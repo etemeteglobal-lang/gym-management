@@ -79,10 +79,10 @@
 <div id="loginOverlay">
     <div class="login-card">
         <h2>Gym Admin Login</h2>
-        <input type="text" id="loginUser" placeholder="Username (admin)">
-        <input type="password" id="loginPass" placeholder="Password (gym123)">
-        <button type="button" onclick="checkLogin()">Login</button>
-        <p id="loginErr" style="color: red; margin-top: 10px; display: none;">Invalid credentials!</p>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button type="button" id="loginBtn" onclick="checkLogin()">Login</button>
+        <p id="loginErr" style="color: red; margin-top: 10px; display: none;"></p>
     </div>
 </div>
 
@@ -119,7 +119,7 @@
                     <h4>EXPIRED MEMBERS</h4>
                     <p id="expiredCount" style="color: #dc2626;">0</p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" id="revenueCard">
                     <h4>TOTAL REVENUE</h4>
                     <p id="revenueCount" style="color: #2563eb;">0 ETB</p>
                 </div>
@@ -127,7 +127,7 @@
 
             <!-- VISUAL GRAPH ANALYTICS -->
             <div class="charts-wrapper">
-                <div class="chart-card" style="flex: 2;">
+                <div class="chart-card" id="revenueChartCard" style="flex: 2;">
                     <h3>Monthly Revenue Overview (ETB)</h3>
                     <canvas id="revenueChart" height="120"></canvas>
                 </div>
@@ -328,6 +328,56 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
 
+    function checkLogin() {
+        const user = document.getElementById('loginUser').value;
+        const pass = document.getElementById('loginPass').value;
+        const errDiv = document.getElementById('loginErr');
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (!user || !pass) {
+            errDiv.innerText = "እባክዎን Username እና Password ያስገቡ!";
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Verifying...";
+        errDiv.style.display = 'none';
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "login", username: user, password: pass })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                
+                // Role Based Authorization Handling
+                if (data.role === "Receptionist") {
+                    document.getElementById('revenueCard').style.display = 'none';
+                    document.getElementById('revenueChartCard').style.display = 'none';
+                } else {
+                    document.getElementById('revenueCard').style.display = 'block';
+                    document.getElementById('revenueChartCard').style.display = 'block';
+                }
+                alert(`እንኳን ደህና መጡ ${data.name} (${data.role})`);
+            } else {
+                errDiv.innerText = data.message;
+                errDiv.style.display = 'block';
+            }
+        })
+        .catch(err => {
+            errDiv.innerText = "የኔትወርክ ስህተት አጋጥሟል!";
+            errDiv.style.display = 'block';
+        })
+        .finally(() => {
+            loginBtn.disabled = false;
+            loginBtn.innerText = "Login";
+        });
+    }
+
     function autoCalculatePrice() {
         const gender = document.getElementById('gender').value;
         const plan = document.getElementById('plan').value;
@@ -340,11 +390,6 @@
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
-    function checkLogin() {
-        if (document.getElementById('loginUser').value === 'admin' && document.getElementById('loginPass').value === 'gym123') {
-            document.getElementById('loginOverlay').style.display = 'none';
-        } else { document.getElementById('loginErr').style.display = 'block'; }
-    }
     function logout() { document.getElementById('loginOverlay').style.display = 'flex'; }
 
     function showPage(pageId, evt) {
@@ -684,7 +729,7 @@
         let csvContent = "data:text/csv;charset=utf-8," + ["Member ID", "Full Name", "Phone", "Plan", "Join Date", "Expiry Date", "Status", "Amount Paid"].join(",") + "\n";
         allMembersData.forEach(row => { if (row[0]) csvContent += row.slice(0, 8).map(c => `"${c || ''}"`).join(",") + "\n"; });
         const link = document.createElement("a");
-        link.setAttribute("href", encodeURI(csvContent));
+        link.setAttribute("href", encodeURI(encodeURI(csvContent)));
         link.setAttribute("download", "Gym_Financial_Report.csv");
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
