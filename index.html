@@ -273,7 +273,7 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         </div>
     </div>
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzsvDMFlvjhWRISkhltHE-m55_Pl6thTpYqc_IeIkmy82Lm_RBSZNsykNi8AnQEDx6KUQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPglNqAYocVNG6OZGrBjxD42t09O3FsPoxCeJcnKHSl0p-M8C1tpHW7JieYuzJN2P52w/exec";
     let allMembersData = [];
     let html5QrcodeScanner = null;
     let selectedRenewId = "";
@@ -478,9 +478,12 @@ let attendanceLogs = [];
         sendAttendanceToGoogleSheet(decodedText, memberName, timeString, status);
 
         // 4. ከ 3 ሰከንድ በኋላ ካሜራው ለቀጣይ አባል ድጋሚ ዝግጁ እንዲሆን ማድረግ
+   // ከ 3 ሰከንድ በኋላ ካሜራው ለቀጣይ አባል ድጋሚ ዝግጁ እንዲሆን ማድረግ
         setTimeout(() => {
             isProcessingScan = false;
-        }, 3000);
+            const resultDiv = document.getElementById('attendanceResult');
+            if (resultDiv) resultDiv.style.display = 'none';
+        }, 3000);   
     }
 
     // መረጃን ወደ Google Sheets የሚልክ ፋንክሽን
@@ -498,6 +501,23 @@ let attendanceLogs = [];
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(data)
+        });
+    }
+    function renderAttendanceLogs() {
+        const tbody = document.getElementById('attendanceLogTable');
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        attendanceLogs.forEach(log => {
+            const statusClass = log.status === 'Active' ? 'status-active' : 'status-expired';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${log.id}</td>
+                <td>${log.name}</td>
+                <td>${log.time}</td>
+                <td><span class="status-badge ${statusClass}">${log.status}</span></td>
+            `;
+            tbody.appendChild(row);
         });
     }
 function onScanFailure(error) {
