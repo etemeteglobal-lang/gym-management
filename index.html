@@ -186,11 +186,18 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         </div>
     </div>
 
-    <!-- PAGE 4: ATTENDANCE SCANNER -->
+<!-- PAGE 4: ATTENDANCE SCANNER -->
     <div id="attendancePage" class="page">
         <div class="card" style="max-width: 500px; margin: auto; text-align: center;">
             <h3>Daily Attendance Verification</h3>
-            <div id="reader" style="margin-top: 15px;"></div>
+            
+            <!-- ካሜራውን የማስበሪያ ቁልፍ -->
+            <button type="button" class="btn-primary" onclick="startScanner()" style="margin-bottom: 15px; background-color: #16a34a;">
+                📷 Start Camera Scanner
+            </button>
+
+            <!-- የካሜራው ማሳያ ሳጥን -->
+            <div id="reader" style="width: 100%; min-height: 250px; background: #f1f5f9; border-radius: 8px;"></div>
 
             <div style="margin-top: 20px; text-align: left;">
                 <label>Manual Verification by Member ID</label>
@@ -201,8 +208,6 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
             <div id="attendanceResult" class="attendance-result"></div>
         </div>
     </div>
-
-</div>
 
 <!-- ID CARD MODAL -->
 <div id="cardModal" class="modal">
