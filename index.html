@@ -6,7 +6,6 @@
     <title>Gym Management System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <!-- Chart.js Library for Visual Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -52,26 +51,25 @@
         .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; padding: 10px; margin-top: 12px; border-radius: 6px; cursor: pointer; width: 100%; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-        th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; }
+        th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }
         th { background-color: #f8fafc; color: #475569; }
 
         .status-badge { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
         .status-active { background-color: #dcfce7; color: #166534; }
         .status-expired { background-color: #fee2e2; color: #991b1b; }
-        .card-btn { background: #8b5cf6; color: white; padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; }
-        .renew-btn { background: #f59e0b; color: white; padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; }
-        .receipt-btn { background: #10b981; color: white; padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; }
+        
+        .action-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+        .action-btns button { padding: 4px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; color: white; }
+        .card-btn { background: #8b5cf6; }
+        .renew-btn { background: #f59e0b; }
+        .edit-btn { background: #0284c7; }
+        .delete-btn { background: #dc2626; }
 
         #reader { width: 100%; max-width: 380px; margin: auto; }
         .attendance-result { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
-        
-        .receipt-card { border: 1px dashed #000; padding: 15px; text-align: left; background: #fff; font-family: monospace; }
-        .receipt-card h3 { text-align: center; margin-bottom: 10px; }
-        .receipt-card p { margin: 4px 0; font-size: 12px; }
-        .receipt-divider { border-top: 1px dashed #000; margin: 8px 0; }
     </style>
 </head>
 <body>
@@ -99,6 +97,7 @@
         <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
         <button class="nav-btn" onclick="showPage('members', event)">👥 Member List</button>
         <button class="nav-btn" onclick="showPage('attendancePage', event)">📷 Attendance Scanner</button>
+        <button class="nav-btn" onclick="showPage('settingsPage', event)">⚙️ Settings</button>
         <button class="nav-btn" style="margin-top: auto; color: #ef4444;" onclick="logout()">🚪 Logout</button>
     </div>
 
@@ -125,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- VISUAL GRAPH ANALYTICS -->
             <div class="charts-wrapper">
                 <div class="chart-card" id="revenueChartCard" style="flex: 2;">
                     <h3>Monthly Revenue Overview (ETB)</h3>
@@ -142,9 +140,8 @@
         <div id="register" class="page">
             <div class="card" style="max-width: 500px; margin: auto;">
                 <h3>New Member Registration</h3>
-                <div id="message"></div>
                 <form id="gymForm">
-                    <label>Member ID (Auto-generated)</label>
+                    <label>Member ID</label>
                     <input type="text" id="memberId" readonly>
 
                     <label>Full Name</label>
@@ -166,7 +163,7 @@
                         <option value="Yearly">Yearly (1 Year)</option>
                     </select>
 
-                    <label>Payment Amount (ETB) - Editable</label>
+                    <label>Payment Amount (ETB)</label>
                     <input type="number" id="amountPaid" required placeholder="Amount in Birr">
 
                     <label>Join Date (Gregorian)</label>
@@ -202,12 +199,12 @@
                 <table id="membersTable">
                     <thead>
                         <tr>
-                            <th>Member ID</th>
+                            <th>ID</th>
                             <th>Full Name</th>
                             <th>Phone</th>
                             <th>Plan</th>
                             <th>Paid (ETB)</th>
-                            <th>Expiry Date (EC)</th>
+                            <th>Expiry (EC)</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -221,13 +218,11 @@
         <div id="attendancePage" class="page">
             <div class="card" style="max-width: 450px; margin: auto; text-align: center;">
                 <h3>Daily Attendance Verification</h3>
-                <button type="button" class="btn-primary" onclick="startScanner()" style="margin-bottom: 15px; background-color: #16a34a;">
-                    📷 Start Camera Scanner
-                </button>
+                <button type="button" class="btn-primary" onclick="startScanner()" style="margin-bottom: 15px; background-color: #16a34a;">📷 Start Camera</button>
                 <div id="reader"></div>
                 <div style="margin-top: 15px; text-align: left;">
-                    <label>Manual Verification by Member ID</label>
-                    <input type="text" id="scanInput" placeholder="Enter Member ID (e.g. GYM-1234)">
+                    <label>Manual Verification</label>
+                    <input type="text" id="scanInput" placeholder="Enter Member ID">
                     <button type="button" class="btn-primary" onclick="verifyMember(document.getElementById('scanInput').value)">Verify Attendance</button>
                 </div>
                 <div id="attendanceResult" class="attendance-result"></div>
@@ -254,77 +249,46 @@
                 </table>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- MODALS -->
-<div id="receiptModal" class="modal">
-    <div class="modal-content">
-        <div id="printableReceipt" class="receipt-card">
-            <h3>GYM PAYMENT RECEIPT</h3>
-            <div class="receipt-divider"></div>
-            <p><strong>Receipt No:</strong> <span id="recNo"></span></p>
-            <p><strong>Date:</strong> <span id="recDate"></span></p>
-            <p><strong>Member ID:</strong> <span id="recId"></span></p>
-            <p><strong>Name:</strong> <span id="recName"></span></p>
-            <p><strong>Plan:</strong> <span id="recPlan"></span></p>
-            <div class="receipt-divider"></div>
-            <p style="font-size: 14px;"><strong>Amount Paid:</strong> <span id="recAmount"></span> ETB</p>
-            <div class="receipt-divider"></div>
-            <p style="text-align: center;">Thank you for your business!</p>
-        </div>
-        <button type="button" class="btn-primary" onclick="window.print()">Print Receipt</button>
-        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('receiptModal')">Close</button>
-    </div>
-</div>
-
-<div id="cardModal" class="modal">
-    <div class="modal-content">
-        <div id="printableCard" style="border:2px solid #2563eb; border-radius:8px; padding:12px; background:#fff; text-align:left;">
-            <div style="background:#2563eb; color:white; padding:6px; border-radius:4px; text-align:center; font-weight:bold; margin-bottom:8px;">SMART GYM MEMBER CARD</div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <p><strong>ID:</strong> <span id="cardId"></span></p>
-                    <p><strong>Name:</strong> <span id="cardName"></span></p>
-                    <p><strong>Plan:</strong> <span id="cardPlan"></span></p>
-                    <p><strong>Expires:</strong> <span id="cardExpiry"></span></p>
-                </div>
-                <div id="qrcode"></div>
+        <!-- SETTINGS (CHANGE PASSWORD) -->
+        <div id="settingsPage" class="page">
+            <div class="card" style="max-width: 400px; margin: auto;">
+                <h3>Change Password</h3>
+                <label>Old Password</label>
+                <input type="password" id="oldPass">
+                <label>New Password</label>
+                <input type="password" id="newPass">
+                <button type="button" class="btn-primary" onclick="changePassword()">Update Password</button>
             </div>
         </div>
-        <button type="button" class="btn-primary" onclick="window.print()">Print ID Card</button>
-        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('cardModal')">Close</button>
     </div>
 </div>
 
-<div id="renewModal" class="modal">
+<!-- EDIT MEMBER MODAL -->
+<div id="editModal" class="modal">
     <div class="modal-content" style="text-align: left;">
-        <h3 style="text-align: center;">Renew Membership</h3>
-        <p style="margin-top: 8px;"><strong>Member:</strong> <span id="renewName"></span> (<span id="renewId"></span>)</p>
-        <label>Select New Plan</label>
-        <select id="renewPlan" onchange="calculateRenewExpiry()">
-            <option value="Monthly">Monthly (1 Month)</option>
-            <option value="3 Months">3 Months</option>
-            <option value="Yearly">Yearly (1 Year)</option>
+        <h3>Edit Member Info</h3>
+        <label>Member ID</label>
+        <input type="text" id="editId" readonly>
+        <label>Full Name</label>
+        <input type="text" id="editName">
+        <label>Phone Number</label>
+        <input type="text" id="editPhone">
+        <label>Gender</label>
+        <select id="editGender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
         </select>
-        <label>Renewal Amount (ETB) - Editable</label>
-        <input type="number" id="renewAmount" required placeholder="Amount in Birr">
-        <label>Renewal Date (Gregorian)</label>
-        <input type="date" id="renewDate" onchange="calculateRenewExpiry()">
-        <label>New Expiry Date (Ethiopian Calendar)</label>
-        <input type="text" id="renewEthExpiry" readonly>
-        <button type="button" class="btn-primary" id="renewSubmitBtn" onclick="submitRenewal()">Confirm Renewal & Print Receipt</button>
-        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('renewModal')">Cancel</button>
+        <button type="button" class="btn-primary" id="saveEditBtn" onclick="saveMemberEdit()">Save Changes</button>
+        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
 </div>
 
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
+    let loggedInUser = "";
     let html5QrcodeScanner = null;
-    let selectedRenewId = "";
-    let isProcessingScan = false;
-    let recentScans = {};
     let revenueChartInstance = null;
     let planChartInstance = null;
 
@@ -334,16 +298,9 @@
         const errDiv = document.getElementById('loginErr');
         const loginBtn = document.getElementById('loginBtn');
 
-        if (!user || !pass) {
-            errDiv.innerText = "እባክዎን Username እና Password ያስገቡ!";
-            errDiv.style.display = 'block';
-            return;
-        }
+        if (!user || !pass) return alert("Enter Username & Password");
 
-        loginBtn.disabled = true;
-        loginBtn.innerText = "Verifying...";
-        errDiv.style.display = 'none';
-
+        loginBtn.disabled = true; loginBtn.innerText = "Verifying...";
         fetch(WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -352,45 +309,114 @@
         .then(res => res.json())
         .then(data => {
             if (data.success) {
+                loggedInUser = user;
                 document.getElementById('loginOverlay').style.display = 'none';
-                
-                // Role Based Authorization Handling
                 if (data.role === "Receptionist") {
                     document.getElementById('revenueCard').style.display = 'none';
                     document.getElementById('revenueChartCard').style.display = 'none';
-                } else {
-                    document.getElementById('revenueCard').style.display = 'block';
-                    document.getElementById('revenueChartCard').style.display = 'block';
                 }
-                alert(`እንኳን ደህና መጡ ${data.name} (${data.role})`);
-            } else {
-                errDiv.innerText = data.message;
-                errDiv.style.display = 'block';
-            }
+                alert(`Welcome ${data.name}`);
+            } else { errDiv.innerText = data.message; errDiv.style.display = 'block'; }
         })
-        .catch(err => {
-            errDiv.innerText = "የኔትወርክ ስህተት አጋጥሟል!";
-            errDiv.style.display = 'block';
-        })
-        .finally(() => {
-            loginBtn.disabled = false;
-            loginBtn.innerText = "Login";
+        .finally(() => { loginBtn.disabled = false; loginBtn.innerText = "Login"; });
+    }
+
+    function changePassword() {
+        const oldP = document.getElementById('oldPass').value;
+        const newP = document.getElementById('newPass').value;
+        if(!oldP || !newP) return alert("Fill all fields");
+
+        fetch(WEB_APP_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "changePassword", username: loggedInUser, oldPassword: oldP, newPassword: newP })
+        }).then(() => {
+            alert("Password update request submitted!");
+            document.getElementById('oldPass').value = ""; document.getElementById('newPass').value = "";
+        });
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('membersTable').querySelector('tbody');
+        tbody.innerHTML = "";
+        data.forEach(r => {
+            if (!r[0] || r[0] === "Member ID") return;
+            const status = r[6] || 'Active';
+            const statusClass = status === 'Active' ? 'status-active' : 'status-expired';
+            let paidAmount = parseFloat(r[7]) || (r[3] === 'Monthly' ? 2000 : 6000);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${r[0]}</td>
+                <td>${r[1] || ''}</td>
+                <td>${r[2] || ''}</td>
+                <td>${r[3] || ''}</td>
+                <td><strong>${paidAmount} ETB</strong></td>
+                <td>${r[5] || ''}</td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="edit-btn" onclick="openEditModal('${r[0]}', '${r[1]}', '${r[2]}', '${r[8]}')">✏️ Edit</button>
+                        <button class="delete-btn" onclick="deleteMember('${r[0]}')">🗑️ Delete</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function openEditModal(id, name, phone, gender) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editGender').value = gender || "Male";
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function saveMemberEdit() {
+        const btn = document.getElementById('saveEditBtn');
+        btn.disabled = true; btn.innerText = "Saving...";
+        const data = {
+            action: "editMember",
+            memberId: document.getElementById('editId').value,
+            fullName: document.getElementById('editName').value,
+            phone: document.getElementById('editPhone').value,
+            gender: document.getElementById('editGender').value
+        };
+
+        fetch(WEB_APP_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            closeModal('editModal');
+            fetchMembers();
+        }).finally(() => { btn.disabled = false; btn.innerText = "Save Changes"; });
+    }
+
+    function deleteMember(id) {
+        if (!confirm(`Are you sure you want to delete member ${id}?`)) return;
+        fetch(WEB_APP_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "deleteMember", memberId: id })
+        }).then(() => {
+            alert("Member Deleted!");
+            fetchMembers();
         });
     }
 
     function autoCalculatePrice() {
         const gender = document.getElementById('gender').value;
         const plan = document.getElementById('plan').value;
-        const amountInput = document.getElementById('amountPaid');
-        let baseMonthly = gender === 'Male' ? 2000 : 1500;
-        if (plan === 'Monthly') amountInput.value = baseMonthly;
-        else if (plan === '3 Months') amountInput.value = baseMonthly * 3;
-        else if (plan === 'Yearly') amountInput.value = baseMonthly * 12;
+        let base = gender === 'Male' ? 2000 : 1500;
+        document.getElementById('amountPaid').value = plan === 'Monthly' ? base : (plan === '3 Months' ? base * 3 : base * 12);
         calculateExpiryDate();
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
     function logout() { document.getElementById('loginOverlay').style.display = 'flex'; }
+    function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
 
     function showPage(pageId, evt) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -407,15 +433,11 @@
         const date = new Date(gregorianDateStr);
         if (isNaN(date.getTime())) return gregorianDateStr;
         const gYear = date.getFullYear(), gMonth = date.getMonth() + 1, gDay = date.getDate();
-        const a = Math.floor((14 - gMonth) / 12);
-        const y = gYear + 4800 - a;
-        const m = gMonth + 12 * a - 3;
+        const a = Math.floor((14 - gMonth) / 12), y = gYear + 4800 - a, m = gMonth + 12 * a - 3;
         const jdn = gDay + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-        const r = (jdn - 1723856) % 1461;
-        const n = (r % 365) + 365 * Math.floor(r / 1460);
+        const r = (jdn - 1723856) % 1461, n = (r % 365) + 365 * Math.floor(r / 1460);
         const ethYear = 4 * Math.floor((jdn - 1723856) / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
-        const ethMonth = Math.floor(n / 30) + 1;
-        const ethDay = (n % 30) + 1;
+        const ethMonth = Math.floor(n / 30) + 1, ethDay = (n % 30) + 1;
         const ethMonthNames = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
         return `${ethDay}/${ethMonth}/${ethYear} E.C (${ethMonthNames[ethMonth - 1] || ethMonth} ${ethDay})`;
     }
@@ -432,11 +454,9 @@
         const joinDate = new Date(joinDateVal);
         const plan = document.getElementById('plan').value;
         document.getElementById('ethJoinDate').value = toEthiopianDate(joinDateVal);
-
         if (plan === "Monthly") joinDate.setMonth(joinDate.getMonth() + 1);
         else if (plan === "3 Months") joinDate.setMonth(joinDate.getMonth() + 3);
         else if (plan === "Yearly") joinDate.setFullYear(joinDate.getFullYear() + 1);
-
         document.getElementById('ethExpiryDate').value = toEthiopianDate(joinDate.toISOString().split('T')[0]);
     }
 
@@ -445,19 +465,13 @@
     function submitData() {
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = "Registering...";
-
-        const mId = document.getElementById('memberId').value;
-        const name = document.getElementById('fullName').value;
-        const plan = document.getElementById('plan').value;
-        const amount = document.getElementById('amountPaid').value;
-
         const data = {
-            memberId: mId,
-            fullName: name,
+            memberId: document.getElementById('memberId').value,
+            fullName: document.getElementById('fullName').value,
             gender: document.getElementById('gender').value,
             phone: document.getElementById('phone').value,
-            plan: plan,
-            amountPaid: amount,
+            plan: document.getElementById('plan').value,
+            amountPaid: document.getElementById('amountPaid').value,
             joinDate: document.getElementById('ethJoinDate').value,
             expiryDate: document.getElementById('ethExpiryDate').value,
             status: document.getElementById('status').value
@@ -468,20 +482,9 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(data)
         }).then(() => {
-            showReceipt(mId, name, plan, amount);
             document.getElementById('gymForm').reset();
             initForm(); fetchMembers();
         }).finally(() => { btn.disabled = false; btn.innerText = "Register & Print Receipt"; });
-    }
-
-    function showReceipt(id, name, plan, amount) {
-        document.getElementById('recNo').innerText = "REC-" + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('recDate').innerText = toEthiopianDate(new Date().toISOString().split('T')[0]);
-        document.getElementById('recId').innerText = id;
-        document.getElementById('recName').innerText = name;
-        document.getElementById('recPlan').innerText = plan;
-        document.getElementById('recAmount').innerText = amount;
-        document.getElementById('receiptModal').style.display = 'flex';
     }
 
     function fetchMembers() {
@@ -498,15 +501,8 @@
         document.getElementById('totalCount').innerText = valid.length;
         document.getElementById('activeCount').innerText = valid.filter(r => (r[6] || 'Active') === 'Active').length;
         document.getElementById('expiredCount').innerText = valid.filter(r => r[6] === 'Expired').length;
-
         let totalRev = 0;
-        valid.forEach(r => {
-            let amt = parseFloat(r[7]);
-            if (isNaN(amt) || amt === 0) {
-                amt = r[3] === 'Monthly' ? 2000 : (r[3] === '3 Months' ? 6000 : (r[3] === 'Yearly' ? 24000 : 0));
-            }
-            totalRev += amt;
-        });
+        valid.forEach(r => totalRev += parseFloat(r[7]) || (r[3] === 'Monthly' ? 2000 : 6000));
         document.getElementById('revenueCount').innerText = totalRev + " ETB";
     }
 
@@ -517,79 +513,23 @@
 
         valid.forEach(r => {
             const plan = r[3] || 'Monthly';
-            let amt = parseFloat(r[7]);
-            if (isNaN(amt) || amt === 0) {
-                amt = plan === 'Monthly' ? 2000 : (plan === '3 Months' ? 6000 : (plan === 'Yearly' ? 24000 : 0));
-            }
-
+            let amt = parseFloat(r[7]) || (plan === 'Monthly' ? 2000 : 6000);
             if (planCounts[plan] !== undefined) planCounts[plan]++;
-
-            const joinDate = r[4] || "Recent";
-            monthlyRevenue[joinDate] = (monthlyRevenue[joinDate] || 0) + amt;
+            monthlyRevenue[r[4] || "Recent"] = (monthlyRevenue[r[4] || "Recent"] || 0) + amt;
         });
 
-        // 1. Bar Chart for Revenue
         const ctx1 = document.getElementById('revenueChart').getContext('2d');
         if (revenueChartInstance) revenueChartInstance.destroy();
         revenueChartInstance = new Chart(ctx1, {
             type: 'bar',
-            data: {
-                labels: Object.keys(monthlyRevenue).length ? Object.keys(monthlyRevenue) : ['Current'],
-                datasets: [{
-                    label: 'Revenue (ETB)',
-                    data: Object.values(monthlyRevenue).length ? Object.values(monthlyRevenue) : [0],
-                    backgroundColor: '#2563eb',
-                    borderRadius: 6
-                }]
-            },
-            options: { responsive: true }
+            data: { labels: Object.keys(monthlyRevenue), datasets: [{ label: 'Revenue (ETB)', data: Object.values(monthlyRevenue), backgroundColor: '#2563eb' }] }
         });
 
-        // 2. Doughnut Chart for Plans
         const ctx2 = document.getElementById('planChart').getContext('2d');
         if (planChartInstance) planChartInstance.destroy();
         planChartInstance = new Chart(ctx2, {
             type: 'doughnut',
-            data: {
-                labels: ['Monthly', '3 Months', 'Yearly'],
-                datasets: [{
-                    data: [planCounts['Monthly'], planCounts['3 Months'], planCounts['Yearly']],
-                    backgroundColor: ['#38bdf8', '#f59e0b', '#10b981']
-                }]
-            },
-            options: { responsive: true }
-        });
-    }
-
-    function renderTable(data) {
-        const tbody = document.getElementById('membersTable').querySelector('tbody');
-        tbody.innerHTML = "";
-        data.forEach(r => {
-            if (!r[0] || r[0] === "Member ID") return;
-            const status = r[6] || 'Active';
-            const statusClass = status === 'Active' ? 'status-active' : 'status-expired';
-            
-            let paidAmount = parseFloat(r[7]);
-            if (isNaN(paidAmount) || paidAmount === 0) {
-                paidAmount = r[3] === 'Monthly' ? 2000 : (r[3] === '3 Months' ? 6000 : (r[3] === 'Yearly' ? 24000 : 0));
-            }
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${r[0]}</td>
-                <td>${r[1] || ''}</td>
-                <td>${r[2] || ''}</td>
-                <td>${r[3] || ''}</td>
-                <td><strong>${paidAmount} ETB</strong></td>
-                <td>${r[5] || ''}</td>
-                <td><span class="status-badge ${statusClass}">${status}</span></td>
-                <td style="display: flex; gap: 4px;">
-                    <button class="card-btn" onclick="openCard('${r[0]}', '${r[1]}', '${r[3]}', '${r[5]}')">Card</button>
-                    <button class="receipt-btn" onclick="showReceipt('${r[0]}', '${r[1]}', '${r[3]}', '${paidAmount}')">Receipt</button>
-                    <button class="renew-btn" onclick="openRenewModal('${r[0]}', '${r[1]}')">Renew</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+            data: { labels: ['Monthly', '3 Months', 'Yearly'], datasets: [{ data: [planCounts['Monthly'], planCounts['3 Months'], planCounts['Yearly']], backgroundColor: ['#38bdf8', '#f59e0b', '#10b981'] }] }
         });
     }
 
@@ -599,142 +539,14 @@
             if (!tbody) return; tbody.innerHTML = "";
             if (data && data.length > 1) {
                 data.slice(1).reverse().forEach(row => {
-                    const statusClass = row[3] === 'Active' ? 'status-active' : 'status-expired';
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><span class="status-badge ${statusClass}">${row[3]}</span></td>`;
+                    tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><span class="status-badge ${row[3] === 'Active' ? 'status-active' : 'status-expired'}">${row[3]}</span></td>`;
                     tbody.appendChild(tr);
                 });
             }
         });
     }
 
-    function startScanner() {
-        if (!html5QrcodeScanner) {
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 220, height: 220 }, videoConstraints: { facingMode: "environment" } });
-            html5QrcodeScanner.render(onScanSuccess, () => {});
-        }
-    }
-
-    function onScanSuccess(decodedText) {
-        if (isProcessingScan) return;
-        const now = new Date().getTime();
-        const cleanId = decodedText.toString().trim().toUpperCase();
-
-        if (recentScans[cleanId] && (now - recentScans[cleanId] < 300000)) {
-            const resultDiv = document.getElementById('attendanceResult');
-            resultDiv.style.display = 'block'; resultDiv.style.background = "#fef08a"; resultDiv.style.color = "#854d0e";
-            resultDiv.innerHTML = `⚠️ <strong>${cleanId}</strong> ቀድመው ተመዝግበዋል!`;
-            setTimeout(() => { resultDiv.style.display = 'none'; }, 3000);
-            return;
-        }
-
-        isProcessingScan = true;
-        verifyMember(decodedText);
-        const nowDate = new Date();
-        const ethDateTime = `${toEthiopianDate(nowDate.toISOString().split('T')[0])} ${nowDate.toLocaleTimeString()}`;
-        const member = allMembersData.find(m => m[0] && m[0].toString().trim().toLowerCase() === decodedText.toString().trim().toLowerCase());
-        const memberName = member ? member[1] : "Unknown";
-        const status = member ? (member[6] || 'Active') : "Failed";
-
-        recentScans[cleanId] = now;
-        sendAttendanceToGoogleSheet(decodedText, memberName, ethDateTime, status);
-        setTimeout(() => { isProcessingScan = false; }, 3000);
-    }
-
-    function sendAttendanceToGoogleSheet(id, name, time, status) {
-        fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: time, status: status })
-        }).then(() => { fetchAttendanceLogs(); });
-    }
-
-    function verifyMember(memberId) {
-        const resultDiv = document.getElementById('attendanceResult');
-        resultDiv.style.display = 'block';
-        const member = allMembersData.find(m => m[0] && m[0].toString().trim().toLowerCase() === memberId.toString().trim().toLowerCase());
-        if (!member) {
-            resultDiv.style.background = "#fee2e2"; resultDiv.style.color = "#991b1b"; resultDiv.innerHTML = "❌ Member Not Found!"; return;
-        }
-        const name = member[1], status = member[6] || 'Active', expiry = member[5];
-        if (status === 'Active') {
-            resultDiv.style.background = "#dcfce7"; resultDiv.style.color = "#166534";
-            resultDiv.innerHTML = `✅ ACCESS GRANTED<br>Welcome, <strong>${name}</strong>!<br><small>Expiry: ${expiry}</small>`;
-        } else {
-            resultDiv.style.background = "#fee2e2"; resultDiv.style.color = "#991b1b";
-            resultDiv.innerHTML = `❌ ACCESS DENIED (Expired)<br>Member: <strong>${name}</strong><br><small>Expired on: ${expiry}</small>`;
-        }
-    }
-
-    function openCard(id, name, plan, expiry) {
-        document.getElementById('cardId').innerText = id;
-        document.getElementById('cardName').innerText = name;
-        document.getElementById('cardPlan').innerText = plan;
-        document.getElementById('cardExpiry').innerText = expiry;
-        const qrContainer = document.getElementById('qrcode');
-        qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: id, width: 80, height: 80 });
-        document.getElementById('cardModal').style.display = 'flex';
-    }
-
-    function openRenewModal(id, name) {
-        selectedRenewId = id;
-        document.getElementById('renewId').innerText = id;
-        document.getElementById('renewName').innerText = name;
-        document.getElementById('renewAmount').value = 2000;
-        document.getElementById('renewDate').value = new Date().toISOString().split('T')[0];
-        calculateRenewExpiry();
-        document.getElementById('renewModal').style.display = 'flex';
-    }
-
-    function calculateRenewExpiry() {
-        const dateVal = document.getElementById('renewDate').value;
-        if (!dateVal) return;
-        const renewDate = new Date(dateVal);
-        const plan = document.getElementById('renewPlan').value;
-        if (plan === "Monthly") renewDate.setMonth(renewDate.getMonth() + 1);
-        else if (plan === "3 Months") renewDate.setMonth(renewDate.getMonth() + 3);
-        else if (plan === "Yearly") renewDate.setFullYear(renewDate.getFullYear() + 1);
-        document.getElementById('renewEthExpiry').value = toEthiopianDate(renewDate.toISOString().split('T')[0]);
-    }
-
-    function submitRenewal() {
-        const btn = document.getElementById('renewSubmitBtn');
-        btn.disabled = true; btn.innerText = "Renewing...";
-        const plan = document.getElementById('renewPlan').value;
-        const amount = document.getElementById('renewAmount').value;
-        const name = document.getElementById('renewName').innerText;
-
-        const data = {
-            action: "renew",
-            memberId: selectedRenewId,
-            plan: plan,
-            amountPaid: amount,
-            expiryDate: document.getElementById('renewEthExpiry').value
-        };
-
-        fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            closeModal('renewModal');
-            showReceipt(selectedRenewId, name, plan, amount);
-            fetchMembers();
-        }).finally(() => { btn.disabled = false; btn.innerText = "Confirm Renewal & Print Receipt"; });
-    }
-
-    function exportToCSV() {
-        if (allMembersData.length === 0) return alert("No data to export!");
-        let csvContent = "data:text/csv;charset=utf-8," + ["Member ID", "Full Name", "Phone", "Plan", "Join Date", "Expiry Date", "Status", "Amount Paid"].join(",") + "\n";
-        allMembersData.forEach(row => { if (row[0]) csvContent += row.slice(0, 8).map(c => `"${c || ''}"`).join(",") + "\n"; });
-        const link = document.createElement("a");
-        link.setAttribute("href", encodeURI(encodeURI(csvContent)));
-        link.setAttribute("download", "Gym_Financial_Report.csv");
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    }
-
-    function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
     function filterMembers() {
         const q = document.getElementById('searchInput').value.toLowerCase();
         renderTable(allMembersData.filter(r => (r[0] && r[0].toString().toLowerCase().includes(q)) || (r[1] && r[1].toString().toLowerCase().includes(q))));
