@@ -1,79 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gym Management System</title>
-    <!-- QR & Scanner Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-* {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-body {background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh;}
-@media (min-width: 768px) {
-  body { flex-direction: row; }
-  .sidebar { width: 220px !important; min-width: 220px; }
-  .main-content { flex: 1; overflow-x: auto; }
-}
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999; }
-        .login-card { background: white; padding: 30px; border-radius: 12px; width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .login-card h2 { margin-bottom: 20px; color: #0f172a; }
-        .login-card input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
-        .login-card button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* Mobile Header */
+        .mobile-header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 12px 20px; position: sticky; top: 0; z-index: 1000; }
+        .hamburger-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+        .main-wrapper { display: flex; flex: 1; position: relative; }
 
         /* Sidebar Styling */
-        .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; }
-        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 30px; color: #38bdf8; }
-        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 15px 25px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; transition: 0.3s; z-index: 999; }
+        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 25px; color: #38bdf8; }
+        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 14px 20px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .nav-btn:hover, .nav-btn.active { background: #1e293b; color: white; border-left: 4px solid #38bdf8; }
 
-        /* Main Content */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        /* Responsive Mobile Layout */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; top: 50px; left: -100%; width: 240px; height: calc(100vh - 50px); box-shadow: 4px 0 10px rgba(0,0,0,0.3); }
+            .sidebar.show { left: 0; }
+        }
+        @media (min-width: 769px) {
+            .mobile-header { display: none; }
+        }
+
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; width: 320px; text-align: center; }
+        .login-card input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .login-card button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
         .page { display: none; }
         .page.active { display: block; }
 
-        /* Cards and Tables */
-        .stats-grid { display: flex; gap: 20px; margin-bottom: 25px; }
-        .stat-card { flex: 1; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
-        .stat-card h4 { color: #64748b; font-size: 13px; margin-bottom: 8px; }
-        .stat-card p { font-size: 26px; font-weight: bold; color: #0f172a; }
+        .stats-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 140px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); text-align: center; }
+        .stat-card h4 { color: #64748b; font-size: 12px; margin-bottom: 5px; }
+        .stat-card p { font-size: 22px; font-weight: bold; color: #0f172a; }
 
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        label { font-weight: 600; display: block; margin-top: 12px; color: #334155; font-size: 14px; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #cbd5e1; }
-        input[readonly] { background-color: #f1f5f9; }
-        .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; margin-top: 15px; cursor: pointer; }
-        .btn-primary:hover { background-color: #1d4ed8; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto; }
+        label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
+        input, select { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; padding: 10px; margin-top: 12px; border-radius: 6px; cursor: pointer; width: 100%; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; }
         th { background-color: #f8fafc; color: #475569; }
-        tr:nth-child(even) { background-color: #f8fafc; }
-        
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+
+        .status-badge { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
         .status-active { background-color: #dcfce7; color: #166534; }
         .status-expired { background-color: #fee2e2; color: #991b1b; }
-        
-        .card-btn { background: #8b5cf6; color: white; padding: 6px 10px; border: none; font-size: 11px; cursor: pointer; width: auto; border-radius: 4px; }
-        .renew-btn { background: #f59e0b; color: white; padding: 6px 10px; border: none; font-size: 11px; cursor: pointer; width: auto; border-radius: 4px; }
+        .card-btn { background: #8b5cf6; color: white; padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; }
+        .renew-btn { background: #f59e0b; color: white; padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; }
 
-        /* Scanner Display */
-        #reader { width: 100%; max-width: 400px; margin: auto; }
-        .attendance-result { margin-top: 20px; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; display: none; }
+        #reader { width: 100%; max-width: 380px; margin: auto; }
+        .attendance-result { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
 
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: white; padding: 25px; border-radius: 10px; width: 400px; text-align: center; }
-        .id-card { border: 2px solid #2563eb; border-radius: 10px; padding: 15px; background: #fff; margin-bottom: 15px; text-align: left; }
-        .id-card-header { background: #2563eb; color: white; padding: 8px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
+        .id-card { border: 2px solid #2563eb; border-radius: 8px; padding: 12px; background: #fff; margin-bottom: 12px; text-align: left; }
+        .id-card-header { background: #2563eb; color: white; padding: 6px; border-radius: 4px; text-align: center; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
         .id-card-body { display: flex; justify-content: space-between; align-items: center; }
-        .id-card-info p { margin: 4px 0; font-size: 13px; }
+        .id-card-info p { margin: 3px 0; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="loginOverlay">
     <div class="login-card">
         <h2>Gym Admin Login</h2>
@@ -84,131 +83,150 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
     </div>
 </div>
 
-<!-- SIDEBAR NAVIGATION -->
-<div class="sidebar">
-    <h2>GYM SYSTEM</h2>
-    <button class="nav-btn" onclick="showPage('attendanceLogPage', event)">📋 Attendance Log</button>
-    <button class="nav-btn active" onclick="showPage('dashboard', event)">📊 Dashboard</button>
-    <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
-    <button class="nav-btn" onclick="showPage('members', event)">👥 Member List</button>
-    <button class="nav-btn" onclick="showPage('attendancePage', event)">📷 Attendance Scanner</button>
-    <button class="nav-btn" style="margin-top: auto; color: #ef4444;" onclick="logout()">🚪 Logout</button>
+<div class="mobile-header">
+    <h3>GYM SYSTEM</h3>
+    <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="main-content">
-    
-    <!-- PAGE 1: DASHBOARD -->
-    <div id="dashboard" class="page active">
-        <h2 style="margin-bottom: 20px;">System Overview</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h4>TOTAL MEMBERS</h4>
-                <p id="totalCount">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>ACTIVE MEMBERS</h4>
-                <p id="activeCount" style="color: #16a34a;">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>EXPIRED MEMBERS</h4>
-                <p id="expiredCount" style="color: #dc2626;">0</p>
-            </div>
-        </div>
+<div class="main-wrapper">
+    <div class="sidebar" id="sidebar">
+        <h2>GYM SYSTEM</h2>
+        <button class="nav-btn active" onclick="showPage('dashboard', event)">📊 Dashboard</button>
+        <button class="nav-btn" onclick="showPage('attendanceLogPage', event)">📋 Attendance Log</button>
+        <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
+        <button class="nav-btn" onclick="showPage('members', event)">👥 Member List</button>
+        <button class="nav-btn" onclick="showPage('attendancePage', event)">📷 Attendance Scanner</button>
+        <button class="nav-btn" style="margin-top: auto; color: #ef4444;" onclick="logout()">🚪 Logout</button>
     </div>
 
-    <!-- PAGE 2: REGISTRATION -->
-    <div id="register" class="page">
-        <div class="card" style="max-width: 600px; margin: auto;">
-            <h3>New Member Registration</h3>
-            <div id="message"></div>
-            <form id="gymForm">
-                <label>Member ID (Auto-generated)</label>
-                <input type="text" id="memberId" readonly>
-
-                <label>Full Name</label>
-                <input type="text" id="fullName" required placeholder="Member Full Name">
-
-                <label>Phone Number</label>
-                <input type="tel" id="phone" required placeholder="09...">
-
-                <label>Membership Plan</label>
-                <select id="plan" onchange="calculateExpiryDate()">
-                    <option value="Monthly">Monthly (1 Month)</option>
-                    <option value="3 Months">3 Months</option>
-                    <option value="Yearly">Yearly (1 Year)</option>
-                </select>
-
-                <label>Join Date (Gregorian)</label>
-                <input type="date" id="joinDate" required onchange="calculateExpiryDate()">
-
-                <label>Join Date (Ethiopian Calendar)</label>
-                <input type="text" id="ethJoinDate" readonly>
-
-                <label>Expiry Date (Ethiopian Calendar)</label>
-                <input type="text" id="ethExpiryDate" readonly>
-
-                <label>Status</label>
-                <select id="status">
-                    <option value="Active">Active</option>
-                    <option value="Expired">Expired</option>
-                </select>
-
-                <button type="button" class="btn-primary" id="submitBtn" onclick="submitData()">Register Member</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- PAGE 3: MEMBER LIST -->
-    <div id="members" class="page">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3>Registered Members Directory</h3>
-                <div style="display: flex; gap: 10px; width: 50%;">
-                    <input type="text" id="searchInput" placeholder="Search Name, Phone, ID..." onkeyup="filterMembers()" style="margin: 0;">
-                    <button type="button" class="btn-primary" style="margin: 0; width: 120px;" onclick="exportToCSV()">Export Excel</button>
+    <div class="main-content">
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="page active">
+            <h2 style="margin-bottom: 15px;">System Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>TOTAL MEMBERS</h4>
+                    <p id="totalCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>ACTIVE MEMBERS</h4>
+                    <p id="activeCount" style="color: #16a34a;">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>EXPIRED MEMBERS</h4>
+                    <p id="expiredCount" style="color: #dc2626;">0</p>
                 </div>
             </div>
-            <table id="membersTable">
-                <thead>
-                    <tr>
-                        <th>Member ID</th>
-                        <th>Full Name</th>
-                        <th>Phone</th>
-                        <th>Plan</th>
-                        <th>Join Date (EC)</th>
-                        <th>Expiry Date (EC)</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
-    </div>
 
-<!-- PAGE 4: ATTENDANCE SCANNER -->
-    <div id="attendancePage" class="page">
-        <div class="card" style="max-width: 500px; margin: auto; text-align: center;">
-            <h3>Daily Attendance Verification</h3>
-            
-            <!-- ካሜራውን የማስበሪያ ቁልፍ -->
-            <button type="button" class="btn-primary" onclick="startScanner()" style="margin-bottom: 15px; background-color: #16a34a;">
-                📷 Start Camera Scanner
-            </button>
+        <!-- REGISTRATION -->
+        <div id="register" class="page">
+            <div class="card" style="max-width: 500px; margin: auto;">
+                <h3>New Member Registration</h3>
+                <div id="message"></div>
+                <form id="gymForm">
+                    <label>Member ID (Auto-generated)</label>
+                    <input type="text" id="memberId" readonly>
 
-            <!-- የካሜራው ማሳያ ሳጥን -->
-            <div id="reader" style="width: 100%; min-height: 250px; background: #f1f5f9; border-radius: 8px;"></div>
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" required placeholder="Member Full Name">
 
-            <div style="margin-top: 20px; text-align: left;">
-                <label>Manual Verification by Member ID</label>
-                <input type="text" id="scanInput" placeholder="Enter Member ID (e.g. GYM-1234)">
-                <button type="button" class="btn-primary" onclick="verifyMember(document.getElementById('scanInput').value)">Verify Attendance</button>
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" required placeholder="09...">
+
+                    <label>Membership Plan</label>
+                    <select id="plan" onchange="calculateExpiryDate()">
+                        <option value="Monthly">Monthly (1 Month)</option>
+                        <option value="3 Months">3 Months</option>
+                        <option value="Yearly">Yearly (1 Year)</option>
+                    </select>
+
+                    <label>Join Date (Gregorian)</label>
+                    <input type="date" id="joinDate" required onchange="calculateExpiryDate()">
+
+                    <label>Join Date (Ethiopian Calendar)</label>
+                    <input type="text" id="ethJoinDate" readonly>
+
+                    <label>Expiry Date (Ethiopian Calendar)</label>
+                    <input type="text" id="ethExpiryDate" readonly>
+
+                    <label>Status</label>
+                    <select id="status">
+                        <option value="Active">Active</option>
+                        <option value="Expired">Expired</option>
+                    </select>
+
+                    <button type="button" class="btn-primary" id="submitBtn" onclick="submitData()">Register Member</button>
+                </form>
             </div>
+        </div>
 
-            <div id="attendanceResult" class="attendance-result"></div>
+        <!-- MEMBER LIST -->
+        <div id="members" class="page">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3>Registered Members Directory</h3>
+                    <div style="display: flex; gap: 10px; width: 100%; max-width: 300px;">
+                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterMembers()" style="margin: 0;">
+                        <button type="button" class="btn-primary" style="margin: 0; width: 100px;" onclick="exportToCSV()">Export</button>
+                    </div>
+                </div>
+                <table id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Full Name</th>
+                            <th>Phone</th>
+                            <th>Plan</th>
+                            <th>Expiry Date (EC)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE SCANNER -->
+        <div id="attendancePage" class="page">
+            <div class="card" style="max-width: 450px; margin: auto; text-align: center;">
+                <h3>Daily Attendance Verification</h3>
+                <button type="button" class="btn-primary" onclick="startScanner()" style="margin-bottom: 15px; background-color: #16a34a;">
+                    📷 Start Camera Scanner
+                </button>
+                <div id="reader"></div>
+                <div style="margin-top: 15px; text-align: left;">
+                    <label>Manual Verification by Member ID</label>
+                    <input type="text" id="scanInput" placeholder="Enter Member ID (e.g. GYM-1234)">
+                    <button type="button" class="btn-primary" onclick="verifyMember(document.getElementById('scanInput').value)">Verify Attendance</button>
+                </div>
+                <div id="attendanceResult" class="attendance-result"></div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE LOGS -->
+        <div id="attendanceLogPage" class="page">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3>Daily Attendance History</h3>
+                    <button type="button" class="btn-primary" style="margin:0; width:auto; padding:6px 12px;" onclick="fetchAttendanceLogs()">🔄 Refresh Log</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Full Name</th>
+                            <th>Scan Date & Time (EC)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceLogTable"></tbody>
+                </table>
+            </div>
         </div>
     </div>
+</div>
 
 <!-- ID CARD MODAL -->
 <div id="cardModal" class="modal">
@@ -226,7 +244,7 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
             </div>
         </div>
         <button type="button" class="btn-primary" onclick="window.print()">Print ID Card</button>
-        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" onclick="closeModal('cardModal')">Close</button>
+        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('cardModal')">Close</button>
     </div>
 </div>
 
@@ -234,49 +252,32 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
 <div id="renewModal" class="modal">
     <div class="modal-content" style="text-align: left;">
         <h3 style="text-align: center;">Renew Membership</h3>
-        <p style="margin-top: 10px;"><strong>Member:</strong> <span id="renewName"></span> (<span id="renewId"></span>)</p>
-
+        <p style="margin-top: 8px;"><strong>Member:</strong> <span id="renewName"></span> (<span id="renewId"></span>)</p>
         <label>Select New Plan</label>
         <select id="renewPlan" onchange="calculateRenewExpiry()">
             <option value="Monthly">Monthly (1 Month)</option>
             <option value="3 Months">3 Months</option>
             <option value="Yearly">Yearly (1 Year)</option>
         </select>
-
         <label>Renewal Date (Gregorian)</label>
         <input type="date" id="renewDate" onchange="calculateRenewExpiry()">
-
         <label>New Expiry Date (Ethiopian Calendar)</label>
         <input type="text" id="renewEthExpiry" readonly>
-
         <button type="button" class="btn-primary" id="renewSubmitBtn" onclick="submitRenewal()">Confirm Renewal</button>
-        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" onclick="closeModal('renewModal')">Cancel</button>
+        <button type="button" style="background:#dc2626; color:white; margin-top:5px;" class="btn-primary" onclick="closeModal('renewModal')">Cancel</button>
     </div>
 </div>
-<!-- PAGE 5: ATTENDANCE LOGS -->
-    <div id="attendanceLogPage" class="page">
-        <div class="card">
-            <h3>Daily Attendance History</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Member ID</th>
-                        <th>Full Name</th>
-                        <th>Scan Date & Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="attendanceLogTable">
-                    <!-- የመገኘት ታሪኮች እዚህ ይገባሉ -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPglNqAYocVNG6OZGrBjxD42t09O3FsPoxCeJcnKHSl0p-M8C1tpHW7JieYuzJN2P52w/exec";
     let allMembersData = [];
     let html5QrcodeScanner = null;
     let selectedRenewId = "";
+    let isProcessingScan = false;
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
 
     function checkLogin() {
         const u = document.getElementById('loginUser').value;
@@ -297,12 +298,15 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
         document.getElementById(pageId).classList.add('active');
-        if (evt) evt.target.classList.add('active');
+        if (evt && evt.target) evt.target.classList.add('active');
+
+        // Close Mobile Sidebar upon page select
+        document.getElementById('sidebar').classList.remove('show');
 
         if (pageId === 'attendancePage') {
             startScanner();
-        } else if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear();
+        } else if (pageId === 'attendanceLogPage') {
+            fetchAttendanceLogs();
         }
     }
 
@@ -361,6 +365,7 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
     window.onload = function() {
         initForm();
         fetchMembers();
+        fetchAttendanceLogs();
     };
 
     function submitData() {
@@ -409,6 +414,32 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         });
     }
 
+    // በሁሉም ዲቫይስ ላይ የተመዘገበውን አቴንዳንስ ከ Google Sheets መውሰጃ
+    function fetchAttendanceLogs() {
+        fetch(WEB_APP_URL + "?action=getAttendance")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('attendanceLogTable');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (data && data.length > 1) {
+                const logs = data.slice(1).reverse(); // ከቅርብ ወደ ቆየ
+                logs.forEach(row => {
+                    const statusClass = row[3] === 'Active' ? 'status-active' : 'status-expired';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                        <td><span class="status-badge ${statusClass}">${row[3]}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+    }
+
     function updateDashboard(data) {
         const valid = data.filter(r => r[0]);
         document.getElementById('totalCount').innerText = valid.length;
@@ -431,7 +462,6 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
                 <td>${rowData[1] || ''}</td>
                 <td>${rowData[2] === '#ERROR!' ? '' : (rowData[2] || '')}</td>
                 <td>${rowData[3] || ''}</td>
-                <td>${rowData[4] || ''}</td>
                 <td>${rowData[5] || ''}</td>
                 <td><span class="status-badge ${statusClass}">${status}</span></td>
                 <td style="display: flex; gap: 5px;">
@@ -443,50 +473,39 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         });
     }
 
-function startScanner() {
-    if (!html5QrcodeScanner) {
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            videoConstraints: { facingMode: "environment" }
-        });
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    function startScanner() {
+        if (!html5QrcodeScanner) {
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+                fps: 10,
+                qrbox: { width: 220, height: 220 },
+                videoConstraints: { facingMode: "environment" }
+            });
+            html5QrcodeScanner.render(onScanSuccess, () => {});
+        }
     }
-}
-let attendanceLogs = [];
-    let isProcessingScan = false; // ደጋግሞ እንዳይመዘግብ የሚከለክል
 
     function onScanSuccess(decodedText) {
-        // 1. አንዴ ስካን ከተደረገ በኋላ ለ 3 ሰከንድ ሌላ ስካን እንዳይቀበል ይከለክላል
         if (isProcessingScan) return;
         isProcessingScan = true;
 
         verifyMember(decodedText);
         
         const now = new Date();
-        const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-        
+        const timeStr = now.toLocaleTimeString();
+        const ethDate = toEthiopianDate(now.toISOString().split('T')[0]);
+        const ethDateTime = `${ethDate} ${timeStr}`; // የኢትዮጵያ ቀን + ሰዓት
+
         const member = allMembersData.find(m => m[0] && m[0].toString().trim().toLowerCase() === decodedText.toString().trim().toLowerCase());
         const memberName = member ? member[1] : "Unknown";
         const status = member ? (member[6] || 'Active') : "Failed";
 
-        // 2. ስልክ ላይ በዝርዝር ማሳየት
-        attendanceLogs.unshift({ id: decodedText, name: memberName, time: timeString, status: status });
-        renderAttendanceLogs();
+        sendAttendanceToGoogleSheet(decodedText, memberName, ethDateTime, status);
 
-        // 3. መረጃውን በቀጥታ ወደ Google Sheets መላክ
-        sendAttendanceToGoogleSheet(decodedText, memberName, timeString, status);
-
-        // 4. ከ 3 ሰከንድ በኋላ ካሜራው ለቀጣይ አባል ድጋሚ ዝግጁ እንዲሆን ማድረግ
-   // ከ 3 ሰከንድ በኋላ ካሜራው ለቀጣይ አባል ድጋሚ ዝግጁ እንዲሆን ማድረግ
         setTimeout(() => {
             isProcessingScan = false;
-            const resultDiv = document.getElementById('attendanceResult');
-            if (resultDiv) resultDiv.style.display = 'none';
-        }, 3000);   
+        }, 3000);
     }
 
-    // መረጃን ወደ Google Sheets የሚልክ ፋንክሽን
     function sendAttendanceToGoogleSheet(id, name, time, status) {
         const data = {
             action: "attendance",
@@ -501,27 +520,10 @@ let attendanceLogs = [];
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(data)
+        }).then(() => {
+            fetchAttendanceLogs(); // ከስካን በኋላ ሰንጠረዡን ማደስ
         });
     }
-    function renderAttendanceLogs() {
-        const tbody = document.getElementById('attendanceLogTable');
-        if (!tbody) return;
-        tbody.innerHTML = "";
-
-        attendanceLogs.forEach(log => {
-            const statusClass = log.status === 'Active' ? 'status-active' : 'status-expired';
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${log.id}</td>
-                <td>${log.name}</td>
-                <td>${log.time}</td>
-                <td><span class="status-badge ${statusClass}">${log.status}</span></td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-function onScanFailure(error) {
-}
 
     function verifyMember(memberId) {
         const resultDiv = document.getElementById('attendanceResult');
@@ -640,18 +642,6 @@ function onScanFailure(error) {
         const filtered = allMembersData.filter(r => (r[0] && r[0].toString().toLowerCase().includes(q)) || (r[1] && r[1].toString().toLowerCase().includes(q)));
         renderTable(filtered);
     }
-  function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('active');
-    }
-    const originalShowPage = showPage;
-    showPage = function(pageId, evt) {
-        originalShowPage(pageId, evt);
-        if (window.innerWidth <= 768) {
-            document.getElementById('sidebar').classList.remove('active');
-        }
-    };  
 </script>
-
 </body>
 </html>
