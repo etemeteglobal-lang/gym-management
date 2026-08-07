@@ -454,12 +454,15 @@ function startScanner() {
     }
 }
 let attendanceLogs = [];
+    let isProcessingScan = false; // ደጋግሞ እንዳይመዘግብ የሚከለክል
 
     function onScanSuccess(decodedText) {
-        // 1. የአባሉን መረጃ ያረጋግጣል
+        // 1. አንዴ ስካን ከተደረገ በኋላ ለ 3 ሰከንድ ሌላ ስካን እንዳይቀበል ይከለክላል
+        if (isProcessingScan) return;
+        isProcessingScan = true;
+
         verifyMember(decodedText);
         
-        // 2. ስካን የተደረገበትን ቀን እና ትክክለኛ ሰዓት ይይዛል
         const now = new Date();
         const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         
@@ -467,24 +470,34 @@ let attendanceLogs = [];
         const memberName = member ? member[1] : "Unknown";
         const status = member ? (member[6] || 'Active') : "Failed";
 
-        // 3. ወደ አዲሱ Attendance Log ሰንጠረዥ ይጨምረዋል
+        // 2. ስልክ ላይ በዝርዝር ማሳየት
         attendanceLogs.unshift({ id: decodedText, name: memberName, time: timeString, status: status });
         renderAttendanceLogs();
+
+        // 3. መረጃውን በቀጥታ ወደ Google Sheets መላክ
+        sendAttendanceToGoogleSheet(decodedText, memberName, timeString, status);
+
+        // 4. ከ 3 ሰከንድ በኋላ ካሜራው ለቀጣይ አባል ድጋሚ ዝግጁ እንዲሆን ማድረግ
+        setTimeout(() => {
+            isProcessingScan = false;
+        }, 3000);
     }
 
-    function renderAttendanceLogs() {
-        const tbody = document.getElementById('attendanceLogTable');
-        if (!tbody) return;
-        tbody.innerHTML = "";
-        attendanceLogs.forEach(log => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${log.id}</td>
-                <td>${log.name}</td>
-                <td>${log.time}</td>
-                <td><span class="status-badge ${log.status === 'Active' ? 'status-active' : 'status-expired'}">${log.status}</span></td>
-            `;
-            tbody.appendChild(row);
+    // መረጃን ወደ Google Sheets የሚልክ ፋንክሽን
+    function sendAttendanceToGoogleSheet(id, name, time, status) {
+        const data = {
+            action: "attendance",
+            memberId: id,
+            fullName: name,
+            scanTime: time,
+            status: status
+        };
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data)
         });
     }
 function onScanFailure(error) {
