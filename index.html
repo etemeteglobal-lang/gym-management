@@ -274,6 +274,9 @@
     let html5QrcodeScanner = null;
     let selectedRenewId = "";
     let isProcessingScan = false;
+    
+    // በቅርብ ጊዜ ስካን የተደረጉ አባላትን መያዣ (የ 5 ደቂቃ ገደብ)
+    let recentScans = {};
 
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
@@ -300,7 +303,6 @@
         document.getElementById(pageId).classList.add('active');
         if (evt && evt.target) evt.target.classList.add('active');
 
-        // Close Mobile Sidebar upon page select
         document.getElementById('sidebar').classList.remove('show');
 
         if (pageId === 'attendancePage') {
@@ -414,7 +416,6 @@
         });
     }
 
-    // በሁሉም ዲቫይስ ላይ የተመዘገበውን አቴንዳንስ ከ Google Sheets መውሰጃ
     function fetchAttendanceLogs() {
         fetch(WEB_APP_URL + "?action=getAttendance")
         .then(res => res.json())
@@ -424,7 +425,7 @@
             tbody.innerHTML = "";
 
             if (data && data.length > 1) {
-                const logs = data.slice(1).reverse(); // ከቅርብ ወደ ቆየ
+                const logs = data.slice(1).reverse();
                 logs.forEach(row => {
                     const statusClass = row[3] === 'Active' ? 'status-active' : 'status-expired';
                     const tr = document.createElement('tr');
@@ -486,18 +487,38 @@
 
     function onScanSuccess(decodedText) {
         if (isProcessingScan) return;
+
+        const now = new Date().getTime();
+        const cleanId = decodedText.toString().trim().toUpperCase();
+
+        // 5 ደቂቃ (300,000 ሚሊሰከንድ) ገደብ - ተደራራቢ ስካን ይከለክላል
+        if (recentScans[cleanId] && (now - recentScans[cleanId] < 300000)) {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.style.display = 'block';
+            resultDiv.style.background = "#fef08a";
+            resultDiv.style.color = "#854d0e";
+            resultDiv.innerHTML = `⚠️ <strong>${cleanId}</strong> ቀድመው ተመዝግበዋል! እባክዎን ከ 5 ደቂቃ በኋላ ይሞክሩ።`;
+            
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 3000);
+            return;
+        }
+
         isProcessingScan = true;
 
         verifyMember(decodedText);
         
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString();
-        const ethDate = toEthiopianDate(now.toISOString().split('T')[0]);
-        const ethDateTime = `${ethDate} ${timeStr}`; // የኢትዮጵያ ቀን + ሰዓት
+        const nowDate = new Date();
+        const timeStr = nowDate.toLocaleTimeString();
+        const ethDate = toEthiopianDate(nowDate.toISOString().split('T')[0]);
+        const ethDateTime = `${ethDate} ${timeStr}`;
 
         const member = allMembersData.find(m => m[0] && m[0].toString().trim().toLowerCase() === decodedText.toString().trim().toLowerCase());
         const memberName = member ? member[1] : "Unknown";
         const status = member ? (member[6] || 'Active') : "Failed";
+
+        recentScans[cleanId] = now;
 
         sendAttendanceToGoogleSheet(decodedText, memberName, ethDateTime, status);
 
@@ -521,7 +542,7 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(data)
         }).then(() => {
-            fetchAttendanceLogs(); // ከስካን በኋላ ሰንጠረዡን ማደስ
+            fetchAttendanceLogs();
         });
     }
 
