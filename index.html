@@ -427,23 +427,19 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
 function startScanner() {
     if (!html5QrcodeScanner) {
         html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 20,
+            fps: 10,
             qrbox: { width: 250, height: 250 },
-            videoConstraints: { 
-                facingMode: "environment",
-                width: { min: 640, ideal: 1280 },
-                height: { min: 480, ideal: 720 }
-            },
-            experimentalFeatures: {
-                useBarCodeDetectorIfSupported: true
-            }
+            videoConstraints: { facingMode: "environment" }
         });
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     }
 }
-    function onScanSuccess(decodedText) {
-        verifyMember(decodedText);
-    }
+
+function onScanSuccess(decodedText) {
+    verifyMember(decodedText);
+}
+function onScanFailure(error) {
+}
 
     function verifyMember(memberId) {
         const resultDiv = document.getElementById('attendanceResult');
