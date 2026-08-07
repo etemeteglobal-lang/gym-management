@@ -26,7 +26,7 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; }
         .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 30px; color: #38bdf8; }
         .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 15px 25px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-        .nav-btn:hover, .nav-btn.active { background: #1e293b; color: #white; border-left: 4px solid #38bdf8; }
+        .nav-btn:hover, .nav-btn.active { background: #1e293b; color: white; border-left: 4px solid #38bdf8; }
 
         /* Main Content */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; }
@@ -87,6 +87,7 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
 <!-- SIDEBAR NAVIGATION -->
 <div class="sidebar">
     <h2>GYM SYSTEM</h2>
+    <button class="nav-btn" onclick="showPage('attendanceLogPage', event)">📋 Attendance Log</button>
     <button class="nav-btn active" onclick="showPage('dashboard', event)">📊 Dashboard</button>
     <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
     <button class="nav-btn" onclick="showPage('members', event)">👥 Member List</button>
@@ -252,7 +253,25 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
         <button type="button" style="background:#dc2626; color:white; margin-top:5px;" onclick="closeModal('renewModal')">Cancel</button>
     </div>
 </div>
-
+<!-- PAGE 5: ATTENDANCE LOGS -->
+    <div id="attendanceLogPage" class="page">
+        <div class="card">
+            <h3>Daily Attendance History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Full Name</th>
+                        <th>Scan Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceLogTable">
+                    <!-- የመገኘት ታሪኮች እዚህ ይገባሉ -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzsvDMFlvjhWRISkhltHE-m55_Pl6thTpYqc_IeIkmy82Lm_RBSZNsykNi8AnQEDx6KUQ/exec";
     let allMembersData = [];
@@ -434,10 +453,40 @@ function startScanner() {
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     }
 }
+let attendanceLogs = [];
 
-function onScanSuccess(decodedText) {
-    verifyMember(decodedText);
-}
+    function onScanSuccess(decodedText) {
+        // 1. የአባሉን መረጃ ያረጋግጣል
+        verifyMember(decodedText);
+        
+        // 2. ስካን የተደረገበትን ቀን እና ትክክለኛ ሰዓት ይይዛል
+        const now = new Date();
+        const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        
+        const member = allMembersData.find(m => m[0] && m[0].toString().trim().toLowerCase() === decodedText.toString().trim().toLowerCase());
+        const memberName = member ? member[1] : "Unknown";
+        const status = member ? (member[6] || 'Active') : "Failed";
+
+        // 3. ወደ አዲሱ Attendance Log ሰንጠረዥ ይጨምረዋል
+        attendanceLogs.unshift({ id: decodedText, name: memberName, time: timeString, status: status });
+        renderAttendanceLogs();
+    }
+
+    function renderAttendanceLogs() {
+        const tbody = document.getElementById('attendanceLogTable');
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        attendanceLogs.forEach(log => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${log.id}</td>
+                <td>${log.name}</td>
+                <td>${log.time}</td>
+                <td><span class="status-badge ${log.status === 'Active' ? 'status-active' : 'status-expired'}">${log.status}</span></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
 function onScanFailure(error) {
 }
 
@@ -558,6 +607,17 @@ function onScanFailure(error) {
         const filtered = allMembersData.filter(r => (r[0] && r[0].toString().toLowerCase().includes(q)) || (r[1] && r[1].toString().toLowerCase().includes(q)));
         renderTable(filtered);
     }
+  function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+    }
+    const originalShowPage = showPage;
+    showPage = function(pageId, evt) {
+        originalShowPage(pageId, evt);
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('active');
+        }
+    };  
 </script>
 
 </body>
