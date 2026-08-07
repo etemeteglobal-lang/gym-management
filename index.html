@@ -422,11 +422,18 @@ body {background-color: #f4f6f9; display: flex; flex-direction: column; min-heig
 function startScanner() {
     if (!html5QrcodeScanner) {
         html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 10, 
-            qrbox: 250,
-            videoConstraints: { facingMode: { exact: "environment" } }
+            fps: 20,
+            qrbox: { width: 250, height: 250 },
+            videoConstraints: { 
+                facingMode: "environment",
+                width: { min: 640, ideal: 1280 },
+                height: { min: 480, ideal: 720 }
+            },
+            experimentalFeatures: {
+                useBarCodeDetectorIfSupported: true
+            }
         });
-        html5QrcodeScanner.render(onScanSuccess);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     }
 }
     function onScanSuccess(decodedText) {
