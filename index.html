@@ -9,10 +9,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; display: flex; height: 100vh; overflow: hidden; }
-
-        /* Login Overlay */
+* {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body {background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh;}
+@media (min-width: 768px) {
+  body { flex-direction: row; }
+  .sidebar { width: 220px !important; min-width: 220px; }
+  .main-content { flex: 1; overflow-x: auto; }
+}
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 999; }
         .login-card { background: white; padding: 30px; border-radius: 12px; width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .login-card h2 { margin-bottom: 20px; color: #0f172a; }
