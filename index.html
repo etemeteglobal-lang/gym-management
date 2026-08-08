@@ -58,7 +58,6 @@
         .status-active { background-color: #dcfce7; color: #166534; }
         .status-expired { background-color: #fee2e2; color: #991b1b; }
         
-        /* ማስተካከያ፦ አክሽኖች በአግድም (Horizontal) እንዲሆኑና ቦታ እንዳይይዙ */
         .action-btns { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 4px; align-items: center; white-space: nowrap; }
         .action-btns button { padding: 5px 8px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; color: white; font-weight: 600; }
         .receipt-btn { background: #10b981; }
@@ -235,7 +234,15 @@
         <div id="attendancePage" class="page">
             <div class="card" style="max-width: 450px; margin: auto; text-align: center;">
                 <h3>Daily Attendance Verification</h3>
-                <div id="reader"></div>
+                
+                <div style="display: flex; gap: 10px; margin: 15px 0;">
+                    <button type="button" class="btn-primary" style="background-color: #16a34a; margin:0;" onclick="startScanner('environment')">📷 Back Cam</button>
+                    <button type="button" class="btn-primary" style="background-color: #0284c7; margin:0;" onclick="startScanner('user')">🤳 Front Cam</button>
+                    <button type="button" class="btn-primary" style="background-color: #dc2626; margin:0;" onclick="stopScanner()">🛑 Stop</button>
+                </div>
+
+                <div id="reader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
+
                 <div style="margin-top: 15px; text-align: left;">
                     <label>Manual Verification</label>
                     <input type="text" id="scanInput" placeholder="Enter Member ID">
@@ -363,7 +370,7 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
     let loggedInUser = "";
-    let html5QrcodeScanner = null;
+    let html5QrCode = null;
     let revenueChartInstance = null;
     let planChartInstance = null;
 
@@ -428,13 +435,34 @@
         });
     }
 
-    /* ስካነሩ ሁለቱንም ካሜራ (Front/Back) እና የካሜራ ምርጫ dropdown በራሱ እንዲያሳይ ተደርጓል */
-    function startScanner() {
-        if (!html5QrcodeScanner) {
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }, false);
-            html5QrcodeScanner.render((decodedText) => {
-                verifyMember(decodedText);
-            });
+    function startScanner(facingMode = 'environment') {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(() => {
+                initHtml5QrCode(facingMode);
+            }).catch(err => console.error(err));
+        } else {
+            initHtml5QrCode(facingMode);
+        }
+    }
+
+    function initHtml5QrCode(facingMode) {
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("reader");
+        }
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        html5QrCode.start({ facingMode: facingMode }, config, (decodedText) => {
+            verifyMember(decodedText);
+        }).catch(err => {
+            console.error("Camera error: ", err);
+            alert("ካሜራውን መክፈት አልተቻለም። እባክዎን የካሜራ ፈቃድ (Camera Permission) መስጠትዎን ያረጋግጡ።");
+        });
+    }
+
+    function stopScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(() => {
+                document.getElementById("reader").innerHTML = "";
+            }).catch(err => console.error(err));
         }
     }
 
@@ -603,8 +631,14 @@
         document.getElementById(pageId).classList.add('active');
         if (evt && evt.target) evt.target.classList.add('active');
         document.getElementById('sidebar').classList.remove('show');
-        if (pageId === 'attendancePage') startScanner();
-        else if (pageId === 'attendanceLogPage') fetchAttendanceLogs();
+        
+        if (pageId === 'attendancePage') {
+            startScanner('environment');
+        } else {
+            stopScanner();
+        }
+        
+        if (pageId === 'attendanceLogPage') fetchAttendanceLogs();
     }
 
     function toEthiopianDate(gregorianDateStr) {
