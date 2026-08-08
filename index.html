@@ -374,12 +374,9 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
 
-    // መደጋገምን የመቆጣጠሪያ ቫሪያብሎች
-    let lastScannedId = "";
-    let lastScanTime = 0;
-    let isProcessingScan = false;
+    // የመጨረሻ ስካን የተደረጉ አባላትን መዝገብ (የ5 ደቂቃ/300000ms ገደብ)
+    let scannedHistory = {}; // { memberId: timestamp }
 
-    // ድምፅ እንዲያወጣ ማድረግ (Beep Sound)
     function playBeepSound() {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -388,7 +385,7 @@
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.type = "sine";
-            osc.frequency.value = 800; // 800Hz Pitch
+            osc.frequency.value = 800;
             gain.gain.setValueAtTime(1, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
             osc.start();
@@ -493,36 +490,40 @@
 
         const cleanId = id.toString().trim();
         const now = Date.now();
-
-        // ስካነሩ በመካከል ዳታ በማስገባት ላይ ከሆነ ወይም ከ 5 ሰከንድ በታች ከሆነ አያስተናግድም
-        if (isProcessingScan) return;
-        if (cleanId === lastScannedId && (now - lastScanTime) < 5000) return;
-
-        isProcessingScan = true;
-        lastScannedId = cleanId;
-        lastScanTime = now;
-
-        // ካሜራውን ለጊዜው እንዲቆም (Pause) ማድረግ
-        if (html5QrCode && html5QrCode.isScanning) {
-            try { html5QrCode.pause(true); } catch(e){}
-        }
-
-        playBeepSound();
-
         const resDiv = document.getElementById('attendanceResult');
         resDiv.style.display = 'block';
+
+        const currDate = new Date();
+        const timeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
+
+        // 1. ተመሳሳይ አባል በ5 ደቂቃ (300,000 ms) ውስጥ ድጋሚ ስካን ከተደረገ የቢጫ ማስጠንቀቂያ ማሳየት
+        if (scannedHistory[cleanId] && (now - scannedHistory[cleanId]) < 300000) {
+            const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === cleanId.toLowerCase());
+            const memberName = member ? member[1] : cleanId;
+
+            resDiv.style.backgroundColor = "#fef08a"; // ቢጫ ከለር
+            resDiv.style.color = "#854d0e";
+            resDiv.innerHTML = `⚠️ <strong>${memberName}</strong><br>ይህ ኮድ ተመዝግቧል! ድጋሜ ለመመዝገብ 5 ደቂቃ ይጠብቁ።<br><small style="font-size:11px;">Scan Time: ${timeStr}</small>`;
+            
+            // ካሜራውን ለ3 ሰከንድ ያህል ማቆየት
+            if (html5QrCode && html5QrCode.isScanning) {
+                try { html5QrCode.pause(true); setTimeout(() => html5QrCode.resume(), 3000); } catch(e){}
+            }
+            return;
+        }
+
         const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === cleanId.toLowerCase());
 
         if (member) {
+            playBeepSound();
+            scannedHistory[cleanId] = now; // የመጨረሻውን የስካን ሰዓት መመዝገብ
+
             const status = member[6] || "Active";
             const isExpired = status === "Expired";
             resDiv.style.backgroundColor = isExpired ? "#fee2e2" : "#dcfce7";
             resDiv.style.color = isExpired ? "#991b1b" : "#166534";
-            resDiv.innerHTML = `<strong>${member[1]}</strong><br>Status: ${status}`;
+            resDiv.innerHTML = `✅ <strong>${member[1]}</strong><br>Status: ${status}<br><small style="font-size:11px;">Scan Time: ${timeStr}</small>`;
 
-            const currDate = new Date();
-            const timeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
-            
             fetch(WEB_APP_URL, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -531,16 +532,16 @@
         } else {
             resDiv.style.backgroundColor = "#fee2e2";
             resDiv.style.color = "#991b1b";
-            resDiv.innerText = "Member ID Not Found!";
+            resDiv.innerText = "❌ Member ID Not Found!";
         }
 
-        // ከ 4 ሰከንድ በኋላ ካሜራው ድጋሚ መስራት እንዲጀምር ያደርጋል
-        setTimeout(() => {
-            isProcessingScan = false;
-            if (html5QrCode) {
-                try { html5QrCode.resume(); } catch(e){}
-            }
-        }, 4000);
+        // ካሜራውን ለ3 ሰከንድ ያህል አቆይቶ መቀጠል
+        if (html5QrCode && html5QrCode.isScanning) {
+            try {
+                html5QrCode.pause(true);
+                setTimeout(() => html5QrCode.resume(), 3000);
+            } catch(e){}
+        }
     }
 
     function openReceiptModal(id, name, plan, amount, expiry) {
