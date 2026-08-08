@@ -245,10 +245,9 @@
             margin-bottom: 15px; 
         }
 
-        /* የዳሽቦርድ ግራፎች እንዳይዛቡ የከበበ ሳጥን */
         .chart-container {
             position: relative;
-            height: 260px;
+            height: 250px;
             width: 100%;
         }
 
@@ -691,6 +690,63 @@
             </div>
         </div>
 
+        <!-- MEMBER PORTAL PAGE -->
+        <div id="memberPortal" class="page">
+            <div class="card" style="max-width: 500px; margin: 20px auto 0 auto !important;">
+                <h3>👤 Member Self-Service Portal</h3>
+                
+                <div id="memberLoginSection">
+                    <label>Member ID</label>
+                    <input type="text" id="portalMemberId" placeholder="e.g. GYM-001">
+                    <label>Phone Number</label>
+                    <input type="tel" id="portalPhone" placeholder="09...">
+                    <button type="button" class="btn-primary" onclick="loginMemberPortal()">Access My Dashboard</button>
+                    <p id="portalErr" style="color: red; margin-top: 10px; display: none; text-align: center;"></p>
+                </div>
+
+                <div id="memberDashboardSection" style="display: none;">
+                    <div style="background: #0f172a; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        <h4 id="portalWelcomeName">Welcome!</h4>
+                        <p style="font-size: 12px; color: #38bdf8;" id="portalPlanInfo">Plan: ---</p>
+                        <p style="font-size: 13px; margin-top: 5px;">Expiry: <span id="portalExpiryInfo" style="font-weight: bold; color: #4ade80;">---</span></p>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>📅 Book Group Class / Session</h4>
+                        <label>Select Session</label>
+                        <select id="bookingSession">
+                            <option value="Morning Aerobics (6:00 AM)">Morning Aerobics (6:00 AM)</option>
+                            <option value="Evening Power Cardio (5:00 PM)">Evening Power Cardio (5:00 PM)</option>
+                            <option value="Weekend Yoga (8:00 AM)">Weekend Yoga (8:00 AM)</option>
+                        </select>
+                        <button type="button" class="btn-primary" style="background: #8b5cf6;" onclick="bookSession()">Book Session Now</button>
+                        <p id="bookingResult" style="font-size: 12px; font-weight: bold; margin-top: 5px; text-align: center; display: none;"></p>
+                    </div>
+
+                    <div class="settings-section" style="border-bottom: none;">
+                        <h4>🏋️ Today's Workout & Smart AI Tip</h4>
+                        <label>Fitness Goal</label>
+                        <select id="userGoal" onchange="generateWorkoutTip()">
+                            <option value="weight_loss">Weight Loss (ክብደት ለመቀነስ)</option>
+                            <option value="muscle_build">Muscle Gain (ጡንቻ ለመገንባት)</option>
+                            <option value="endurance">Stamina & Fitness (ጽናት ለመጨመር)</option>
+                        </select>
+
+                        <label>Today's Completed Exercise</label>
+                        <textarea id="workoutNotes" rows="2" placeholder="e.g. 30 min Treadmill, 3 sets Bench Press"></textarea>
+                        
+                        <div id="aiTipBox" style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 10px; font-size: 12px; color: #1e40af; margin-top: 10px; border-radius: 4px;">
+                            💡 <strong>Smart AI Tip:</strong> Select your goal to get tailored workout advice!
+                        </div>
+                        
+                        <button type="button" class="btn-primary" style="background: #10b981;" onclick="saveWorkoutLog()">Save Workout Record</button>
+                    </div>
+
+                    <button type="button" class="btn-primary" style="background: #dc2626; margin-top: 15px;" onclick="logoutMemberPortal()">Logout Member</button>
+                </div>
+            </div>
+        </div>
+
         <!-- SETTINGS PAGE -->
         <div id="settingsPage" class="page">
             <div class="card" style="max-width: 550px; margin: auto;">
@@ -832,64 +888,7 @@
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
 </div>
-<!-- MEMBER PORTAL PAGE -->
-<div id="memberPortal" class="page">
-    <div class="card" style="max-width: 500px; margin: 0 auto;">
-        <h3>👤 Member Self-Service Portal</h3>
-                <div id="memberLoginSection">
-                    <label>Member ID</label>
-                    <input type="text" id="portalMemberId" placeholder="e.g. GYM-001">
-                    <label>Phone Number</label>
-                    <input type="tel" id="portalPhone" placeholder="09...">
-                    <button type="button" class="btn-primary" onclick="loginMemberPortal()">Access My Dashboard</button>
-                    <p id="portalErr" style="color: red; margin-top: 10px; display: none; text-align: center;"></p>
-                </div>
-
-                <div id="memberDashboardSection" style="display: none;">
-                    <div style="background: #0f172a; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                        <h4 id="portalWelcomeName">Welcome!</h4>
-                        <p style="font-size: 12px; color: #38bdf8;" id="portalPlanInfo">Plan: ---</p>
-                        <p style="font-size: 13px; margin-top: 5px;">Expiry: <span id="portalExpiryInfo" style="font-weight: bold; color: #4ade80;">---</span></p>
-                    </div>
-
-                    <!-- CLASS BOOKING SECTION -->
-                    <div class="settings-section">
-                        <h4>📅 Book Group Class / Session</h4>
-                        <label>Select Session</label>
-                        <select id="bookingSession">
-                            <option value="Morning Aerobics (6:00 AM)">Morning Aerobics (6:00 AM)</option>
-                            <option value="Evening Power Cardio (5:00 PM)">Evening Power Cardio (5:00 PM)</option>
-                            <option value="Weekend Yoga (8:00 AM)">Weekend Yoga (8:00 AM)</option>
-                        </select>
-                        <button type="button" class="btn-primary" style="background: #8b5cf6;" onclick="bookSession()">Book Session Now</button>
-                        <p id="bookingResult" style="font-size: 12px; font-weight: bold; margin-top: 5px; text-align: center; display: none;"></p>
-                    </div>
-
-                    <!-- WORKOUT TRACKER & AI SUGGESTION -->
-                    <div class="settings-section" style="border-bottom: none;">
-                        <h4>🏋️ Today's Workout & Smart AI Tip</h4>
-                        <label>Fitness Goal</label>
-                        <select id="userGoal" onchange="generateWorkoutTip()">
-                            <option value="weight_loss">Weight Loss (ክብደት ለመቀነስ)</option>
-                            <option value="muscle_build">Muscle Gain (ጡንቻ ለመገንባት)</option>
-                            <option value="endurance">Stamina & Fitness (ጽናት ለመጨመር)</option>
-                        </select>
-
-                        <label>Today's Completed Exercise</label>
-                        <textarea id="workoutNotes" rows="2" placeholder="e.g. 30 min Treadmill, 3 sets Bench Press"></textarea>
-                        
-                        <div id="aiTipBox" style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 10px; font-size: 12px; color: #1e40af; margin-top: 10px; border-radius: 4px;">
-                            💡 <strong>Smart AI Tip:</strong> Select your goal to get tailored workout advice!
-                        </div>
-                        
-                        <button type="button" class="btn-primary" style="background: #10b981;" onclick="saveWorkoutLog()">Save Workout Record</button>
-                    </div>
-
-                    <button type="button" class="btn-primary" style="background: #dc2626; margin-top: 15px;" onclick="logoutMemberPortal()">Logout Member</button>
-                </div>
-            </div>
-        </div>
-<script>
+    <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
     let loggedInUser = "";
@@ -898,6 +897,7 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
     let showOnlyUnpaid = false;
+    let currentPortalMember = null;
 
     let systemConfig = {
         gymName: "FITNESS GYM CLUB",
@@ -967,7 +967,6 @@
         document.getElementById('loginPass').value = "";
     }
 
-    // የተስተካከለው የሎጎ አፕሎድ - ምስሉን መጥኖ በፍጥነት የሚጭን
     function handleLogoUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -978,27 +977,20 @@
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxSize = 200; // የምስሉን ስፋትና ከፍታ ወደ 200px ይቀንሰዋል
+                const maxSize = 200;
                 let width = img.width;
                 let height = img.height;
 
                 if (width > height) {
-                    if (width > maxSize) {
-                        height *= maxSize / width;
-                        width = maxSize;
-                    }
+                    if (width > maxSize) { height *= maxSize / width; width = maxSize; }
                 } else {
-                    if (height > maxSize) {
-                        width *= maxSize / height;
-                        height = maxSize;
-                    }
+                    if (height > maxSize) { width *= maxSize / height; height = maxSize; }
                 }
 
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // መጠኑ በጣም አነስተኛ (~15KB) የሆነ Base64 ምስል ይፈጥራል
                 const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
                 document.getElementById('setGymLogoUrl').value = compressedBase64;
             };
@@ -1199,7 +1191,6 @@
         renderCharts(revenue, planCounts);
     }
 
-    // የዳሽቦርድ ግራፎች በቦታቸው እንዲወሰኑ ተደርጎ የተሰራ
     function renderCharts(revenue, planCounts) {
         if (revenueChartInstance) revenueChartInstance.destroy();
         if (planChartInstance) planChartInstance.destroy();
@@ -1209,11 +1200,19 @@
             type: 'bar',
             data: {
                 labels: ['Total Revenue'],
-                datasets: [{ label: 'ETB', data: [revenue], backgroundColor: '#2563eb' }]
+                datasets: [{ 
+                    label: 'ETB', 
+                    data: [revenue], 
+                    backgroundColor: '#2563eb',
+                    barThickness: 60 
+                }]
             },
             options: { 
                 responsive: true, 
-                maintainAspectRatio: false 
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
             }
         });
 
@@ -1230,7 +1229,8 @@
             }
         });
     }
-function renderMembersTable(members) {
+
+    function renderMembersTable(members) {
         const tbody = document.querySelector('#membersTable tbody');
         tbody.innerHTML = '';
 
@@ -1240,7 +1240,6 @@ function renderMembersTable(members) {
         }
 
         members.forEach((m) => {
-            // ነጠላ ሰረዝ ወይም ልዩ ምልክቶች ስም ላይ ሲኖሩ ኮዱ እንዳይበላሽ ማጽጃ
             let rawId = String(m[0] || '');
             let rawName = String(m[1] || '');
             let id = rawId.replace(/'/g, "\\'");
@@ -1276,10 +1275,10 @@ function renderMembersTable(members) {
             tbody.appendChild(tr);
         });
     }
-   
+
     function filterMembers() {
         let query = document.getElementById('searchInput').value.toLowerCase();
-        let filtered = allMembersData.filter(m => m[0].toLowerCase().includes(query) || m[1].toLowerCase().includes(query) || m[2].includes(query));
+        let filtered = allMembersData.filter(m => String(m[0]).toLowerCase().includes(query) || String(m[1]).toLowerCase().includes(query) || String(m[2]).includes(query));
         renderMembersTable(filtered);
     }
 
@@ -1430,7 +1429,7 @@ function renderMembersTable(members) {
         const resDiv = document.getElementById('attendanceResult');
         resDiv.style.display = 'block';
 
-        let member = allMembersData.find(m => m[0].trim().toLowerCase() === mId.trim().toLowerCase());
+        let member = allMembersData.find(m => String(m[0]).trim().toLowerCase() === mId.trim().toLowerCase());
         if (!member) {
             resDiv.style.background = '#fee2e2';
             resDiv.style.color = '#991b1b';
@@ -1499,9 +1498,9 @@ function renderMembersTable(members) {
         a.href = URL.createObjectURL(blob);
         a.download = 'Gym_Members.csv';
         a.click();
-      // ================= MEMBER PORTAL LOGIC =================
-    let currentPortalMember = null;
+    }
 
+    // MEMBER PORTAL FUNCTIONS
     function loginMemberPortal() {
         const idInput = document.getElementById('portalMemberId').value.trim().toLowerCase();
         const phoneInput = document.getElementById('portalPhone').value.trim();
@@ -1513,10 +1512,9 @@ function renderMembersTable(members) {
             return;
         }
 
-        // አባሉ በዳታቤዝ ውስጥ መኖሩን ማረጋገጥ
         let member = allMembersData.find(m => 
-            m[0].trim().toLowerCase() === idInput && 
-            m[2].trim().includes(phoneInput)
+            String(m[0]).trim().toLowerCase() === idInput && 
+            String(m[2]).trim().includes(phoneInput)
         );
 
         if (member) {
@@ -1544,7 +1542,6 @@ function renderMembersTable(members) {
         document.getElementById('memberLoginSection').style.display = 'block';
     }
 
-    // በስፖርት ግባቸው ላይ የተመሰረተ የስማርት AI ምክር
     function generateWorkoutTip() {
         const goal = document.getElementById('userGoal').value;
         const tipBox = document.getElementById('aiTipBox');
@@ -1560,7 +1557,6 @@ function renderMembersTable(members) {
         tipBox.innerHTML = tipText;
     }
 
-    // የቡድን ሴሽን ቦታ ማስያዣ (Class Booking)
     function bookSession() {
         const session = document.getElementById('bookingSession').value;
         const res = document.getElementById('bookingResult');
@@ -1571,7 +1567,6 @@ function renderMembersTable(members) {
         res.style.color = '#166534';
         res.innerText = `✅ Successfully booked ${session}! See you there!`;
 
-        // ቦክ ያደረጉትን መረጃ ወደ ባክኤንድ መላክ
         fetch(WEB_APP_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -1585,7 +1580,6 @@ function renderMembersTable(members) {
         });
     }
 
-    // የእለት ተእለት የስፖርት ውሎ መመዝገቢያ
     function saveWorkoutLog() {
         const notes = document.getElementById('workoutNotes').value.trim();
         if (!notes) {
@@ -1607,7 +1601,6 @@ function renderMembersTable(members) {
             alert("Workout log saved successfully!");
             document.getElementById('workoutNotes').value = "";
         });
-    }  
     }
 </script>
 </body>
