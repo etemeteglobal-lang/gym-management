@@ -494,18 +494,18 @@
         resDiv.style.display = 'block';
 
         const currDate = new Date();
-        const timeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
+        const scanTimeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
 
-        // 1. ተመሳሳይ አባል በ5 ደቂቃ (300,000 ms) ውስጥ ድጋሚ ስካን ከተደረገ የቢጫ ማስጠንቀቂያ ማሳየት
+        // 1. ተመሳሳይ አባል በ5 ደቂቃ (300,000 ms) ውስጥ ድጋሜ ስካን ከተደረገ የቢጫ ማስጠንቀቂያ ማሳየት
         if (scannedHistory[cleanId] && (now - scannedHistory[cleanId]) < 300000) {
             const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === cleanId.toLowerCase());
             const memberName = member ? member[1] : cleanId;
+            const expiryDate = member ? (member[5] || "N/A") : "N/A";
 
             resDiv.style.backgroundColor = "#fef08a"; // ቢጫ ከለር
             resDiv.style.color = "#854d0e";
-            resDiv.innerHTML = `⚠️ <strong>${memberName}</strong><br>ይህ ኮድ ተመዝግቧል! ድጋሜ ለመመዝገብ 5 ደቂቃ ይጠብቁ።<br><small style="font-size:11px;">Scan Time: ${timeStr}</small>`;
+            resDiv.innerHTML = `⚠️ <strong>${memberName}</strong><br>ይህ ኮድ ተመዝግቧል! ድጋሜ ለመመዝገብ 5 ደቂቃ ይጠብቁ።<br><small style="font-size:11px;">Expires: ${expiryDate}</small>`;
             
-            // ካሜራውን ለ3 ሰከንድ ያህል ማቆየት
             if (html5QrCode && html5QrCode.isScanning) {
                 try { html5QrCode.pause(true); setTimeout(() => html5QrCode.resume(), 3000); } catch(e){}
             }
@@ -519,15 +519,17 @@
             scannedHistory[cleanId] = now; // የመጨረሻውን የስካን ሰዓት መመዝገብ
 
             const status = member[6] || "Active";
+            const expiryDate = member[5] || "N/A";
             const isExpired = status === "Expired";
+            
             resDiv.style.backgroundColor = isExpired ? "#fee2e2" : "#dcfce7";
             resDiv.style.color = isExpired ? "#991b1b" : "#166534";
-            resDiv.innerHTML = `✅ <strong>${member[1]}</strong><br>Status: ${status}<br><small style="font-size:11px;">Scan Time: ${timeStr}</small>`;
+            resDiv.innerHTML = `✅ <strong>${member[1]}</strong><br>Status: ${status}<br><small style="font-size:11px;">Expires: ${expiryDate}</small>`;
 
             fetch(WEB_APP_URL, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "attendance", memberId: member[0], fullName: member[1], scanTime: timeStr, status: status })
+                body: JSON.stringify({ action: "attendance", memberId: member[0], fullName: member[1], scanTime: scanTimeStr, status: status })
             });
         } else {
             resDiv.style.backgroundColor = "#fee2e2";
@@ -535,7 +537,6 @@
             resDiv.innerText = "❌ Member ID Not Found!";
         }
 
-        // ካሜራውን ለ3 ሰከንድ ያህል አቆይቶ መቀጠል
         if (html5QrCode && html5QrCode.isScanning) {
             try {
                 html5QrCode.pause(true);
