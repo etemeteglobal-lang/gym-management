@@ -24,6 +24,8 @@
         @media (max-width: 768px) {
             .sidebar { position: fixed; top: 50px; left: -100%; width: 240px; height: calc(100vh - 50px); box-shadow: 4px 0 10px rgba(0,0,0,0.3); }
             .sidebar.show { left: 0; }
+            .main-content { padding: 10px !important; }
+            .card { padding: 12px 5px !important; margin-bottom: 12px !important; }
         }
         @media (min-width: 769px) { .mobile-header { display: none; } }
 
@@ -47,11 +49,13 @@
 
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        /* ሰንጠረዡ ወደ ጎን እንዲንሸራተትና እንዳይጨናነቅ የተደረገ ማስተካከያ */
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; min-width: 700px; }
+        /* ስልክ ላይ ሙሉ ስክሪን የሚይዝ እና ሰፊ የሰንጠረዥ ዲዛይን */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
         th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; white-space: nowrap; }
-        th { background-color: #f8fafc; color: #475569; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 700; }
+
+        .date-group-header { background-color: #e2e8f0; color: #0f172a; font-weight: bold; padding: 8px 12px; }
 
         label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
         input, select { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
@@ -210,9 +214,10 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <h3>Registered Members Directory</h3>
-                    <div style="display: flex; gap: 10px; width: 100%; max-width: 300px;">
-                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterMembers()" style="margin: 0;">
-                        <button type="button" class="btn-primary" style="margin: 0; width: 100px;" onclick="exportToCSV()">Export</button>
+                    <div style="display: flex; gap: 8px; width: 100%; flex-wrap: wrap;">
+                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterMembers()" style="margin: 0; flex: 1; min-width: 140px;">
+                        <button type="button" id="toggleUnpaidBtn" class="btn-primary" style="margin: 0; width: auto; background: #dc2626; padding: 6px 12px;" onclick="toggleUnpaidFilter()">⚠️ Unpaid Only</button>
+                        <button type="button" class="btn-primary" style="margin: 0; width: auto; padding: 6px 12px;" onclick="exportToCSV()">Export</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -380,6 +385,7 @@
     let html5QrCode = null;
     let revenueChartInstance = null;
     let planChartInstance = null;
+    let showOnlyUnpaid = false;
 
     let scannedHistory = {};
 
@@ -434,6 +440,10 @@
         data.forEach(r => {
             if (!r[0] || r[0] === "Member ID") return;
             const status = r[6] || 'Active';
+            
+            // Unpaid Filter ከነቃ Expired የሆኑትን ብቻ ያሳያል
+            if (showOnlyUnpaid && status !== 'Expired') return;
+
             const statusClass = status === 'Active' ? 'status-active' : 'status-expired';
             let paidAmount = parseFloat(r[7]) || (r[3] === 'Monthly' ? 2000 : 6000);
 
@@ -458,6 +468,19 @@
             `;
             tbody.appendChild(row);
         });
+    }
+
+    function toggleUnpaidFilter() {
+        showOnlyUnpaid = !showOnlyUnpaid;
+        const btn = document.getElementById('toggleUnpaidBtn');
+        if (showOnlyUnpaid) {
+            btn.innerText = "👥 Show All";
+            btn.style.background = "#2563eb";
+        } else {
+            btn.innerText = "⚠️ Unpaid Only";
+            btn.style.background = "#dc2626";
+        }
+        filterMembers();
     }
 
     function startScanner(facingMode = 'environment') {
@@ -778,15 +801,41 @@
         });
     }
 
+    /* አቴንዳንስ ታሪክን በየቀኑ በግሩፕ ከፍሎ ማሳየት */
     function fetchAttendanceLogs() {
         fetch(WEB_APP_URL + "?action=getAttendance").then(res => res.json()).then(data => {
             const tbody = document.getElementById('attendanceLogTable');
-            if (!tbody) return; tbody.innerHTML = "";
+            if (!tbody) return; 
+            tbody.innerHTML = "";
+            
             if (data && data.length > 1) {
-                data.slice(1).reverse().forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><span class="status-badge ${row[3] === 'Active' ? 'status-active' : 'status-expired'}">${row[3]}</span></td>`;
-                    tbody.appendChild(tr);
+                const logs = data.slice(1).reverse();
+                const groupedByDate = {};
+
+                // በየቀኑ ዳታውን መቧደን
+                logs.forEach(row => {
+                    const fullDateTime = row[2] || "";
+                    const datePart = fullDateTime.split(' ')[0] || "Unknown Date";
+                    if (!groupedByDate[datePart]) groupedByDate[datePart] = [];
+                    groupedByDate[datePart].push(row);
+                });
+
+                // ሰንጠረዡ ላይ በየቀኑ በግሩፕ ከፍሎ መጻፍ
+                Object.keys(groupedByDate).forEach(date => {
+                    const headerTr = document.createElement('tr');
+                    headerTr.innerHTML = `<td colspan="4" class="date-group-header">📅 Date: ${date}</td>`;
+                    tbody.appendChild(headerTr);
+
+                    groupedByDate[date].forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row[0]}</td>
+                            <td>${row[1]}</td>
+                            <td>${row[2]}</td>
+                            <td><span class="status-badge ${row[3] === 'Active' ? 'status-active' : 'status-expired'}">${row[3]}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
                 });
             }
         });
