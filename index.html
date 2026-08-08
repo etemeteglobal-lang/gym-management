@@ -49,7 +49,6 @@
 
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        /* ስልክ ላይ ሙሉ ስክሪን የሚይዝ እና ሰፊ የሰንጠረዥ ዲዛይን */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
         th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; white-space: nowrap; }
@@ -87,6 +86,9 @@
         .qr-card-body p { margin: 4px 0; font-size: 13px; color: #334155; }
         #qrcode { display: flex; justify-content: center; margin: 12px 0; }
 
+        .settings-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+        .settings-section h4 { color: #0f172a; margin-bottom: 8px; font-size: 15px; }
+
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
@@ -108,13 +110,13 @@
 </div>
 
 <div class="mobile-header">
-    <h3>GYM SYSTEM</h3>
+    <h3 id="mobileGymTitle">GYM SYSTEM</h3>
     <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
 </div>
 
 <div class="main-wrapper">
     <div class="sidebar" id="sidebar">
-        <h2>GYM SYSTEM</h2>
+        <h2 id="sidebarGymTitle">GYM SYSTEM</h2>
         <button class="nav-btn active" onclick="showPage('dashboard', event)">📊 Dashboard</button>
         <button class="nav-btn" onclick="showPage('attendanceLogPage', event)">📋 Attendance Log</button>
         <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
@@ -285,15 +287,52 @@
             </div>
         </div>
 
-        <!-- SETTINGS -->
+        <!-- SETTINGS PAGE (ENHANCED) -->
         <div id="settingsPage" class="page">
-            <div class="card" style="max-width: 400px; margin: auto;">
-                <h3>Change Password</h3>
-                <label>Old Password</label>
-                <input type="password" id="oldPass">
-                <label>New Password</label>
-                <input type="password" id="newPass">
-                <button type="button" class="btn-primary" onclick="changePassword()">Update Password</button>
+            <div class="card" style="max-width: 550px; margin: auto;">
+                <h3 style="margin-bottom: 15px;">System Settings Configuration</h3>
+
+                <!-- 1. GYM PROFILE -->
+                <div class="settings-section">
+                    <h4>🏢 Gym Profile Info</h4>
+                    <label>Gym Name</label>
+                    <input type="text" id="setGymName" value="FITNESS GYM CLUB">
+                    <label>Gym Phone Number</label>
+                    <input type="text" id="setGymPhone" value="0911000000">
+                </div>
+
+                <!-- 2. PRICING CONFIGURATION -->
+                <div class="settings-section">
+                    <h4>💰 Membership Pricing (ETB)</h4>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>Male Monthly</label>
+                            <input type="number" id="setMalePrice" value="2000">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Female Monthly</label>
+                            <input type="number" id="setFemalePrice" value="1500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. SCAN TIMEOUT -->
+                <div class="settings-section">
+                    <h4>⏱️ Duplicate Scan Timeout</h4>
+                    <label>Wait Duration (Minutes)</label>
+                    <input type="number" id="setScanTimeout" value="5" min="1" max="60">
+                </div>
+
+                <!-- 4. CHANGE PASSWORD -->
+                <div class="settings-section" style="border-bottom: none;">
+                    <h4>🔐 Change Admin Password</h4>
+                    <label>Old Password</label>
+                    <input type="password" id="oldPass">
+                    <label>New Password</label>
+                    <input type="password" id="newPass">
+                </div>
+
+                <button type="button" class="btn-primary" onclick="saveSettings()">💾 Save Settings</button>
             </div>
         </div>
     </div>
@@ -303,7 +342,7 @@
 <div id="receiptModal" class="modal">
     <div class="modal-content">
         <div class="receipt-box" id="printableReceipt">
-            <h4>Fitness Gym Receipt</h4>
+            <h4 id="receiptGymName">Fitness Gym Receipt</h4>
             <p><strong>Member ID:</strong> <span id="recId"></span></p>
             <p><strong>Name:</strong> <span id="recName"></span></p>
             <p><strong>Plan:</strong> <span id="recPlan"></span></p>
@@ -321,7 +360,7 @@
 <div id="qrModal" class="modal">
     <div class="modal-content">
         <div class="qr-card-container">
-            <div class="qr-card-header">FITNESS GYM CLUB</div>
+            <div class="qr-card-header" id="cardGymHeader">FITNESS GYM CLUB</div>
             <div id="qrcode"></div>
             <div class="qr-card-body">
                 <p><strong id="cardName">---</strong></p>
@@ -387,7 +426,47 @@
     let planChartInstance = null;
     let showOnlyUnpaid = false;
 
+    // Default System Config Settings
+    let systemConfig = {
+        gymName: "FITNESS GYM CLUB",
+        gymPhone: "0911000000",
+        malePrice: 2000,
+        femalePrice: 1500,
+        scanTimeout: 5 // minutes
+    };
+
     let scannedHistory = {};
+
+    function loadSettings() {
+        const saved = localStorage.getItem('gym_system_config');
+        if (saved) {
+            systemConfig = JSON.parse(saved);
+        }
+        document.getElementById('setGymName').value = systemConfig.gymName;
+        document.getElementById('setGymPhone').value = systemConfig.gymPhone;
+        document.getElementById('setMalePrice').value = systemConfig.malePrice;
+        document.getElementById('setFemalePrice').value = systemConfig.femalePrice;
+        document.getElementById('setScanTimeout').value = systemConfig.scanTimeout;
+
+        // Apply Gym Name UI
+        document.getElementById('sidebarGymTitle').innerText = systemConfig.gymName;
+        document.getElementById('mobileGymTitle').innerText = systemConfig.gymName;
+        document.getElementById('cardGymHeader').innerText = systemConfig.gymName;
+        document.getElementById('receiptGymName').innerText = systemConfig.gymName + " Receipt";
+    }
+
+    function saveSettings() {
+        systemConfig.gymName = document.getElementById('setGymName').value || "FITNESS GYM CLUB";
+        systemConfig.gymPhone = document.getElementById('setGymPhone').value || "0911000000";
+        systemConfig.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
+        systemConfig.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
+        systemConfig.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
+
+        localStorage.setItem('gym_system_config', JSON.stringify(systemConfig));
+        loadSettings();
+        autoCalculatePrice();
+        alert("Settings Saved Successfully!");
+    }
 
     function playBeepSound() {
         try {
@@ -441,11 +520,10 @@
             if (!r[0] || r[0] === "Member ID") return;
             const status = r[6] || 'Active';
             
-            // Unpaid Filter ከነቃ Expired የሆኑትን ብቻ ያሳያል
             if (showOnlyUnpaid && status !== 'Expired') return;
 
             const statusClass = status === 'Active' ? 'status-active' : 'status-expired';
-            let paidAmount = parseFloat(r[7]) || (r[3] === 'Monthly' ? 2000 : 6000);
+            let paidAmount = parseFloat(r[7]) || (r[3] === 'Monthly' ? systemConfig.malePrice : systemConfig.malePrice * 3);
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -525,14 +603,17 @@
         const currDate = new Date();
         const scanTimeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
 
-        if (scannedHistory[cleanId] && (now - scannedHistory[cleanId]) < 300000) {
+        // ዱፕሊኬት ስካን ታይምአውት ከሴቲንግ ይወሰዳል
+        const timeoutMs = (systemConfig.scanTimeout || 5) * 60 * 1000;
+
+        if (scannedHistory[cleanId] && (now - scannedHistory[cleanId]) < timeoutMs) {
             const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === cleanId.toLowerCase());
             const memberName = member ? member[1] : cleanId;
             const expiryDate = member ? (member[5] || "N/A") : "N/A";
 
             resDiv.style.backgroundColor = "#fef08a";
             resDiv.style.color = "#854d0e";
-            resDiv.innerHTML = `⚠️ <strong>${memberName}</strong><br>ይህ ኮድ ተመዝግቧል! ድጋሜ ለመመዝገብ 5 ደቂቃ ይጠብቁ።<br><small style="font-size:11px;">Expires: ${expiryDate}</small>`;
+            resDiv.innerHTML = `⚠️ <strong>${memberName}</strong><br>ይህ ኮድ ተመዝግቧል! ድጋሜ ለመመዝገብ ${systemConfig.scanTimeout} ደቂቃ ይጠብቁ።<br><small style="font-size:11px;">Expires: ${expiryDate}</small>`;
             
             if (html5QrCode && html5QrCode.isScanning) {
                 try { html5QrCode.pause(true); setTimeout(() => html5QrCode.resume(), 3000); } catch(e){}
@@ -630,7 +711,7 @@
     function autoCalculateRenewPrice() {
         const gender = document.getElementById('renewModal').dataset.gender || "Male";
         const plan = document.getElementById('renewPlan').value;
-        let base = gender === 'Male' ? 2000 : 1500;
+        let base = gender === 'Male' ? systemConfig.malePrice : systemConfig.femalePrice;
         document.getElementById('renewAmount').value = plan === 'Monthly' ? base : (plan === '3 Months' ? base * 3 : base * 12);
         
         const today = new Date();
@@ -696,7 +777,7 @@
     function autoCalculatePrice() {
         const gender = document.getElementById('gender').value;
         const plan = document.getElementById('plan').value;
-        let base = gender === 'Male' ? 2000 : 1500;
+        let base = gender === 'Male' ? systemConfig.malePrice : systemConfig.femalePrice;
         document.getElementById('amountPaid').value = plan === 'Monthly' ? base : (plan === '3 Months' ? base * 3 : base * 12);
         calculateExpiryDate();
     }
@@ -753,7 +834,7 @@
         document.getElementById('ethExpiryDate').value = toEthiopianDate(joinDate.toISOString().split('T')[0]);
     }
 
-    window.onload = function() { initForm(); fetchMembers(); fetchAttendanceLogs(); };
+    window.onload = function() { loadSettings(); initForm(); fetchMembers(); fetchAttendanceLogs(); };
 
     function fetchMembers() {
         fetch(WEB_APP_URL).then(res => res.json()).then(data => {
@@ -770,7 +851,7 @@
         document.getElementById('activeCount').innerText = valid.filter(r => (r[6] || 'Active') === 'Active').length;
         document.getElementById('expiredCount').innerText = valid.filter(r => r[6] === 'Expired').length;
         let totalRev = 0;
-        valid.forEach(r => totalRev += parseFloat(r[7]) || (r[3] === 'Monthly' ? 2000 : 6000));
+        valid.forEach(r => totalRev += parseFloat(r[7]) || (r[3] === 'Monthly' ? systemConfig.malePrice : systemConfig.malePrice * 3));
         document.getElementById('revenueCount').innerText = totalRev + " ETB";
     }
 
@@ -781,7 +862,7 @@
 
         valid.forEach(r => {
             const plan = r[3] || 'Monthly';
-            let amt = parseFloat(r[7]) || (plan === 'Monthly' ? 2000 : 6000);
+            let amt = parseFloat(r[7]) || (plan === 'Monthly' ? systemConfig.malePrice : systemConfig.malePrice * 3);
             if (planCounts[plan] !== undefined) planCounts[plan]++;
             monthlyRevenue[r[4] || "Recent"] = (monthlyRevenue[r[4] || "Recent"] || 0) + amt;
         });
@@ -801,7 +882,6 @@
         });
     }
 
-    /* አቴንዳንስ ታሪክን በየቀኑ በግሩፕ ከፍሎ ማሳየት */
     function fetchAttendanceLogs() {
         fetch(WEB_APP_URL + "?action=getAttendance").then(res => res.json()).then(data => {
             const tbody = document.getElementById('attendanceLogTable');
@@ -812,7 +892,6 @@
                 const logs = data.slice(1).reverse();
                 const groupedByDate = {};
 
-                // በየቀኑ ዳታውን መቧደን
                 logs.forEach(row => {
                     const fullDateTime = row[2] || "";
                     const datePart = fullDateTime.split(' ')[0] || "Unknown Date";
@@ -820,7 +899,6 @@
                     groupedByDate[datePart].push(row);
                 });
 
-                // ሰንጠረዡ ላይ በየቀኑ በግሩፕ ከፍሎ መጻፍ
                 Object.keys(groupedByDate).forEach(date => {
                     const headerTr = document.createElement('tr');
                     headerTr.innerHTML = `<td colspan="4" class="date-group-header">📅 Date: ${date}</td>`;
