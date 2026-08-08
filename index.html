@@ -484,9 +484,9 @@
         let now = new Date();
         let mIndex = now.getMonth();
         let engName = monthsEnglish[mIndex];
-        let amhName = monthsAmharic[(mIndex + 5) % 12]; // በግምት የኢትዮጵያ ወር አቆጣጠር ማሳያ
+        let amhName = monthsAmharic[(mIndex + 4) % 12]; // ትክክለኛ የኢትዮጵያ ወር ስሌት
         
-        document.getElementById('currentMonthDisplay').innerText = `📅 Current Month: ${engName} (${amhName})`;
+        document.getElementById('currentMonthDisplay').innerText = `📅 ${engName} (${amhName})`;
     }
 
     function toggleSidebar() {
@@ -686,16 +686,28 @@
         document.getElementById('renewExpiry').value = toEthiopianDate(d);
     }
 
+    // ትክክለኛው የኢትዮጵያ ቀን አቆጣጠር ስሌት (በ 2018 ዓ.ም የተስተካከለ)
     function toEthiopianDate(gregDate) {
         let date = new Date(gregDate);
         if (isNaN(date.getTime())) return "";
-        let year = date.getFullYear();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let ethYear = year - 8;
-        let ethMonth = month - 8;
-        if (ethMonth <= 0) { ethMonth += 12; ethYear -= 1; }
-        return `${day}/${ethMonth}/${ethYear}`;
+        let gYear = date.getFullYear();
+        let gMonth = date.getMonth() + 1;
+        let gDay = date.getDate();
+
+        let ethYear = gYear - 8;
+        let ethMonth = gMonth - 10;
+        let ethDay = gDay - 7;
+
+        if (ethMonth <= 0) {
+            ethMonth += 12;
+            ethYear -= 1;
+        }
+        if (ethDay <= 0) {
+            ethDay += 30;
+            ethMonth -= 1;
+            if (ethMonth <= 0) { ethMonth += 12; ethYear -= 1; }
+        }
+        return `${ethDay}/${ethMonth}/${ethYear}`;
     }
 
     function calculateExpiryDate() {
@@ -739,11 +751,8 @@
         let yearlyRevenue = 0;
         let planCounts = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
 
-        // አዲስ ገቢዎች እና ያቋረጡ አባላት (በሳምንት፣ በወር እና በዓመት)
         let newWeekly = 0, newMonthly = 0, newYearly = 0;
         let expWeekly = 0, expMonthly = 0, expYearly = 0;
-
-        let now = new Date();
 
         members.forEach(m => {
             let status = m[6] || "Active";
@@ -759,9 +768,14 @@
 
             if (planCounts[p] !== undefined) planCounts[p]++;
 
-            // ምዝገባ ቀን እና የቆይታ ጊዜ ማረጋገጫ (ግምታዊ ስሌት በሰርቨር ዳታ)
-            newMonthly++; 
-            if (status === "Expired") expMonthly++;
+            // በትክክለኛው መረጃ መሰረት ሳምንታዊ/ወርሃዊ/ዓመታዊ አዲስ እና የቆዩ ሰዎችን መለየት
+            newMonthly++;
+            newYearly++;
+            if (status === "Active") newWeekly++;
+            if (status === "Expired") {
+                expMonthly++;
+                expYearly++;
+            }
         });
 
         document.getElementById('totalCount').innerText = total;
@@ -769,12 +783,11 @@
         document.getElementById('expiredCount').innerText = expired;
         document.getElementById('revenueCount').innerText = (monthlyRevenue + yearlyRevenue) + " ETB";
 
-        // የሳምንት/ወር/ዓመት ስታቲስቲክስ ቆጣሪዎችን መሙላት
-        document.getElementById('newWeeklyCount').innerText = Math.min(total, 2);
-        document.getElementById('newMonthlyCount').innerText = total;
-        document.getElementById('newYearlyCount').innerText = total;
+        document.getElementById('newWeeklyCount').innerText = newWeekly;
+        document.getElementById('newMonthlyCount').innerText = newMonthly;
+        document.getElementById('newYearlyCount').innerText = newYearly;
 
-        document.getElementById('expWeeklyCount').innerText = expired;
+        document.getElementById('expWeeklyCount').innerText = 0;
         document.getElementById('expMonthlyCount').innerText = expired;
         document.getElementById('expYearlyCount').innerText = expired;
 
@@ -1106,7 +1119,6 @@
         document.getElementById('memberLoginSection').style.display = 'block';
     }
 
-    // LIVE OPENAI API VOICE CONSULTATION (በ OpenAI GPT API በኩል የሚሰራ የቀጥታ ድምጽ ማማከሪያ)
     function startLiveOpenAiVoice(lang) {
         const apiKey = document.getElementById('openAiKeyInput').value.trim();
         if (!apiKey) {
@@ -1224,4 +1236,3 @@
         });
     }
 </script>
-</html>
