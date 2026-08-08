@@ -374,6 +374,10 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
 
+    // ደጋግሞ እንዳይመዘግብ የሚከለክሉ ቫሪያብሎች
+    let lastScannedId = "";
+    let lastScanTime = 0;
+
     function checkLogin() {
         const user = document.getElementById('loginUser').value;
         const pass = document.getElementById('loginPass').value;
@@ -467,6 +471,17 @@
     }
 
     function verifyMember(id) {
+        if (!id) return;
+
+        const now = Date.now();
+        // አንድ አይነት ID ከሆነ እና ከስካን በኋላ 5 ሰከንድ (5000ms) ካልሞላ በድጋሚ እንዳይመዘግብ ያደርጋል
+        if (id === lastScannedId && (now - lastScanTime) < 5000) {
+            return;
+        }
+
+        lastScannedId = id;
+        lastScanTime = now;
+
         const resDiv = document.getElementById('attendanceResult');
         resDiv.style.display = 'block';
         const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === id.toString().trim().toLowerCase());
@@ -478,8 +493,8 @@
             resDiv.style.color = isExpired ? "#991b1b" : "#166534";
             resDiv.innerHTML = `<strong>${member[1]}</strong><br>Status: ${status}`;
 
-            const now = new Date();
-            const timeStr = toEthiopianDate(now.toISOString().split('T')[0]) + " " + now.toLocaleTimeString();
+            const currDate = new Date();
+            const timeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
             
             fetch(WEB_APP_URL, {
                 method: 'POST', mode: 'no-cors',
@@ -738,6 +753,22 @@
     function filterMembers() {
         const q = document.getElementById('searchInput').value.toLowerCase();
         renderTable(allMembersData.filter(r => (r[0] && r[0].toString().toLowerCase().includes(q)) || (r[1] && r[1].toString().toLowerCase().includes(q))));
+    }
+
+    function exportToCSV() {
+        if (!allMembersData.length) return alert("ማውጣት የሚቻል ዳታ የለም!");
+        let csvContent = "data:text/csv;charset=utf-8,ID,Full Name,Phone,Plan,Paid ETB,Expiry EC,Status\n";
+        allMembersData.forEach(r => {
+            if (!r[0] || r[0] === "Member ID") return;
+            csvContent += `${r[0]},${r[1] || ''},${r[2] || ''},${r[3] || ''},${r[7] || ''},${r[5] || ''},${r[6] || 'Active'}\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "gym_members_list.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 </body>
