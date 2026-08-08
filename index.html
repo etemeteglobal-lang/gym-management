@@ -17,7 +17,8 @@
         .main-wrapper { display: flex; flex: 1; position: relative; }
 
         .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; transition: 0.3s; z-index: 999; }
-        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 25px; color: #38bdf8; }
+        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 25px; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .sidebar-logo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none; }
         .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 14px 20px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .nav-btn:hover, .nav-btn.active { background: #1e293b; color: white; border-left: 4px solid #38bdf8; }
 
@@ -38,6 +39,9 @@
         .page { display: none; }
         .page.active { display: block; }
 
+        /* Announcement Notice Banner */
+        .notice-banner { background: #fef3c7; color: #92400e; border-left: 5px solid #f59e0b; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; font-size: 14px; display: none; align-items: center; gap: 10px; }
+
         .stats-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .stat-card { flex: 1; min-width: 130px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); text-align: center; }
         .stat-card h4 { color: #64748b; font-size: 11px; margin-bottom: 5px; }
@@ -57,7 +61,7 @@
         .date-group-header { background-color: #e2e8f0; color: #0f172a; font-weight: bold; padding: 8px 12px; }
 
         label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
-        input, select { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
         .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; padding: 10px; margin-top: 12px; border-radius: 6px; cursor: pointer; width: 100%; }
 
         .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
@@ -79,10 +83,12 @@
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
 
         .receipt-box { border: 1px dashed #333; padding: 15px; text-align: left; font-family: monospace; background: #fff8dc; border-radius: 6px; }
-        .receipt-box h4 { text-align: center; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px dashed #333; padding-bottom: 5px; }
+        .receipt-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
+        .receipt-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; display: none; }
 
         .qr-card-container { width: 300px; border: 2px solid #0f172a; border-radius: 12px; padding: 15px; background: #fff; margin: auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .qr-card-header { background: #0f172a; color: white; padding: 8px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 14px; }
+        .qr-card-header { background: #0f172a; color: white; padding: 8px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .qr-logo { width: 25px; height: 25px; border-radius: 50%; object-fit: cover; display: none; }
         .qr-card-body p { margin: 4px 0; font-size: 13px; color: #334155; }
         #qrcode { display: flex; justify-content: center; margin: 12px 0; }
 
@@ -110,13 +116,19 @@
 </div>
 
 <div class="mobile-header">
-    <h3 id="mobileGymTitle">GYM SYSTEM</h3>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <img id="mobileLogo" class="sidebar-logo" src="" alt="Logo">
+        <h3 id="mobileGymTitle">GYM SYSTEM</h3>
+    </div>
     <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
 </div>
 
 <div class="main-wrapper">
     <div class="sidebar" id="sidebar">
-        <h2 id="sidebarGymTitle">GYM SYSTEM</h2>
+        <h2>
+            <img id="sidebarLogo" class="sidebar-logo" src="" alt="Logo">
+            <span id="sidebarGymTitle">GYM SYSTEM</span>
+        </h2>
         <button class="nav-btn active" onclick="showPage('dashboard', event)">📊 Dashboard</button>
         <button class="nav-btn" onclick="showPage('attendanceLogPage', event)">📋 Attendance Log</button>
         <button class="nav-btn" onclick="showPage('register', event)">➕ Register Member</button>
@@ -127,6 +139,12 @@
     </div>
 
     <div class="main-content">
+        <!-- ANNOUNCEMENT BANNER -->
+        <div id="noticeBanner" class="notice-banner">
+            <span>📢</span>
+            <span id="noticeText">Welcome to Gym System!</span>
+        </div>
+
         <!-- DASHBOARD -->
         <div id="dashboard" class="page active">
             <h2 style="margin-bottom: 15px;">System Overview & Analytics</h2>
@@ -287,21 +305,34 @@
             </div>
         </div>
 
-        <!-- SETTINGS PAGE (ENHANCED) -->
+        <!-- SETTINGS PAGE (LOGI & NOTICE ADDED) -->
         <div id="settingsPage" class="page">
             <div class="card" style="max-width: 550px; margin: auto;">
                 <h3 style="margin-bottom: 15px;">System Settings Configuration</h3>
 
-                <!-- 1. GYM PROFILE -->
+                <!-- 1. GYM PROFILE & LOGO -->
                 <div class="settings-section">
-                    <h4>🏢 Gym Profile Info</h4>
+                    <h4>🏢 Gym Profile Info & Logo</h4>
                     <label>Gym Name</label>
                     <input type="text" id="setGymName" value="FITNESS GYM CLUB">
                     <label>Gym Phone Number</label>
                     <input type="text" id="setGymPhone" value="0911000000">
+                    
+                    <label>Upload Logo File (ከስልክ/ኮምፒዩተር መምረጫ)</label>
+                    <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)">
+                    
+                    <label>Or Paste Logo Image URL</label>
+                    <input type="text" id="setGymLogoUrl" placeholder="https://example.com/logo.png">
                 </div>
 
-                <!-- 2. PRICING CONFIGURATION -->
+                <!-- 2. ANNOUNCEMENT NOTICE -->
+                <div class="settings-section">
+                    <h4>📢 Announcement Notice</h4>
+                    <label>Notice Message (ለአባላት ማስታወቂያ)</label>
+                    <textarea id="setNoticeText" rows="2" placeholder="e.g. በበዓል ምክንያት ጅሙ የፊታችን እሁድ ዝግ ይሆናል።"></textarea>
+                </div>
+
+                <!-- 3. PRICING CONFIGURATION -->
                 <div class="settings-section">
                     <h4>💰 Membership Pricing (ETB)</h4>
                     <div style="display: flex; gap: 10px;">
@@ -316,14 +347,14 @@
                     </div>
                 </div>
 
-                <!-- 3. SCAN TIMEOUT -->
+                <!-- 4. SCAN TIMEOUT -->
                 <div class="settings-section">
                     <h4>⏱️ Duplicate Scan Timeout</h4>
                     <label>Wait Duration (Minutes)</label>
                     <input type="number" id="setScanTimeout" value="5" min="1" max="60">
                 </div>
 
-                <!-- 4. CHANGE PASSWORD -->
+                <!-- 5. CHANGE PASSWORD -->
                 <div class="settings-section" style="border-bottom: none;">
                     <h4>🔐 Change Admin Password</h4>
                     <label>Old Password</label>
@@ -342,7 +373,10 @@
 <div id="receiptModal" class="modal">
     <div class="modal-content">
         <div class="receipt-box" id="printableReceipt">
-            <h4 id="receiptGymName">Fitness Gym Receipt</h4>
+            <div class="receipt-header">
+                <img id="receiptLogo" class="receipt-logo" src="" alt="Logo">
+                <h4 id="receiptGymName">Fitness Gym Receipt</h4>
+            </div>
             <p><strong>Member ID:</strong> <span id="recId"></span></p>
             <p><strong>Name:</strong> <span id="recName"></span></p>
             <p><strong>Plan:</strong> <span id="recPlan"></span></p>
@@ -360,7 +394,10 @@
 <div id="qrModal" class="modal">
     <div class="modal-content">
         <div class="qr-card-container">
-            <div class="qr-card-header" id="cardGymHeader">FITNESS GYM CLUB</div>
+            <div class="qr-card-header">
+                <img id="qrCardLogo" class="qr-logo" src="" alt="Logo">
+                <span id="cardGymHeader">FITNESS GYM CLUB</span>
+            </div>
             <div id="qrcode"></div>
             <div class="qr-card-body">
                 <p><strong id="cardName">---</strong></p>
@@ -426,38 +463,77 @@
     let planChartInstance = null;
     let showOnlyUnpaid = false;
 
-    // Default System Config Settings
+    // System Config Settings
     let systemConfig = {
         gymName: "FITNESS GYM CLUB",
         gymPhone: "0911000000",
+        gymLogo: "",
+        notice: "",
         malePrice: 2000,
         femalePrice: 1500,
-        scanTimeout: 5 // minutes
+        scanTimeout: 5
     };
 
     let scannedHistory = {};
+
+    function handleLogoUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('setGymLogoUrl').value = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 
     function loadSettings() {
         const saved = localStorage.getItem('gym_system_config');
         if (saved) {
             systemConfig = JSON.parse(saved);
         }
-        document.getElementById('setGymName').value = systemConfig.gymName;
-        document.getElementById('setGymPhone').value = systemConfig.gymPhone;
-        document.getElementById('setMalePrice').value = systemConfig.malePrice;
-        document.getElementById('setFemalePrice').value = systemConfig.femalePrice;
-        document.getElementById('setScanTimeout').value = systemConfig.scanTimeout;
+        document.getElementById('setGymName').value = systemConfig.gymName || "FITNESS GYM CLUB";
+        document.getElementById('setGymPhone').value = systemConfig.gymPhone || "0911000000";
+        document.getElementById('setGymLogoUrl').value = systemConfig.gymLogo || "";
+        document.getElementById('setNoticeText').value = systemConfig.notice || "";
+        document.getElementById('setMalePrice').value = systemConfig.malePrice || 2000;
+        document.getElementById('setFemalePrice').value = systemConfig.femalePrice || 1500;
+        document.getElementById('setScanTimeout').value = systemConfig.scanTimeout || 5;
 
-        // Apply Gym Name UI
+        // Apply UI Updates
         document.getElementById('sidebarGymTitle').innerText = systemConfig.gymName;
         document.getElementById('mobileGymTitle').innerText = systemConfig.gymName;
         document.getElementById('cardGymHeader').innerText = systemConfig.gymName;
         document.getElementById('receiptGymName').innerText = systemConfig.gymName + " Receipt";
+
+        // Apply Logo
+        const logoUrl = systemConfig.gymLogo;
+        const logoElements = ['sidebarLogo', 'mobileLogo', 'receiptLogo', 'qrCardLogo'];
+        logoElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (logoUrl) {
+                el.src = logoUrl;
+                el.style.display = 'inline-block';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+
+        // Apply Notice
+        const noticeBanner = document.getElementById('noticeBanner');
+        if (systemConfig.notice && systemConfig.notice.trim() !== "") {
+            document.getElementById('noticeText').innerText = systemConfig.notice;
+            noticeBanner.style.display = 'flex';
+        } else {
+            noticeBanner.style.display = 'none';
+        }
     }
 
     function saveSettings() {
         systemConfig.gymName = document.getElementById('setGymName').value || "FITNESS GYM CLUB";
         systemConfig.gymPhone = document.getElementById('setGymPhone').value || "0911000000";
+        systemConfig.gymLogo = document.getElementById('setGymLogoUrl').value || "";
+        systemConfig.notice = document.getElementById('setNoticeText').value || "";
         systemConfig.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
         systemConfig.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
         systemConfig.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
@@ -603,7 +679,6 @@
         const currDate = new Date();
         const scanTimeStr = toEthiopianDate(currDate.toISOString().split('T')[0]) + " " + currDate.toLocaleTimeString();
 
-        // ዱፕሊኬት ስካን ታይምአውት ከሴቲንግ ይወሰዳል
         const timeoutMs = (systemConfig.scanTimeout || 5) * 60 * 1000;
 
         if (scannedHistory[cleanId] && (now - scannedHistory[cleanId]) < timeoutMs) {
