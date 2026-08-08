@@ -374,9 +374,27 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
 
-    // ደጋግሞ እንዳይመዘግብ የሚከለክሉ ቫሪያብሎች
+    // መደጋገምን የመቆጣጠሪያ ቫሪያብሎች
     let lastScannedId = "";
     let lastScanTime = 0;
+    let isProcessingScan = false;
+
+    // ድምፅ እንዲያወጣ ማድረግ (Beep Sound)
+    function playBeepSound() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = "sine";
+            osc.frequency.value = 800; // 800Hz Pitch
+            gain.gain.setValueAtTime(1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+        } catch(e) { console.log(e); }
+    }
 
     function checkLogin() {
         const user = document.getElementById('loginUser').value;
@@ -473,18 +491,27 @@
     function verifyMember(id) {
         if (!id) return;
 
+        const cleanId = id.toString().trim();
         const now = Date.now();
-        // አንድ አይነት ID ከሆነ እና ከስካን በኋላ 5 ሰከንድ (5000ms) ካልሞላ በድጋሚ እንዳይመዘግብ ያደርጋል
-        if (id === lastScannedId && (now - lastScanTime) < 5000) {
-            return;
+
+        // ስካነሩ በመካከል ዳታ በማስገባት ላይ ከሆነ ወይም ከ 5 ሰከንድ በታች ከሆነ አያስተናግድም
+        if (isProcessingScan) return;
+        if (cleanId === lastScannedId && (now - lastScanTime) < 5000) return;
+
+        isProcessingScan = true;
+        lastScannedId = cleanId;
+        lastScanTime = now;
+
+        // ካሜራውን ለጊዜው እንዲቆም (Pause) ማድረግ
+        if (html5QrCode && html5QrCode.isScanning) {
+            try { html5QrCode.pause(true); } catch(e){}
         }
 
-        lastScannedId = id;
-        lastScanTime = now;
+        playBeepSound();
 
         const resDiv = document.getElementById('attendanceResult');
         resDiv.style.display = 'block';
-        const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === id.toString().trim().toLowerCase());
+        const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === cleanId.toLowerCase());
 
         if (member) {
             const status = member[6] || "Active";
@@ -506,6 +533,14 @@
             resDiv.style.color = "#991b1b";
             resDiv.innerText = "Member ID Not Found!";
         }
+
+        // ከ 4 ሰከንድ በኋላ ካሜራው ድጋሚ መስራት እንዲጀምር ያደርጋል
+        setTimeout(() => {
+            isProcessingScan = false;
+            if (html5QrCode) {
+                try { html5QrCode.resume(); } catch(e){}
+            }
+        }, 4000);
     }
 
     function openReceiptModal(id, name, plan, amount, expiry) {
