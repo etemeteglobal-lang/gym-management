@@ -832,11 +832,10 @@
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
 </div>
-    <!-- MEMBER PORTAL PAGE -->
-        <div id="memberPortal" class="page">
-            <div class="card" style="max-width: 500px; margin: auto;">
-                <h3>👤 Member Self-Service Portal</h3>
-                
+<!-- MEMBER PORTAL PAGE -->
+<div id="memberPortal" class="page">
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <h3>👤 Member Self-Service Portal</h3>
                 <div id="memberLoginSection">
                     <label>Member ID</label>
                     <input type="text" id="portalMemberId" placeholder="e.g. GYM-001">
@@ -1231,19 +1230,34 @@
             }
         });
     }
-
-    function renderMembersTable(members) {
+function renderMembersTable(members) {
         const tbody = document.querySelector('#membersTable tbody');
         tbody.innerHTML = '';
 
+        if (!members || members.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#64748b;">No members found.</td></tr>';
+            return;
+        }
+
         members.forEach((m) => {
-            let id = m[0], name = m[1], phone = m[2], plan = m[3], paid = m[7] || 0, expiry = m[5], status = m[6] || "Active";
+            // ነጠላ ሰረዝ ወይም ልዩ ምልክቶች ስም ላይ ሲኖሩ ኮዱ እንዳይበላሽ ማጽጃ
+            let rawId = String(m[0] || '');
+            let rawName = String(m[1] || '');
+            let id = rawId.replace(/'/g, "\\'");
+            let name = rawName.replace(/'/g, "\\'");
+            let phone = String(m[2] || '');
+            let plan = String(m[3] || 'Monthly');
+            let expiry = String(m[5] || '');
+            let status = String(m[6] || 'Active');
+            let paid = m[7] || 0;
+            let gender = String(m[8] || 'Male').replace(/'/g, "\\'");
+
             if (showOnlyUnpaid && parseFloat(paid) > 0) return;
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${id}</strong></td>
-                <td>${name}</td>
+                <td><strong>${rawId}</strong></td>
+                <td>${rawName}</td>
                 <td>${phone}</td>
                 <td>${plan}</td>
                 <td>${paid}</td>
@@ -1254,7 +1268,7 @@
                         <button class="receipt-btn" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">📄 Receipt</button>
                         <button class="card-btn" onclick="openQRCard('${id}','${name}','${plan}','${expiry}')">🎴 Card</button>
                         <button class="renew-btn" onclick="openRenewModal('${id}','${name}')">🔄 Renew</button>
-                        <button class="edit-btn" onclick="openEditModal('${id}','${name}','${phone}','${m[8]||'Male'}')">✏️ Edit</button>
+                        <button class="edit-btn" onclick="openEditModal('${id}','${name}','${phone}','${gender}')">✏️ Edit</button>
                         <button class="delete-btn" onclick="deleteMember('${id}')">🗑️ Delete</button>
                     </div>
                 </td>
@@ -1262,7 +1276,7 @@
             tbody.appendChild(tr);
         });
     }
-
+   
     function filterMembers() {
         let query = document.getElementById('searchInput').value.toLowerCase();
         let filtered = allMembersData.filter(m => m[0].toLowerCase().includes(query) || m[1].toLowerCase().includes(query) || m[2].includes(query));
