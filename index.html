@@ -448,8 +448,7 @@
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
 </div>
-
- <script>
+<script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
     let loggedInUser = "";
@@ -478,15 +477,14 @@
         displayCurrentMonthName();
     };
 
-    // 1. ትክክለኛውን የወር ስም ማሳያ (ነሐሴ ለ August)
     function displayCurrentMonthName() {
         const monthsAmharic = ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"];
         const monthsEnglish = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
         let now = new Date();
-        let mIndex = now.getMonth(); // 7 ማለት ነሐሴ (August) ነው
+        let mIndex = now.getMonth();
         let engName = monthsEnglish[mIndex];
-        let amhName = monthsAmharic[mIndex]; // ትክክለኛውን የኢትዮጵያ ወር በቀጥታ ማምጣት
+        let amhName = monthsAmharic[mIndex];
         
         document.getElementById('currentMonthDisplay').innerText = `📅 ${engName} (${amhName})`;
     }
@@ -688,32 +686,50 @@
         document.getElementById('renewExpiry').value = toEthiopianDate(d);
     }
 
-    // 2. ትክክለኛው የኢትዮጵያ ቀን አቆጣጠር ስሌት (ዓ.ም 2018 እና ትክክለኛ ወር/ቀን)
+    // 100% ትክክለኛ የሆነ እና ማነስ/ማድላት የሌለበት የኢትዮጵያ ቀን ቀመር (Anchor-based Algorithm)
     function toEthiopianDate(gregDate) {
-        let date = new Date(gregDate);
-        if (isNaN(date.getTime())) return "";
-        let gYear = date.getFullYear();
-        let gMonth = date.getMonth() + 1; // 1-12
-        let gDay = date.getDate();
+        let d = new Date(gregDate);
+        if (isNaN(d.getTime())) return "";
 
-        // ለ 2018 ዓ.ም (የአሁኑ ዓመት) ትክክለኛ ማስተካከያ
-        let ethYear = gYear - 8;
-        if (gMonth > 9 || (gMonth === 9 && gDay >= 11)) {
-            ethYear = gYear - 7;
+        // ማጣቀሻ: ነሐሴ 8, 2026 (እ.አ.አ) = ነሐሴ 2, 2018 ዓ.ም (ቀን 2፣ ወር 12፣ ዓመት 2018)
+        let anchorGreg = new Date(2026, 7, 8); 
+        let diffTime = d - anchorGreg;
+        let diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+        let eDay = 2 + diffDays;
+        let eMonth = 12;
+        let eYear = 2018;
+
+        while (eDay > 30) {
+            if (eMonth === 13) {
+                let pagumeDays = (eYear % 4 === 3) ? 6 : 5;
+                if (eDay > pagumeDays) {
+                    eDay -= pagumeDays;
+                    eMonth = 1;
+                    eYear += 1;
+                } else {
+                    break;
+                }
+            } else if (eMonth === 12) {
+                eDay -= 30;
+                eMonth = 13;
+            } else {
+                eDay -= 30;
+                eMonth += 1;
+            }
         }
 
-        // ለነሐሴ 2026 (የኢትዮጵያ 2018 ዓ.ም ወር 12) ትክክለኛ ቀናት ስሌት
-        let diffDays = Math.floor((date - new Date(gYear, 8, 11)) / (1000 * 60 * 60 * 24));
-        let ethMonth = Math.floor(diffDays / 30) + 1;
-        let ethDay = (diffDays % 30) + 1;
-
-        if (gMonth === 8) { // ነሐሴ ወር ሲሆን
-            ethYear = 2018;
-            ethMonth = 12;
-            ethDay = gDay - 6; // ነሐሴ 1 ከ ነሐሴ 7 ጀምሮ ሲሆን
+        while (eDay <= 0) {
+            eMonth -= 1;
+            if (eMonth <= 0) {
+                eMonth = 13;
+                eYear -= 1;
+            }
+            let daysInPrevMonth = (eMonth === 13) ? ((eYear % 4 === 3) ? 6 : 5) : 30;
+            eDay += daysInPrevMonth;
         }
 
-        return `${ethDay}/${ethMonth}/${ethYear}`;
+        return `${eDay}/${eMonth}/${eYear}`;
     }
 
     function calculateExpiryDate() {
