@@ -8,92 +8,476 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
 
-        .mobile-header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 12px 20px; position: sticky; top: 0; z-index: 1000; }
-        .hamburger-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        body { 
+            background-color: #f4f6f9; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
 
-        .main-wrapper { display: flex; flex: 1; position: relative; }
+        .mobile-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: #0f172a; 
+            color: white; 
+            padding: 12px 20px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
 
-        .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; transition: 0.3s; z-index: 999; }
-        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 25px; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .sidebar-logo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none; }
-        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 14px 20px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-        .nav-btn:hover, .nav-btn.active { background: #1e293b; color: white; border-left: 4px solid #38bdf8; }
+        .hamburger-btn { 
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 24px; 
+            cursor: pointer; 
+        }
+
+        .main-wrapper { 
+            display: flex; 
+            flex: 1; 
+            position: relative; 
+        }
+
+        .sidebar { 
+            width: 250px; 
+            background: #0f172a; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px 0; 
+            transition: 0.3s; 
+            z-index: 999; 
+        }
+
+        .sidebar h2 { 
+            text-align: center; 
+            font-size: 18px; 
+            margin-bottom: 25px; 
+            color: #38bdf8; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+
+        .sidebar-logo { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            display: none; 
+        }
+
+        .nav-btn { 
+            background: transparent; 
+            color: #94a3b8; 
+            border: none; 
+            padding: 14px 20px; 
+            text-align: left; 
+            font-size: 15px; 
+            width: 100%; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .nav-btn:hover, .nav-btn.active { 
+            background: #1e293b; 
+            color: white; 
+            border-left: 4px solid #38bdf8; 
+        }
 
         @media (max-width: 768px) {
-            .sidebar { position: fixed; top: 50px; left: -100%; width: 240px; height: calc(100vh - 50px); box-shadow: 4px 0 10px rgba(0,0,0,0.3); }
-            .sidebar.show { left: 0; }
-            .main-content { padding: 10px !important; }
-            .card { padding: 12px 5px !important; margin-bottom: 12px !important; }
+            .sidebar { 
+                position: fixed; 
+                top: 50px; 
+                left: -100%; 
+                width: 240px; 
+                height: calc(100vh - 50px); 
+                box-shadow: 4px 0 10px rgba(0,0,0,0.3); 
+            }
+            .sidebar.show { 
+                left: 0; 
+            }
+            .main-content { 
+                padding: 10px !important; 
+            }
+            .card { 
+                padding: 12px 5px !important; 
+                margin-bottom: 12px !important; 
+            }
         }
-        @media (min-width: 769px) { .mobile-header { display: none; } }
 
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-card { background: white; padding: 30px; border-radius: 12px; width: 320px; text-align: center; }
-        .login-card input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
-        .login-card button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        @media (min-width: 769px) { 
+            .mobile-header { 
+                display: none; 
+            } 
+        }
 
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
-        .page { display: none; }
-        .page.active { display: block; }
+        #loginOverlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: #1e293b; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+        }
 
-        /* Announcement Notice Banner */
-        .notice-banner { background: #fef3c7; color: #92400e; border-left: 5px solid #f59e0b; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; font-size: 14px; display: none; align-items: center; gap: 10px; }
+        .login-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            width: 320px; 
+            text-align: center; 
+        }
 
-        .stats-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .stat-card { flex: 1; min-width: 130px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); text-align: center; }
-        .stat-card h4 { color: #64748b; font-size: 11px; margin-bottom: 5px; }
-        .stat-card p { font-size: 20px; font-weight: bold; color: #0f172a; }
+        .login-card input { 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 12px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 6px; 
+        }
 
-        .charts-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
-        .chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); flex: 1; min-width: 300px; }
-        .chart-card h3 { font-size: 14px; color: #475569; margin-bottom: 15px; }
+        .login-card button { 
+            width: 100%; 
+            padding: 10px; 
+            background: #2563eb; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
 
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
-        th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; white-space: nowrap; }
-        th { background-color: #f8fafc; color: #475569; font-weight: 700; }
+        .main-content { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+        }
 
-        .date-group-header { background-color: #e2e8f0; color: #0f172a; font-weight: bold; padding: 8px 12px; }
+        .page { 
+            display: none; 
+        }
 
-        label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
-        input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
-        .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; padding: 10px; margin-top: 12px; border-radius: 6px; cursor: pointer; width: 100%; }
+        .page.active { 
+            display: block; 
+        }
 
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
-        .status-active { background-color: #dcfce7; color: #166534; }
-        .status-expired { background-color: #fee2e2; color: #991b1b; }
-        
-        .action-btns { display: flex; flex-direction: row; gap: 6px; align-items: center; white-space: nowrap; }
-        .action-btns button { padding: 6px 10px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; color: white; font-weight: 600; }
-        .receipt-btn { background: #10b981; }
-        .card-btn { background: #8b5cf6; }
-        .renew-btn { background: #f59e0b; }
-        .edit-btn { background: #0284c7; }
+        .notice-banner { 
+            background: #fef3c7; 
+            color: #92400e; 
+            border-left: 5px solid #f59e0b; 
+            padding: 12px 15px; 
+            border-radius: 6px; 
+            margin-bottom: 20px; 
+            font-weight: 600; 
+            font-size: 14px; 
+            display: none; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .stats-grid { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap; 
+        }
+
+        .stat-card { 
+            flex: 1; 
+            min-width: 130px; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
+            text-align: center; 
+        }
+
+        .stat-card h4 { 
+            color: #64748b; 
+            font-size: 11px; 
+            margin-bottom: 5px; 
+        }
+
+        .stat-card p { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #0f172a; 
+        }
+
+        .charts-wrapper { 
+            display: flex; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+            margin-bottom: 20px; 
+        }
+
+        .chart-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
+            flex: 1; 
+            min-width: 300px; 
+        }
+
+        .chart-card h3 { 
+            font-size: 14px; 
+            color: #475569; 
+            margin-bottom: 15px; 
+        }
+
+        /* የዳሽቦርድ ግራፎች እንዳይዛቡ የከበበ ሳጥን */
+        .chart-container {
+            position: relative;
+            height: 260px;
+            width: 100%;
+        }
+
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+        }
+
+        .table-responsive { 
+            width: 100%; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
+            margin-top: 10px; 
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+            min-width: 650px; 
+        }
+
+        th, td { 
+            border: 1px solid #e2e8f0; 
+            padding: 10px 12px; 
+            text-align: left; 
+            vertical-align: middle; 
+            white-space: nowrap; 
+        }
+
+        th { 
+            background-color: #f8fafc; 
+            color: #475569; 
+            font-weight: 700; 
+        }
+
+        label { 
+            font-weight: 600; 
+            display: block; 
+            margin-top: 10px; 
+            color: #334155; 
+            font-size: 13px; 
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 9px; 
+            margin-top: 4px; 
+            border-radius: 6px; 
+            border: 1px solid #cbd5e1; 
+        }
+
+        .btn-primary { 
+            background-color: #2563eb; 
+            color: white; 
+            font-weight: bold; 
+            border: none; 
+            padding: 10px; 
+            margin-top: 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            width: 100%; 
+        }
+
+        .status-badge { 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 11px; 
+            display: inline-block; 
+        }
+
+        .status-active { 
+            background-color: #dcfce7; 
+            color: #166534; 
+        }
+
+        .status-expired { 
+            background-color: #fee2e2; 
+            color: #991b1b; 
+        }
+
+        .action-btns { 
+            display: flex; 
+            flex-direction: row; 
+            gap: 6px; 
+            align-items: center; 
+            white-space: nowrap; 
+        }
+
+        .action-btns button { 
+            padding: 6px 10px; 
+            border: none; 
+            font-size: 11px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: 600; 
+        }
+
+        .receipt-btn { background: #10b981; } 
+        .card-btn { background: #8b5cf6; } 
+        .renew-btn { background: #f59e0b; } 
+        .edit-btn { background: #0284c7; } 
         .delete-btn { background: #dc2626; }
 
-        #reader { width: 100%; max-width: 380px; margin: auto; }
-        .attendance-result { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
+        #reader { 
+            width: 100%; 
+            max-width: 380px; 
+            margin: auto; 
+        }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
+        .attendance-result { 
+            margin-top: 15px; 
+            padding: 12px; 
+            border-radius: 6px; 
+            text-align: center; 
+            font-weight: bold; 
+            display: none; 
+        }
 
-        .receipt-box { border: 1px dashed #333; padding: 15px; text-align: left; font-family: monospace; background: #fff8dc; border-radius: 6px; }
-        .receipt-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
-        .receipt-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; display: none; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+        }
 
-        .qr-card-container { width: 300px; border: 2px solid #0f172a; border-radius: 12px; padding: 15px; background: #fff; margin: auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .qr-card-header { background: #0f172a; color: white; padding: 8px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .qr-logo { width: 25px; height: 25px; border-radius: 50%; object-fit: cover; display: none; }
-        .qr-card-body p { margin: 4px 0; font-size: 13px; color: #334155; }
-        #qrcode { display: flex; justify-content: center; margin: 12px 0; }
+        .modal-content { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 380px; 
+            text-align: center; 
+        }
 
-        .settings-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
-        .settings-section h4 { color: #0f172a; margin-bottom: 8px; font-size: 15px; }
+        .receipt-box { 
+            border: 1px dashed #333; 
+            padding: 15px; 
+            text-align: left; 
+            font-family: monospace; 
+            background: #fff8dc; 
+            border-radius: 6px; 
+        }
+
+        .receipt-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 10px; 
+            border-bottom: 1px dashed #333; 
+            padding-bottom: 5px; 
+        }
+
+        .receipt-logo { 
+            width: 35px; 
+            height: 35px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            display: none; 
+        }
+
+        .qr-card-container { 
+            width: 300px; 
+            border: 2px solid #0f172a; 
+            border-radius: 12px; 
+            padding: 15px; 
+            background: #fff; 
+            margin: auto; 
+            text-align: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+
+        .qr-card-header { 
+            background: #0f172a; 
+            color: white; 
+            padding: 8px; 
+            border-radius: 6px; 
+            margin-bottom: 12px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+
+        .qr-logo { 
+            width: 25px; 
+            height: 25px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            display: none; 
+        }
+
+        .qr-card-body p { 
+            margin: 4px 0; 
+            font-size: 13px; 
+            color: #334155; 
+        }
+
+        #qrcode { 
+            display: flex; 
+            justify-content: center; 
+            margin: 12px 0; 
+        }
+
+        .settings-section { 
+            margin-bottom: 20px; 
+            padding-bottom: 15px; 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+
+        .settings-section h4 { 
+            color: #0f172a; 
+            margin-bottom: 8px; 
+            font-size: 15px; 
+        }
 
         @media print {
             body * { visibility: hidden; }
@@ -139,15 +523,15 @@
     </div>
 
     <div class="main-content">
-        <!-- ANNOUNCEMENT BANNER -->
         <div id="noticeBanner" class="notice-banner">
             <span>📢</span>
             <span id="noticeText">Welcome to Gym System!</span>
         </div>
 
-        <!-- DASHBOARD -->
+        <!-- DASHBOARD PAGE -->
         <div id="dashboard" class="page active">
             <h2 style="margin-bottom: 15px;">System Overview & Analytics</h2>
+            
             <div class="stats-grid">
                 <div class="stat-card">
                     <h4>TOTAL MEMBERS</h4>
@@ -168,18 +552,22 @@
             </div>
 
             <div class="charts-wrapper">
-                <div class="chart-card" id="revenueChartCard" style="flex: 2;">
+                <div class="chart-card" style="flex: 2;">
                     <h3>Monthly Revenue Overview (ETB)</h3>
-                    <canvas id="revenueChart" height="120"></canvas>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
                 </div>
                 <div class="chart-card" style="flex: 1;">
                     <h3>Membership Plan Distribution</h3>
-                    <canvas id="planChart" height="180"></canvas>
+                    <div class="chart-container">
+                        <canvas id="planChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- REGISTRATION -->
+        <!-- REGISTRATION PAGE -->
         <div id="register" class="page">
             <div class="card" style="max-width: 500px; margin: auto;">
                 <h3>New Member Registration</h3>
@@ -229,7 +617,7 @@
             </div>
         </div>
 
-        <!-- MEMBER LIST -->
+        <!-- MEMBERS LIST PAGE -->
         <div id="members" class="page">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
@@ -260,19 +648,16 @@
             </div>
         </div>
 
-        <!-- ATTENDANCE SCANNER -->
+        <!-- ATTENDANCE SCANNER PAGE -->
         <div id="attendancePage" class="page">
             <div class="card" style="max-width: 450px; margin: auto; text-align: center;">
                 <h3>Daily Attendance Verification</h3>
-                
                 <div style="display: flex; gap: 10px; margin: 15px 0;">
                     <button type="button" class="btn-primary" style="background-color: #16a34a; margin:0;" onclick="startScanner('environment')">📷 Back Cam</button>
                     <button type="button" class="btn-primary" style="background-color: #0284c7; margin:0;" onclick="startScanner('user')">🤳 Front Cam</button>
                     <button type="button" class="btn-primary" style="background-color: #dc2626; margin:0;" onclick="stopScanner()">🛑 Stop</button>
                 </div>
-
                 <div id="reader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
-
                 <div style="margin-top: 15px; text-align: left;">
                     <label>Manual Verification</label>
                     <input type="text" id="scanInput" placeholder="Enter Member ID">
@@ -282,7 +667,7 @@
             </div>
         </div>
 
-        <!-- ATTENDANCE LOGS -->
+        <!-- ATTENDANCE LOG PAGE -->
         <div id="attendanceLogPage" class="page">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -309,30 +694,28 @@
         <div id="settingsPage" class="page">
             <div class="card" style="max-width: 550px; margin: auto;">
                 <h3 style="margin-bottom: 15px;">System Settings Configuration</h3>
-
-                <!-- 1. GYM PROFILE & LOGO -->
+                
                 <div class="settings-section">
                     <h4>🏢 Gym Profile Info & Logo</h4>
                     <label>Gym Name</label>
                     <input type="text" id="setGymName" value="FITNESS GYM CLUB">
+                    
                     <label>Gym Phone Number</label>
                     <input type="text" id="setGymPhone" value="0911000000">
                     
-                    <label>Upload Logo File (ከስልክ/ኮምፒዩተር መምረጫ)</label>
+                    <label>Upload Logo File</label>
                     <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)">
                     
                     <label>Or Paste Logo Image URL</label>
                     <input type="text" id="setGymLogoUrl" placeholder="https://example.com/logo.png">
                 </div>
 
-                <!-- 2. ANNOUNCEMENT NOTICE -->
                 <div class="settings-section">
                     <h4>📢 Announcement Notice</h4>
-                    <label>Notice Message (ለአባላት ማስታወቂያ)</label>
+                    <label>Notice Message</label>
                     <textarea id="setNoticeText" rows="2" placeholder="e.g. በበዓል ምክንያት ጅሙ የፊታችን እሁድ ዝግ ይሆናል።"></textarea>
                 </div>
 
-                <!-- 3. PRICING CONFIGURATION -->
                 <div class="settings-section">
                     <h4>💰 Membership Pricing (ETB)</h4>
                     <div style="display: flex; gap: 10px;">
@@ -347,14 +730,12 @@
                     </div>
                 </div>
 
-                <!-- 4. SCAN TIMEOUT -->
                 <div class="settings-section">
                     <h4>⏱️ Duplicate Scan Timeout</h4>
                     <label>Wait Duration (Minutes)</label>
                     <input type="number" id="setScanTimeout" value="5" min="1" max="60">
                 </div>
 
-                <!-- 5. CHANGE PASSWORD -->
                 <div class="settings-section" style="border-bottom: none;">
                     <h4>🔐 Change Admin Password</h4>
                     <label>Old Password</label>
@@ -369,7 +750,7 @@
     </div>
 </div>
 
-<!-- RECEIPT MODAL -->
+<!-- MODALS SECTION -->
 <div id="receiptModal" class="modal">
     <div class="modal-content">
         <div class="receipt-box" id="printableReceipt">
@@ -390,7 +771,6 @@
     </div>
 </div>
 
-<!-- QR CARD MODAL -->
 <div id="qrModal" class="modal">
     <div class="modal-content">
         <div class="qr-card-container">
@@ -411,7 +791,6 @@
     </div>
 </div>
 
-<!-- RENEW MODAL -->
 <div id="renewModal" class="modal">
     <div class="modal-content" style="text-align: left;">
         <h3>Renew Membership</h3>
@@ -434,7 +813,6 @@
     </div>
 </div>
 
-<!-- EDIT MEMBER MODAL -->
 <div id="editModal" class="modal">
     <div class="modal-content" style="text-align: left;">
         <h3>Edit Member Info</h3>
@@ -453,7 +831,6 @@
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
 </div>
-
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
@@ -501,11 +878,16 @@
         const btn = document.getElementById('loginBtn');
         const err = document.getElementById('loginErr');
 
-        if(!u || !p) { err.innerText = "Please enter username and password!"; err.style.display="block"; return; }
+        if(!u || !p) { 
+            err.innerText = "Please enter username and password!"; 
+            err.style.display = "block"; 
+            return; 
+        }
         
         btn.innerText = "Checking...";
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "login", username: u, password: p })
         }).then(() => {
@@ -527,15 +909,44 @@
         document.getElementById('loginPass').value = "";
     }
 
+    // የተስተካከለው የሎጎ አፕሎድ - ምስሉን መጥኖ በፍጥነት የሚጭን
     function handleLogoUpload(e) {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                document.getElementById('setGymLogoUrl').value = evt.target.result;
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxSize = 200; // የምስሉን ስፋትና ከፍታ ወደ 200px ይቀንሰዋል
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxSize) {
+                        height *= maxSize / width;
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width *= maxSize / height;
+                        height = maxSize;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // መጠኑ በጣም አነስተኛ (~15KB) የሆነ Base64 ምስል ይፈጥራል
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                document.getElementById('setGymLogoUrl').value = compressedBase64;
             };
-            reader.readAsDataURL(file);
-        }
+            img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 
     function loadSettings() {
@@ -580,8 +991,12 @@
         const logoUrl = systemConfig.gymLogo;
         ['sidebarLogo', 'mobileLogo', 'receiptLogo', 'qrCardLogo'].forEach(id => {
             const el = document.getElementById(id);
-            if (logoUrl) { el.src = logoUrl; el.style.display = 'inline-block'; }
-            else { el.style.display = 'none'; }
+            if (logoUrl) { 
+                el.src = logoUrl; 
+                el.style.display = 'inline-block'; 
+            } else { 
+                el.style.display = 'none'; 
+            }
         });
 
         const noticeBanner = document.getElementById('noticeBanner');
@@ -604,7 +1019,8 @@
         systemConfig.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
 
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "saveSettings", ...systemConfig })
         }).then(() => {
@@ -617,7 +1033,8 @@
         const newP = document.getElementById('newPass').value;
         if (oldP && newP) {
             fetch(WEB_APP_URL, {
-                method: 'POST', mode: 'no-cors',
+                method: 'POST', 
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: "changePassword", username: loggedInUser, oldPassword: oldP, newPassword: newP })
             });
@@ -654,13 +1071,17 @@
 
     function toEthiopianDate(gregDate) {
         let date = new Date(gregDate);
+        if (isNaN(date.getTime())) return "";
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
         let day = date.getDate();
 
         let ethYear = year - 8;
         let ethMonth = month - 8;
-        if (ethMonth <= 0) { ethMonth += 12; ethYear -= 1; }
+        if (ethMonth <= 0) { 
+            ethMonth += 12; 
+            ethYear -= 1; 
+        }
         return `${day}/${ethMonth}/${ethYear}`;
     }
 
@@ -694,7 +1115,8 @@
                 updateDashboard(allMembersData);
             }
             document.getElementById('memberId').value = generateMemberId();
-        });
+        })
+        .catch(err => console.error("Error fetching members:", err));
     }
 
     function updateDashboard(members) {
@@ -719,6 +1141,7 @@
         renderCharts(revenue, planCounts);
     }
 
+    // የዳሽቦርድ ግራፎች በቦታቸው እንዲወሰኑ ተደርጎ የተሰራ
     function renderCharts(revenue, planCounts) {
         if (revenueChartInstance) revenueChartInstance.destroy();
         if (planChartInstance) planChartInstance.destroy();
@@ -730,7 +1153,10 @@
                 labels: ['Total Revenue'],
                 datasets: [{ label: 'ETB', data: [revenue], backgroundColor: '#2563eb' }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false 
+            }
         });
 
         const ctx2 = document.getElementById('planChart').getContext('2d');
@@ -740,7 +1166,10 @@
                 labels: Object.keys(planCounts),
                 datasets: [{ data: Object.values(planCounts), backgroundColor: ['#38bdf8', '#f59e0b', '#10b981'] }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false 
+            }
         });
     }
 
@@ -806,7 +1235,8 @@
         };
 
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -856,7 +1286,8 @@
         };
 
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -883,7 +1314,8 @@
         };
 
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -895,7 +1327,8 @@
     function deleteMember(id) {
         if (confirm("Are you sure you want to delete member " + id + "?")) {
             fetch(WEB_APP_URL, {
-                method: 'POST', mode: 'no-cors',
+                method: 'POST', 
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: "deleteMember", memberId: id })
             }).then(() => fetchMembers());
@@ -959,7 +1392,8 @@
     function logAttendance(id, name, status) {
         let scanTime = toEthiopianDate(new Date()) + " " + new Date().toLocaleTimeString();
         fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST', 
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: scanTime, status: status })
         });
