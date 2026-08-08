@@ -14,6 +14,7 @@
             padding: 0; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
         }
+
         body { 
             background-color: #f4f6f9; 
             display: flex; 
@@ -107,23 +108,12 @@
                 height: calc(100vh - 50px); 
                 box-shadow: 4px 0 10px rgba(0,0,0,0.3); 
             }
-            .sidebar.show { 
-                left: 0; 
-            }
-            .main-content { 
-                padding: 10px !important; 
-            }
-            .card { 
-                padding: 12px 5px !important; 
-                margin-bottom: 12px !important; 
-            }
+            .sidebar.show { left: 0; }
+            .main-content { padding: 10px !important; }
+            .card { padding: 12px 5px !important; margin-bottom: 12px !important; }
         }
 
-        @media (min-width: 769px) { 
-            .mobile-header { 
-                display: none; 
-            } 
-        }
+        @media (min-width: 769px) { .mobile-header { display: none; } }
 
         #loginOverlay { 
             position: fixed; 
@@ -171,13 +161,8 @@
             overflow-y: auto; 
         }
 
-        .page { 
-            display: none; 
-        }
-
-        .page.active { 
-            display: block; 
-        }
+        .page { display: none; }
+        .page.active { display: block; }
 
         .notice-banner { 
             background: #fef3c7; 
@@ -210,17 +195,8 @@
             text-align: center; 
         }
 
-        .stat-card h4 { 
-            color: #64748b; 
-            font-size: 11px; 
-            margin-bottom: 5px; 
-        }
-
-        .stat-card p { 
-            font-size: 20px; 
-            font-weight: bold; 
-            color: #0f172a; 
-        }
+        .stat-card h4 { color: #64748b; font-size: 11px; margin-bottom: 5px; }
+        .stat-card p { font-size: 20px; font-weight: bold; color: #0f172a; }
 
         .charts-wrapper { 
             display: flex; 
@@ -238,17 +214,8 @@
             min-width: 300px; 
         }
 
-        .chart-card h3 { 
-            font-size: 14px; 
-            color: #475569; 
-            margin-bottom: 15px; 
-        }
-
-        .chart-container {
-            position: relative;
-            height: 250px;
-            width: 100%;
-        }
+        .chart-card h3 { font-size: 14px; color: #475569; margin-bottom: 15px; }
+        .chart-container { position: relative; height: 250px; width: 100%; }
 
         .card { 
             background: white; 
@@ -265,42 +232,12 @@
             margin-top: 10px; 
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 13px; 
-            min-width: 650px; 
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
+        th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; white-space: nowrap; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 700; }
 
-        th, td { 
-            border: 1px solid #e2e8f0; 
-            padding: 10px 12px; 
-            text-align: left; 
-            vertical-align: middle; 
-            white-space: nowrap; 
-        }
-
-        th { 
-            background-color: #f8fafc; 
-            color: #475569; 
-            font-weight: 700; 
-        }
-
-        label { 
-            font-weight: 600; 
-            display: block; 
-            margin-top: 10px; 
-            color: #334155; 
-            font-size: 13px; 
-        }
-
-        input, select, textarea { 
-            width: 100%; 
-            padding: 9px; 
-            margin-top: 4px; 
-            border-radius: 6px; 
-            border: 1px solid #cbd5e1; 
-        }
+        label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
 
         .btn-primary { 
             background-color: #2563eb; 
@@ -314,41 +251,12 @@
             width: 100%; 
         }
 
-        .status-badge { 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-weight: bold; 
-            font-size: 11px; 
-            display: inline-block; 
-        }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-expired { background-color: #fee2e2; color: #991b1b; }
 
-        .status-active { 
-            background-color: #dcfce7; 
-            color: #166534; 
-        }
-
-        .status-expired { 
-            background-color: #fee2e2; 
-            color: #991b1b; 
-        }
-
-        .action-btns { 
-            display: flex; 
-            flex-direction: row; 
-            gap: 6px; 
-            align-items: center; 
-            white-space: nowrap; 
-        }
-
-        .action-btns button { 
-            padding: 6px 10px; 
-            border: none; 
-            font-size: 11px; 
-            cursor: pointer; 
-            border-radius: 4px; 
-            color: white; 
-            font-weight: 600; 
-        }
+        .action-btns { display: flex; flex-direction: row; gap: 6px; align-items: center; white-space: nowrap; }
+        .action-btns button { padding: 6px 10px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; color: white; font-weight: 600; }
 
         .receipt-btn { background: #10b981; } 
         .card-btn { background: #8b5cf6; } 
@@ -356,126 +264,24 @@
         .edit-btn { background: #0284c7; } 
         .delete-btn { background: #dc2626; }
 
-        #reader { 
-            width: 100%; 
-            max-width: 380px; 
-            margin: auto; 
-        }
+        #reader { width: 100%; max-width: 380px; margin: auto; }
+        .attendance-result { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
 
-        .attendance-result { 
-            margin-top: 15px; 
-            padding: 12px; 
-            border-radius: 6px; 
-            text-align: center; 
-            font-weight: bold; 
-            display: none; 
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
 
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.6); 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 2000; 
-        }
+        .receipt-box { border: 1px dashed #333; padding: 15px; text-align: left; font-family: monospace; background: #fff8dc; border-radius: 6px; }
+        .receipt-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
+        .receipt-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; display: none; }
 
-        .modal-content { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            width: 90%; 
-            max-width: 380px; 
-            text-align: center; 
-        }
+        .qr-card-container { width: 300px; border: 2px solid #0f172a; border-radius: 12px; padding: 15px; background: #fff; margin: auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .qr-card-header { background: #0f172a; color: white; padding: 8px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .qr-logo { width: 25px; height: 25px; border-radius: 50%; object-fit: cover; display: none; }
+        .qr-card-body p { margin: 4px 0; font-size: 13px; color: #334155; }
+        #qrcode { display: flex; justify-content: center; margin: 12px 0; }
 
-        .receipt-box { 
-            border: 1px dashed #333; 
-            padding: 15px; 
-            text-align: left; 
-            font-family: monospace; 
-            background: #fff8dc; 
-            border-radius: 6px; 
-        }
-
-        .receipt-header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            margin-bottom: 10px; 
-            border-bottom: 1px dashed #333; 
-            padding-bottom: 5px; 
-        }
-
-        .receipt-logo { 
-            width: 35px; 
-            height: 35px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            display: none; 
-        }
-
-        .qr-card-container { 
-            width: 300px; 
-            border: 2px solid #0f172a; 
-            border-radius: 12px; 
-            padding: 15px; 
-            background: #fff; 
-            margin: auto; 
-            text-align: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-
-        .qr-card-header { 
-            background: #0f172a; 
-            color: white; 
-            padding: 8px; 
-            border-radius: 6px; 
-            margin-bottom: 12px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-        }
-
-        .qr-logo { 
-            width: 25px; 
-            height: 25px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            display: none; 
-        }
-
-        .qr-card-body p { 
-            margin: 4px 0; 
-            font-size: 13px; 
-            color: #334155; 
-        }
-
-        #qrcode { 
-            display: flex; 
-            justify-content: center; 
-            margin: 12px 0; 
-        }
-
-        .settings-section { 
-            margin-bottom: 20px; 
-            padding-bottom: 15px; 
-            border-bottom: 1px solid #e2e8f0; 
-        }
-
-        .settings-section h4 { 
-            color: #0f172a; 
-            margin-bottom: 8px; 
-            font-size: 15px; 
-        }
+        .settings-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+        .settings-section h4 { color: #0f172a; margin-bottom: 8px; font-size: 15px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -532,36 +338,20 @@
             <h2 style="margin-bottom: 15px;">System Overview & Analytics</h2>
             
             <div class="stats-grid">
-                <div class="stat-card">
-                    <h4>TOTAL MEMBERS</h4>
-                    <p id="totalCount">0</p>
-                </div>
-                <div class="stat-card">
-                    <h4>ACTIVE MEMBERS</h4>
-                    <p id="activeCount" style="color: #16a34a;">0</p>
-                </div>
-                <div class="stat-card">
-                    <h4>EXPIRED MEMBERS</h4>
-                    <p id="expiredCount" style="color: #dc2626;">0</p>
-                </div>
-                <div class="stat-card" id="revenueCard">
-                    <h4>TOTAL REVENUE</h4>
-                    <p id="revenueCount" style="color: #2563eb;">0 ETB</p>
-                </div>
+                <div class="stat-card"><h4>TOTAL MEMBERS</h4><p id="totalCount">0</p></div>
+                <div class="stat-card"><h4>ACTIVE MEMBERS</h4><p id="activeCount" style="color: #16a34a;">0</p></div>
+                <div class="stat-card"><h4>EXPIRED MEMBERS</h4><p id="expiredCount" style="color: #dc2626;">0</p></div>
+                <div class="stat-card"><h4>TOTAL REVENUE</h4><p id="revenueCount" style="color: #2563eb;">0 ETB</p></div>
             </div>
 
             <div class="charts-wrapper">
-                <div class="chart-card" style="flex: 2;">
-                    <h3>Monthly Revenue Overview (ETB)</h3>
-                    <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
+                <div class="chart-card" style="flex: 1;">
+                    <h3>Revenue Breakdown (Monthly vs Yearly)</h3>
+                    <div class="chart-container"><canvas id="revenueBreakdownChart"></canvas></div>
                 </div>
                 <div class="chart-card" style="flex: 1;">
                     <h3>Membership Plan Distribution</h3>
-                    <div class="chart-container">
-                        <canvas id="planChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="planChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -573,44 +363,31 @@
                 <form id="gymForm">
                     <label>Member ID</label>
                     <input type="text" id="memberId" readonly>
-
                     <label>Full Name</label>
                     <input type="text" id="fullName" required placeholder="Member Full Name">
-
                     <label>Gender (ፆታ)</label>
                     <select id="gender" onchange="autoCalculatePrice()">
                         <option value="Male">Male (ወንድ)</option>
                         <option value="Female">Female (ሴት)</option>
                     </select>
-
                     <label>Phone Number</label>
                     <input type="tel" id="phone" required placeholder="09...">
-
                     <label>Membership Plan</label>
                     <select id="plan" onchange="autoCalculatePrice()">
                         <option value="Monthly">Monthly (1 Month)</option>
                         <option value="3 Months">3 Months</option>
                         <option value="Yearly">Yearly (1 Year)</option>
                     </select>
-
                     <label>Payment Amount (ETB)</label>
                     <input type="number" id="amountPaid" required placeholder="Amount in Birr">
-
-                    <label>Join Date (Gregorian)</label>
+                    <label>Join Date</label>
                     <input type="date" id="joinDate" required onchange="calculateExpiryDate()">
-
-                    <label>Join Date (Ethiopian Calendar)</label>
+                    <label>Join Date (Ethiopian)</label>
                     <input type="text" id="ethJoinDate" readonly>
-
-                    <label>Expiry Date (Ethiopian Calendar)</label>
+                    <label>Expiry Date (Ethiopian)</label>
                     <input type="text" id="ethExpiryDate" readonly>
-
                     <label>Status</label>
-                    <select id="status">
-                        <option value="Active">Active</option>
-                        <option value="Expired">Expired</option>
-                    </select>
-
+                    <select id="status"><option value="Active">Active</option><option value="Expired">Expired</option></select>
                     <button type="button" class="btn-primary" id="submitBtn" onclick="submitData()">Register & Print Receipt</button>
                 </form>
             </div>
@@ -630,16 +407,7 @@
                 <div class="table-responsive">
                     <table id="membersTable">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Full Name</th>
-                                <th>Phone</th>
-                                <th>Plan</th>
-                                <th>Paid (ETB)</th>
-                                <th>Expiry (EC)</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
+                            <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Plan</th><th>Paid (ETB)</th><th>Expiry (EC)</th><th>Status</th><th>Actions</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -675,14 +443,7 @@
                 </div>
                 <div class="table-responsive">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Member ID</th>
-                                <th>Full Name</th>
-                                <th>Scan Date & Time (EC)</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Date & Time (EC)</th><th>Status</th></tr></thead>
                         <tbody id="attendanceLogTable"></tbody>
                     </table>
                 </div>
@@ -710,6 +471,19 @@
                         <p style="font-size: 13px; margin-top: 5px;">Expiry: <span id="portalExpiryInfo" style="font-weight: bold; color: #4ade80;">---</span></p>
                     </div>
 
+                    <div class="settings-section" style="background: #f8fafc; padding: 15px; border-radius: 8px;">
+                        <h4>🎙️ AI Voice Consultation (ማማከሪያ / Gorsa Sagalee)</h4>
+                        <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">ቋንቋ ይምረጡ / Filadhu:</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <button type="button" class="btn-primary" style="margin:0; background:#0284c7;" onclick="startVoiceConsultation('am-ET')">🇪🇹 አማርኛ (Speak)</button>
+                            <button type="button" class="btn-primary" style="margin:0; background:#10b981;" onclick="startVoiceConsultation('om-ET')">🌐 Afaan Oromoo (Dubbadhu)</button>
+                        </div>
+                        <p style="font-size: 12px; font-weight: bold; color: #334155; margin-top: 8px;">የተናገሩት / Dubbatan:</p>
+                        <div id="voiceTranscript" style="background: white; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; font-size: 12px; min-height: 35px; color: #0f172a; margin-top: 4px;">---</div>
+                        <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin-top: 8px;">የ AI መልስ / Deebii AI:</p>
+                        <div id="voiceAiReply" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px; border-radius: 6px; font-size: 12px; min-height: 45px; color: #1e40af; margin-top: 4px;">እባክዎ ማማከር የሚፈልጉትን በድምጽ ይጠይቁ / Sagaleen gaafadhaa.</div>
+                    </div>
+
                     <div class="settings-section">
                         <h4>📅 Book Group Class / Session</h4>
                         <label>Select Session</label>
@@ -723,21 +497,16 @@
                     </div>
 
                     <div class="settings-section" style="border-bottom: none;">
-                        <h4>🏋️ Today's Workout & Smart AI Tip</h4>
+                        <h4>🏋️ Today's Workout & Smart Tip</h4>
                         <label>Fitness Goal</label>
                         <select id="userGoal" onchange="generateWorkoutTip()">
                             <option value="weight_loss">Weight Loss (ክብደት ለመቀነስ)</option>
                             <option value="muscle_build">Muscle Gain (ጡንቻ ለመገንባት)</option>
                             <option value="endurance">Stamina & Fitness (ጽናት ለመጨመር)</option>
                         </select>
-
                         <label>Today's Completed Exercise</label>
-                        <textarea id="workoutNotes" rows="2" placeholder="e.g. 30 min Treadmill, 3 sets Bench Press"></textarea>
-                        
-                        <div id="aiTipBox" style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 10px; font-size: 12px; color: #1e40af; margin-top: 10px; border-radius: 4px;">
-                            💡 <strong>Smart AI Tip:</strong> Select your goal to get tailored workout advice!
-                        </div>
-                        
+                        <textarea id="workoutNotes" rows="2" placeholder="e.g. 30 min Treadmill"></textarea>
+                        <div id="aiTipBox" style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 10px; font-size: 12px; color: #1e40af; margin-top: 10px; border-radius: 4px;">💡 Select your goal!</div>
                         <button type="button" class="btn-primary" style="background: #10b981;" onclick="saveWorkoutLog()">Save Workout Record</button>
                     </div>
 
@@ -750,56 +519,33 @@
         <div id="settingsPage" class="page">
             <div class="card" style="max-width: 550px; margin: auto;">
                 <h3 style="margin-bottom: 15px;">System Settings Configuration</h3>
-                
                 <div class="settings-section">
                     <h4>🏢 Gym Profile Info & Logo</h4>
-                    <label>Gym Name</label>
-                    <input type="text" id="setGymName" value="FITNESS GYM CLUB">
-                    
-                    <label>Gym Phone Number</label>
-                    <input type="text" id="setGymPhone" value="0911000000">
-                    
-                    <label>Upload Logo File</label>
-                    <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)">
-                    
-                    <label>Or Paste Logo Image URL</label>
-                    <input type="text" id="setGymLogoUrl" placeholder="https://example.com/logo.png">
+                    <label>Gym Name</label><input type="text" id="setGymName" value="FITNESS GYM CLUB">
+                    <label>Gym Phone Number</label><input type="text" id="setGymPhone" value="0911000000">
+                    <label>Upload Logo File</label><input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)">
+                    <label>Or Paste Logo Image URL</label><input type="text" id="setGymLogoUrl">
                 </div>
-
                 <div class="settings-section">
                     <h4>📢 Announcement Notice</h4>
-                    <label>Notice Message</label>
-                    <textarea id="setNoticeText" rows="2" placeholder="e.g. በበዓል ምክንያት ጅሙ የፊታችን እሁድ ዝግ ይሆናል።"></textarea>
+                    <label>Notice Message</label><textarea id="setNoticeText" rows="2"></textarea>
                 </div>
-
                 <div class="settings-section">
                     <h4>💰 Membership Pricing (ETB)</h4>
                     <div style="display: flex; gap: 10px;">
-                        <div style="flex: 1;">
-                            <label>Male Monthly</label>
-                            <input type="number" id="setMalePrice" value="2000">
-                        </div>
-                        <div style="flex: 1;">
-                            <label>Female Monthly</label>
-                            <input type="number" id="setFemalePrice" value="1500">
-                        </div>
+                        <div style="flex: 1;"><label>Male Monthly</label><input type="number" id="setMalePrice" value="2000"></div>
+                        <div style="flex: 1;"><label>Female Monthly</label><input type="number" id="setFemalePrice" value="1500"></div>
                     </div>
                 </div>
-
                 <div class="settings-section">
                     <h4>⏱️ Duplicate Scan Timeout</h4>
-                    <label>Wait Duration (Minutes)</label>
-                    <input type="number" id="setScanTimeout" value="5" min="1" max="60">
+                    <label>Wait Duration (Minutes)</label><input type="number" id="setScanTimeout" value="5" min="1" max="60">
                 </div>
-
                 <div class="settings-section" style="border-bottom: none;">
                     <h4>🔐 Change Admin Password</h4>
-                    <label>Old Password</label>
-                    <input type="password" id="oldPass">
-                    <label>New Password</label>
-                    <input type="password" id="newPass">
+                    <label>Old Password</label><input type="password" id="oldPass">
+                    <label>New Password</label><input type="password" id="newPass">
                 </div>
-
                 <button type="button" class="btn-primary" onclick="saveSettings()">💾 Save Settings</button>
             </div>
         </div>
@@ -886,12 +632,10 @@
         <button type="button" class="btn-primary" id="saveEditBtn" onclick="saveMemberEdit()">Save Changes</button>
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
-</div>
-    <script>
+</div><script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
     let loggedInUser = "";
-    let userRole = "Staff";
     let html5QrCode = null;
     let revenueChartInstance = null;
     let planChartInstance = null;
@@ -943,8 +687,7 @@
         
         btn.innerText = "Checking...";
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "login", username: u, password: p })
         }).then(() => {
@@ -1040,11 +783,9 @@
         const logoUrl = systemConfig.gymLogo;
         ['sidebarLogo', 'mobileLogo', 'receiptLogo', 'qrCardLogo'].forEach(id => {
             const el = document.getElementById(id);
-            if (logoUrl) { 
-                el.src = logoUrl; 
-                el.style.display = 'inline-block'; 
-            } else { 
-                el.style.display = 'none'; 
+            if (el) {
+                if (logoUrl) { el.src = logoUrl; el.style.display = 'inline-block'; } 
+                else { el.style.display = 'none'; }
             }
         });
 
@@ -1068,8 +809,7 @@
         systemConfig.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
 
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "saveSettings", ...systemConfig })
         }).then(() => {
@@ -1082,8 +822,7 @@
         const newP = document.getElementById('newPass').value;
         if (oldP && newP) {
             fetch(WEB_APP_URL, {
-                method: 'POST', 
-                mode: 'no-cors',
+                method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: "changePassword", username: loggedInUser, oldPassword: oldP, newPassword: newP })
             });
@@ -1124,13 +863,9 @@
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
         let day = date.getDate();
-
         let ethYear = year - 8;
         let ethMonth = month - 8;
-        if (ethMonth <= 0) { 
-            ethMonth += 12; 
-            ethYear -= 1; 
-        }
+        if (ethMonth <= 0) { ethMonth += 12; ethYear -= 1; }
         return `${day}/${ethMonth}/${ethYear}`;
     }
 
@@ -1170,48 +905,56 @@
 
     function updateDashboard(members) {
         let total = members.length;
-        let active = 0, expired = 0, revenue = 0;
+        let active = 0, expired = 0;
+        let monthlyRevenue = 0;
+        let yearlyRevenue = 0;
         let planCounts = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
 
         members.forEach(m => {
             let status = m[6] || "Active";
             if (status === "Active") active++; else expired++;
             let amt = parseFloat(m[7]) || 0;
-            revenue += amt;
             let p = m[3] || "Monthly";
+            
+            if (p === "Yearly") {
+                yearlyRevenue += amt;
+            } else {
+                monthlyRevenue += amt;
+            }
+
             if (planCounts[p] !== undefined) planCounts[p]++;
         });
+
+        let totalRevenue = monthlyRevenue + yearlyRevenue;
 
         document.getElementById('totalCount').innerText = total;
         document.getElementById('activeCount').innerText = active;
         document.getElementById('expiredCount').innerText = expired;
-        document.getElementById('revenueCount').innerText = revenue + " ETB";
+        document.getElementById('revenueCount').innerText = totalRevenue + " ETB";
 
-        renderCharts(revenue, planCounts);
+        renderCharts(monthlyRevenue, yearlyRevenue, planCounts);
     }
 
-    function renderCharts(revenue, planCounts) {
+    function renderCharts(monthlyRev, yearlyRev, planCounts) {
         if (revenueChartInstance) revenueChartInstance.destroy();
         if (planChartInstance) planChartInstance.destroy();
 
-        const ctx1 = document.getElementById('revenueChart').getContext('2d');
+        const ctx1 = document.getElementById('revenueBreakdownChart').getContext('2d');
         revenueChartInstance = new Chart(ctx1, {
             type: 'bar',
             data: {
-                labels: ['Total Revenue'],
+                labels: ['Monthly Revenue', 'Yearly Revenue'],
                 datasets: [{ 
                     label: 'ETB', 
-                    data: [revenue], 
-                    backgroundColor: '#2563eb',
-                    barThickness: 60 
+                    data: [monthlyRev, yearlyRev], 
+                    backgroundColor: ['#2563eb', '#10b981'],
+                    barThickness: 45 
                 }]
             },
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
-                }
+                scales: { y: { beginAtZero: true } }
             }
         });
 
@@ -1222,10 +965,7 @@
                 labels: Object.keys(planCounts),
                 datasets: [{ data: Object.values(planCounts), backgroundColor: ['#38bdf8', '#f59e0b', '#10b981'] }]
             },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false 
-            }
+            options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
@@ -1306,8 +1046,7 @@
         };
 
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -1334,7 +1073,6 @@
         document.getElementById('cardName').innerText = name;
         document.getElementById('cardPlan').innerText = plan;
         document.getElementById('cardExpiry').innerText = expiry;
-
         document.getElementById('qrcode').innerHTML = '';
         new QRCode(document.getElementById("qrcode"), { text: id, width: 120, height: 120 });
         document.getElementById('qrModal').style.display = 'flex';
@@ -1355,10 +1093,8 @@
             amountPaid: document.getElementById('renewAmount').value,
             expiryDate: document.getElementById('renewExpiry').value
         };
-
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -1383,10 +1119,8 @@
             phone: document.getElementById('editPhone').value,
             gender: document.getElementById('editGender').value
         };
-
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         }).then(() => {
@@ -1398,17 +1132,14 @@
     function deleteMember(id) {
         if (confirm("Are you sure you want to delete member " + id + "?")) {
             fetch(WEB_APP_URL, {
-                method: 'POST', 
-                mode: 'no-cors',
+                method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: "deleteMember", memberId: id })
             }).then(() => fetchMembers());
         }
     }
 
-    function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
-    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function startScanner(camFacing) {
         if (html5QrCode) stopScanner();
@@ -1427,11 +1158,9 @@
     function verifyMember(mId) {
         const resDiv = document.getElementById('attendanceResult');
         resDiv.style.display = 'block';
-
         let member = allMembersData.find(m => String(m[0]).trim().toLowerCase() === mId.trim().toLowerCase());
         if (!member) {
-            resDiv.style.background = '#fee2e2';
-            resDiv.style.color = '#991b1b';
+            resDiv.style.background = '#fee2e2'; resDiv.style.color = '#991b1b';
             resDiv.innerText = "❌ Member Not Found!";
             return;
         }
@@ -1439,8 +1168,7 @@
         let now = new Date();
         let timeoutMs = systemConfig.scanTimeout * 60 * 1000;
         if (scannedHistory[mId] && (now - scannedHistory[mId]) < timeoutMs) {
-            resDiv.style.background = '#fef3c7';
-            resDiv.style.color = '#92400e';
+            resDiv.style.background = '#fef3c7'; resDiv.style.color = '#92400e';
             resDiv.innerText = `⚠️ Duplicate Scan! Please wait ${systemConfig.scanTimeout} mins.`;
             return;
         }
@@ -1448,13 +1176,11 @@
         let status = member[6] || "Active";
         if (status === "Active") {
             scannedHistory[mId] = now;
-            resDiv.style.background = '#dcfce7';
-            resDiv.style.color = '#166534';
+            resDiv.style.background = '#dcfce7'; resDiv.style.color = '#166534';
             resDiv.innerText = `✅ Welcome, ${member[1]}! Attendance Recorded.`;
             logAttendance(member[0], member[1], "Granted");
         } else {
-            resDiv.style.background = '#fee2e2';
-            resDiv.style.color = '#991b1b';
+            resDiv.style.background = '#fee2e2'; resDiv.style.color = '#991b1b';
             resDiv.innerText = `❌ Expired Membership for ${member[1]}! Access Denied.`;
             logAttendance(member[0], member[1], "Denied (Expired)");
         }
@@ -1463,8 +1189,7 @@
     function logAttendance(id, name, status) {
         let scanTime = toEthiopianDate(new Date()) + " " + new Date().toLocaleTimeString();
         fetch(WEB_APP_URL, {
-            method: 'POST', 
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: scanTime, status: status })
         });
@@ -1499,7 +1224,6 @@
         a.click();
     }
 
-    // MEMBER PORTAL FUNCTIONS
     function loginMemberPortal() {
         const idInput = document.getElementById('portalMemberId').value.trim().toLowerCase();
         const phoneInput = document.getElementById('portalPhone').value.trim();
@@ -1525,7 +1249,6 @@
             document.getElementById('portalWelcomeName').innerText = "Welcome, " + member[1] + "!";
             document.getElementById('portalPlanInfo').innerText = "Plan: " + (member[3] || "Monthly");
             document.getElementById('portalExpiryInfo').innerText = member[5] || "Active";
-
             generateWorkoutTip();
         } else {
             err.innerText = "Member ID or Phone Number not found!";
@@ -1541,17 +1264,68 @@
         document.getElementById('memberLoginSection').style.display = 'block';
     }
 
+    function startVoiceConsultation(lang) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Your browser does not support Voice Recognition. Please use Chrome.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = lang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const transcriptDiv = document.getElementById('voiceTranscript');
+        const aiReplyDiv = document.getElementById('voiceAiReply');
+
+        transcriptDiv.innerText = lang === 'om-ET' ? "Dhaggeeffachaa jira... Dubbadhu." : "እየሰማሁ ነው... ይናገሩ።";
+        aiReplyDiv.innerText = "...";
+
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const speechText = event.results[0][0].transcript;
+            transcriptDiv.innerText = speechText;
+
+            let textLower = speechText.toLowerCase();
+            let reply = "";
+
+            if (lang === 'om-ET') {
+                if (textLower.includes('gatii') || textLower.includes('qarshii')) {
+                    reply = "Gatiin keenya ji'atti birrii 2000 yoo ta'u, ji'a 3 fi waggaaf hir'ina qaba.";
+                } else if (textLower.includes('saatii') || textLower.includes('yeroo')) {
+                    reply = "Galgala saatii 11:00 hanga ganama saatii 3:00 bannee jirra.";
+                } else {
+                    reply = "Galatoomaa! Gorsa dabalataaf leenjisaa keenya gaafachuu dandeessu.";
+                }
+            } else {
+                if (textLower.includes('ዋጋ') || textLower.includes('ብር')) {
+                    reply = "የወር ክፍያ 2000 ብር ሲሆን ለ3 ወር እና ለአመት ቅናሽ አለው።";
+                } else if (textLower.includes('ሰዓት') || textLower.includes('ክፈት')) {
+                    reply = "ጅማችን ከጥዋቱ 12:00 እስከ ማታ 4:00 ክፍት ነው።";
+                } else {
+                    reply = "ጥያቄዎ ገብቷል! ተጨማሪ መረጃ ከፈለጉ አስተዳዳሪውን ማነጋገር ይችላሉ።";
+                }
+            }
+            aiReplyDiv.innerText = reply;
+        };
+
+        recognition.onerror = function() {
+            transcriptDiv.innerText = "Error occurred in recognition. Try again.";
+        };
+    }
+
     function generateWorkoutTip() {
         const goal = document.getElementById('userGoal').value;
         const tipBox = document.getElementById('aiTipBox');
-
         let tipText = "";
         if (goal === "weight_loss") {
-            tipText = "💡 <strong>Smart AI Tip:</strong> Focus on High-Intensity Interval Training (HIIT), 30 mins cardio, and maintain a caloric deficit with high protein intake.";
+            tipText = "💡 <strong>Smart AI Tip:</strong> Focus on High-Intensity Interval Training (HIIT) and 30 mins cardio.";
         } else if (goal === "muscle_build") {
-            tipText = "💡 <strong>Smart AI Tip:</strong> Prioritize progressive overload with compound lifts (Squats, Bench Press, Deadlifts). Rest 48 hours between same muscle groups.";
+            tipText = "💡 <strong>Smart AI Tip:</strong> Prioritize progressive overload and compound lifts (Squats, Bench Press).";
         } else {
-            tipText = "💡 <strong>Smart AI Tip:</strong> Combine moderate resistance training with dynamic stretching and active recovery sessions to boost stamina.";
+            tipText = "💡 <strong>Smart AI Tip:</strong> Combine moderate resistance training with stretching for stamina.";
         }
         tipBox.innerHTML = tipText;
     }
@@ -1559,16 +1333,13 @@
     function bookSession() {
         const session = document.getElementById('bookingSession').value;
         const res = document.getElementById('bookingResult');
-
         if (!currentPortalMember) return;
-
         res.style.display = 'block';
         res.style.color = '#166534';
-        res.innerText = `✅ Successfully booked ${session}! See you there!`;
+        res.innerText = `✅ Successfully booked ${session}!`;
 
         fetch(WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
                 action: "bookSession",
@@ -1581,14 +1352,9 @@
 
     function saveWorkoutLog() {
         const notes = document.getElementById('workoutNotes').value.trim();
-        if (!notes) {
-            alert("Please enter your completed exercises first!");
-            return;
-        }
-
+        if (!notes) { alert("Please enter your exercise notes!"); return; }
         fetch(WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
                 action: "saveWorkout",
@@ -1602,5 +1368,4 @@
         });
     }
 </script>
-</body>
 </html>
