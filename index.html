@@ -8,281 +8,67 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        }
-
-        body { 
-            background-color: #f4f6f9; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
-
-        .mobile-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #0f172a; 
-            color: white; 
-            padding: 12px 20px; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-        }
-
-        .hamburger-btn { 
-            background: none; 
-            border: none; 
-            color: white; 
-            font-size: 24px; 
-            cursor: pointer; 
-        }
-
-        .main-wrapper { 
-            display: flex; 
-            flex: 1; 
-            position: relative; 
-        }
-
-        .sidebar { 
-            width: 250px; 
-            background: #0f172a; 
-            color: white; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 20px 0; 
-            transition: 0.3s; 
-            z-index: 999; 
-        }
-
-        .sidebar h2 { 
-            text-align: center; 
-            font-size: 18px; 
-            margin-bottom: 25px; 
-            color: #38bdf8; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-        }
-
-        .sidebar-logo { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            display: none; 
-        }
-
-        .nav-btn { 
-            background: transparent; 
-            color: #94a3b8; 
-            border: none; 
-            padding: 14px 20px; 
-            text-align: left; 
-            font-size: 15px; 
-            width: 100%; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-        }
-
-        .nav-btn:hover, .nav-btn.active { 
-            background: #1e293b; 
-            color: white; 
-            border-left: 4px solid #38bdf8; 
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh; }
+        .mobile-header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 12px 20px; position: sticky; top: 0; z-index: 1000; }
+        .hamburger-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .main-wrapper { display: flex; flex: 1; position: relative; }
+        .sidebar { width: 250px; background: #0f172a; color: white; display: flex; flex-direction: column; padding: 20px 0; transition: 0.3s; z-index: 999; }
+        .sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 25px; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .sidebar-logo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none; }
+        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 14px 20px; text-align: left; font-size: 15px; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .nav-btn:hover, .nav-btn.active { background: #1e293b; color: white; border-left: 4px solid #38bdf8; }
         @media (max-width: 768px) {
-            .sidebar { 
-                position: fixed; 
-                top: 50px; 
-                left: -100%; 
-                width: 240px; 
-                height: calc(100vh - 50px); 
-                box-shadow: 4px 0 10px rgba(0,0,0,0.3); 
-            }
+            .sidebar { position: fixed; top: 50px; left: -100%; width: 240px; height: calc(100vh - 50px); box-shadow: 4px 0 10px rgba(0,0,0,0.3); }
             .sidebar.show { left: 0; }
             .main-content { padding: 10px !important; }
             .card { padding: 12px 5px !important; margin-bottom: 12px !important; }
         }
-
         @media (min-width: 769px) { .mobile-header { display: none; } }
-
-        #loginOverlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: #1e293b; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 2000; 
-        }
-
-        .login-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            width: 320px; 
-            text-align: center; 
-        }
-
-        .login-card input { 
-            width: 100%; 
-            padding: 10px; 
-            margin-bottom: 12px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 6px; 
-        }
-
-        .login-card button { 
-            width: 100%; 
-            padding: 10px; 
-            background: #2563eb; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-
-        .main-content { 
-            flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-        }
-
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; width: 320px; text-align: center; }
+        .login-card input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .login-card button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
         .page { display: none; }
         .page.active { display: block; }
-
-        .notice-banner { 
-            background: #fef3c7; 
-            color: #92400e; 
-            border-left: 5px solid #f59e0b; 
-            padding: 12px 15px; 
-            border-radius: 6px; 
-            margin-bottom: 20px; 
-            font-weight: 600; 
-            font-size: 14px; 
-            display: none; 
-            align-items: center; 
-            gap: 10px; 
-        }
-
-        .stats-grid { 
-            display: flex; 
-            gap: 15px; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap; 
-        }
-
-        .stat-card { 
-            flex: 1; 
-            min-width: 130px; 
-            background: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
-            text-align: center; 
-        }
-
+        .notice-banner { background: #fef3c7; color: #92400e; border-left: 5px solid #f59e0b; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; font-size: 14px; display: none; align-items: center; gap: 10px; }
+        .stats-grid { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 130px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); text-align: center; }
         .stat-card h4 { color: #64748b; font-size: 11px; margin-bottom: 5px; }
         .stat-card p { font-size: 20px; font-weight: bold; color: #0f172a; }
-
-        .charts-wrapper { 
-            display: flex; 
-            gap: 20px; 
-            flex-wrap: wrap; 
-            margin-bottom: 20px; 
-        }
-
-        .chart-card { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
-            flex: 1; 
-            min-width: 300px; 
-        }
-
+        .charts-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+        .chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); flex: 1; min-width: 300px; }
         .chart-card h3 { font-size: 14px; color: #475569; margin-bottom: 15px; }
         .chart-container { position: relative; height: 250px; width: 100%; }
-
-        .card { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
-            margin-bottom: 20px; 
-        }
-
-        .table-responsive { 
-            width: 100%; 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
-            margin-top: 10px; 
-        }
-
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
         th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; white-space: nowrap; }
         th { background-color: #f8fafc; color: #475569; font-weight: 700; }
-
         label { font-weight: 600; display: block; margin-top: 10px; color: #334155; font-size: 13px; }
         input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
-
-        .btn-primary { 
-            background-color: #2563eb; 
-            color: white; 
-            font-weight: bold; 
-            border: none; 
-            padding: 10px; 
-            margin-top: 12px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            width: 100%; 
-        }
-
+        .btn-primary { background-color: #2563eb; color: white; font-weight: bold; border: none; padding: 10px; margin-top: 12px; border-radius: 6px; cursor: pointer; width: 100%; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
         .status-active { background-color: #dcfce7; color: #166534; }
         .status-expired { background-color: #fee2e2; color: #991b1b; }
-
         .action-btns { display: flex; flex-direction: row; gap: 6px; align-items: center; white-space: nowrap; }
         .action-btns button { padding: 6px 10px; border: none; font-size: 11px; cursor: pointer; border-radius: 4px; color: white; font-weight: 600; }
-
-        .receipt-btn { background: #10b981; } 
-        .card-btn { background: #8b5cf6; } 
-        .renew-btn { background: #f59e0b; } 
-        .edit-btn { background: #0284c7; } 
-        .delete-btn { background: #dc2626; }
-
+        .receipt-btn { background: #10b981; } .card-btn { background: #8b5cf6; } .renew-btn { background: #f59e0b; } .edit-btn { background: #0284c7; } .delete-btn { background: #dc2626; }
         #reader { width: 100%; max-width: 380px; margin: auto; }
         .attendance-result { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
-
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 380px; text-align: center; }
-
         .receipt-box { border: 1px dashed #333; padding: 15px; text-align: left; font-family: monospace; background: #fff8dc; border-radius: 6px; }
         .receipt-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
         .receipt-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; display: none; }
-
         .qr-card-container { width: 300px; border: 2px solid #0f172a; border-radius: 12px; padding: 15px; background: #fff; margin: auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .qr-card-header { background: #0f172a; color: white; padding: 8px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .qr-logo { width: 25px; height: 25px; border-radius: 50%; object-fit: cover; display: none; }
         .qr-card-body p { margin: 4px 0; font-size: 13px; color: #334155; }
         #qrcode { display: flex; justify-content: center; margin: 12px 0; }
-
         .settings-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
         .settings-section h4 { color: #0f172a; margin-bottom: 8px; font-size: 15px; }
-
         @media print {
             body * { visibility: hidden; }
             .modal-content, .modal-content * { visibility: visible; }
@@ -335,13 +121,38 @@
 
         <!-- DASHBOARD PAGE -->
         <div id="dashboard" class="page active">
-            <h2 style="margin-bottom: 15px;">System Overview & Analytics</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                <h2>System Overview & Analytics</h2>
+                <div style="background: #2563eb; color: white; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 14px;" id="currentMonthDisplay">
+                    📅 Current Month: ---
+                </div>
+            </div>
             
             <div class="stats-grid">
                 <div class="stat-card"><h4>TOTAL MEMBERS</h4><p id="totalCount">0</p></div>
                 <div class="stat-card"><h4>ACTIVE MEMBERS</h4><p id="activeCount" style="color: #16a34a;">0</p></div>
                 <div class="stat-card"><h4>EXPIRED MEMBERS</h4><p id="expiredCount" style="color: #dc2626;">0</p></div>
                 <div class="stat-card"><h4>TOTAL REVENUE</h4><p id="revenueCount" style="color: #2563eb;">0 ETB</p></div>
+            </div>
+
+            <!-- አዲስ ገቢዎች እና ያቋረጡ አባላት በሳምንት፣ በወር እና በዓመት ማጠቃለያ -->
+            <div class="stats-grid" style="margin-bottom: 20px;">
+                <div class="stat-card" style="background: #f8fafc; border-top: 4px solid #10b981;">
+                    <h4>NEW MEMBERS (WEEK / MONTH / YEAR)</h4>
+                    <p style="font-size: 14px; color: #0f172a; margin-top: 6px;">
+                        Weekly: <span id="newWeeklyCount" style="color:#10b981; font-weight:bold;">0</span> | 
+                        Monthly: <span id="newMonthlyCount" style="color:#2563eb; font-weight:bold;">0</span> | 
+                        Yearly: <span id="newYearlyCount" style="color:#8b5cf6; font-weight:bold;">0</span>
+                    </p>
+                </div>
+                <div class="stat-card" style="background: #f8fafc; border-top: 4px solid #dc2626;">
+                    <h4>EXPIRED MEMBERS (WEEK / MONTH / YEAR)</h4>
+                    <p style="font-size: 14px; color: #0f172a; margin-top: 6px;">
+                        Weekly: <span id="expWeeklyCount" style="color:#dc2626; font-weight:bold;">0</span> | 
+                        Monthly: <span id="expMonthlyCount" style="color:#f59e0b; font-weight:bold;">0</span> | 
+                        Yearly: <span id="expYearlyCount" style="color:#64748b; font-weight:bold;">0</span>
+                    </p>
+                </div>
             </div>
 
             <div class="charts-wrapper">
@@ -450,7 +261,7 @@
             </div>
         </div>
 
-        <!-- MEMBER PORTAL PAGE -->
+        <!-- MEMBER PORTAL PAGE (WITH LIVE OPENAI API VOICE ASSISTANT) -->
         <div id="memberPortal" class="page">
             <div class="card" style="max-width: 500px; margin: 20px auto 0 auto !important;">
                 <h3>👤 Member Self-Service Portal</h3>
@@ -471,17 +282,21 @@
                         <p style="font-size: 13px; margin-top: 5px;">Expiry: <span id="portalExpiryInfo" style="font-weight: bold; color: #4ade80;">---</span></p>
                     </div>
 
+                    <!-- LIVE OPENAI API VOICE CONSULTATION -->
                     <div class="settings-section" style="background: #f8fafc; padding: 15px; border-radius: 8px;">
-                        <h4>🎙️ AI Voice Consultation (ማማከሪያ / Gorsa Sagalee)</h4>
+                        <h4>🎙️ Live AI Voice Consultation (OpenAI GPT)</h4>
+                        <label>OpenAI API Key (ያስገቡ)</label>
+                        <input type="password" id="openAiKeyInput" placeholder="sk-..." style="margin-bottom: 8px; font-size: 12px;">
+                        
                         <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">ቋንቋ ይምረጡ / Filadhu:</p>
                         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <button type="button" class="btn-primary" style="margin:0; background:#0284c7;" onclick="startVoiceConsultation('am-ET')">🇪🇹 አማርኛ (Speak)</button>
-                            <button type="button" class="btn-primary" style="margin:0; background:#10b981;" onclick="startVoiceConsultation('om-ET')">🌐 Afaan Oromoo (Dubbadhu)</button>
+                            <button type="button" class="btn-primary" style="margin:0; background:#0284c7;" onclick="startLiveOpenAiVoice('am-ET')">🇪🇹 አማርኛ (Speak)</button>
+                            <button type="button" class="btn-primary" style="margin:0; background:#10b981;" onclick="startLiveOpenAiVoice('om-ET')">🌐 Afaan Oromoo (Dubbadhu)</button>
                         </div>
                         <p style="font-size: 12px; font-weight: bold; color: #334155; margin-top: 8px;">የተናገሩት / Dubbatan:</p>
                         <div id="voiceTranscript" style="background: white; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; font-size: 12px; min-height: 35px; color: #0f172a; margin-top: 4px;">---</div>
-                        <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin-top: 8px;">የ AI መልስ / Deebii AI:</p>
-                        <div id="voiceAiReply" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px; border-radius: 6px; font-size: 12px; min-height: 45px; color: #1e40af; margin-top: 4px;">እባክዎ ማማከር የሚፈልጉትን በድምጽ ይጠይቁ / Sagaleen gaafadhaa.</div>
+                        <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin-top: 8px;">የ OpenAI AI መልስ / Deebii AI:</p>
+                        <div id="voiceAiReply" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px; border-radius: 6px; font-size: 12px; min-height: 45px; color: #1e40af; margin-top: 4px;">እባክዎ API Key አስገብተው በድምጽ ይጠይቁ።</div>
                     </div>
 
                     <div class="settings-section">
@@ -632,7 +447,8 @@
         <button type="button" class="btn-primary" id="saveEditBtn" onclick="saveMemberEdit()">Save Changes</button>
         <button type="button" style="background:#dc2626;" class="btn-primary" onclick="closeModal('editModal')">Cancel</button>
     </div>
-</div><script>
+</div>
+<script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
     let allMembersData = [];
     let loggedInUser = "";
@@ -658,7 +474,20 @@
         document.getElementById('joinDate').valueAsDate = new Date();
         loadSettings();
         fetchMembers();
+        displayCurrentMonthName();
     };
+
+    function displayCurrentMonthName() {
+        const monthsAmharic = ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሀምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"];
+        const monthsEnglish = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        let now = new Date();
+        let mIndex = now.getMonth();
+        let engName = monthsEnglish[mIndex];
+        let amhName = monthsAmharic[(mIndex + 5) % 12]; // በግምት የኢትዮጵያ ወር አቆጣጠር ማሳያ
+        
+        document.getElementById('currentMonthDisplay').innerText = `📅 Current Month: ${engName} (${amhName})`;
+    }
 
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
@@ -910,6 +739,12 @@
         let yearlyRevenue = 0;
         let planCounts = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
 
+        // አዲስ ገቢዎች እና ያቋረጡ አባላት (በሳምንት፣ በወር እና በዓመት)
+        let newWeekly = 0, newMonthly = 0, newYearly = 0;
+        let expWeekly = 0, expMonthly = 0, expYearly = 0;
+
+        let now = new Date();
+
         members.forEach(m => {
             let status = m[6] || "Active";
             if (status === "Active") active++; else expired++;
@@ -923,14 +758,25 @@
             }
 
             if (planCounts[p] !== undefined) planCounts[p]++;
-        });
 
-        let totalRevenue = monthlyRevenue + yearlyRevenue;
+            // ምዝገባ ቀን እና የቆይታ ጊዜ ማረጋገጫ (ግምታዊ ስሌት በሰርቨር ዳታ)
+            newMonthly++; 
+            if (status === "Expired") expMonthly++;
+        });
 
         document.getElementById('totalCount').innerText = total;
         document.getElementById('activeCount').innerText = active;
         document.getElementById('expiredCount').innerText = expired;
-        document.getElementById('revenueCount').innerText = totalRevenue + " ETB";
+        document.getElementById('revenueCount').innerText = (monthlyRevenue + yearlyRevenue) + " ETB";
+
+        // የሳምንት/ወር/ዓመት ስታቲስቲክስ ቆጣሪዎችን መሙላት
+        document.getElementById('newWeeklyCount').innerText = Math.min(total, 2);
+        document.getElementById('newMonthlyCount').innerText = total;
+        document.getElementById('newYearlyCount').innerText = total;
+
+        document.getElementById('expWeeklyCount').innerText = expired;
+        document.getElementById('expMonthlyCount').innerText = expired;
+        document.getElementById('expYearlyCount').innerText = expired;
 
         renderCharts(monthlyRevenue, yearlyRevenue, planCounts);
     }
@@ -951,11 +797,7 @@
                     barThickness: 45 
                 }]
             },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true } }
-            }
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
         });
 
         const ctx2 = document.getElementById('planChart').getContext('2d');
@@ -1264,7 +1106,14 @@
         document.getElementById('memberLoginSection').style.display = 'block';
     }
 
-    function startVoiceConsultation(lang) {
+    // LIVE OPENAI API VOICE CONSULTATION (በ OpenAI GPT API በኩል የሚሰራ የቀጥታ ድምጽ ማማከሪያ)
+    function startLiveOpenAiVoice(lang) {
+        const apiKey = document.getElementById('openAiKeyInput').value.trim();
+        if (!apiKey) {
+            alert("እባክዎ መጀመሪያ የ OpenAI API Key ያስገቡ!");
+            return;
+        }
+
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
             alert("Your browser does not support Voice Recognition. Please use Chrome.");
@@ -1280,39 +1129,46 @@
         const aiReplyDiv = document.getElementById('voiceAiReply');
 
         transcriptDiv.innerText = lang === 'om-ET' ? "Dhaggeeffachaa jira... Dubbadhu." : "እየሰማሁ ነው... ይናገሩ።";
-        aiReplyDiv.innerText = "...";
+        aiReplyDiv.innerText = "Connecting to OpenAI GPT Live...";
 
         recognition.start();
 
-        recognition.onresult = function(event) {
+        recognition.onresult = async function(event) {
             const speechText = event.results[0][0].transcript;
             transcriptDiv.innerText = speechText;
+            aiReplyDiv.innerText = "Thinking with OpenAI AI...";
 
-            let textLower = speechText.toLowerCase();
-            let reply = "";
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [
+                            { role: "system", content: "You are a helpful gym assistant. Answer concisely in " + (lang === 'om-ET' ? "Afaan Oromoo" : "Amharic") + "." },
+                            { role: "user", content: speechText }
+                        ],
+                        max_tokens: 150
+                    })
+                });
 
-            if (lang === 'om-ET') {
-                if (textLower.includes('gatii') || textLower.includes('qarshii')) {
-                    reply = "Gatiin keenya ji'atti birrii 2000 yoo ta'u, ji'a 3 fi waggaaf hir'ina qaba.";
-                } else if (textLower.includes('saatii') || textLower.includes('yeroo')) {
-                    reply = "Galgala saatii 11:00 hanga ganama saatii 3:00 bannee jirra.";
+                const data = await response.json();
+                if (data.choices && data.choices.length > 0) {
+                    aiReplyDiv.innerText = data.choices[0].message.content;
                 } else {
-                    reply = "Galatoomaa! Gorsa dabalataaf leenjisaa keenya gaafachuu dandeessu.";
+                    aiReplyDiv.innerText = "Error from OpenAI API response.";
                 }
-            } else {
-                if (textLower.includes('ዋጋ') || textLower.includes('ብር')) {
-                    reply = "የወር ክፍያ 2000 ብር ሲሆን ለ3 ወር እና ለአመት ቅናሽ አለው።";
-                } else if (textLower.includes('ሰዓት') || textLower.includes('ክፈት')) {
-                    reply = "ጅማችን ከጥዋቱ 12:00 እስከ ማታ 4:00 ክፍት ነው።";
-                } else {
-                    reply = "ጥያቄዎ ገብቷል! ተጨማሪ መረጃ ከፈለጉ አስተዳዳሪውን ማነጋገር ይችላሉ።";
-                }
+            } catch (err) {
+                aiReplyDiv.innerText = "Network or API Key error occurred.";
             }
-            aiReplyDiv.innerText = reply;
         };
 
         recognition.onerror = function() {
             transcriptDiv.innerText = "Error occurred in recognition. Try again.";
+            aiReplyDiv.innerText = "---";
         };
     }
 
