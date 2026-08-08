@@ -428,6 +428,42 @@
         });
     }
 
+    function startScanner() {
+        if (html5QrcodeScanner) { html5QrcodeScanner.clear(); }
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render((decodedText) => {
+            verifyMember(decodedText);
+            html5QrcodeScanner.clear();
+        });
+    }
+
+    function verifyMember(id) {
+        const resDiv = document.getElementById('attendanceResult');
+        resDiv.style.display = 'block';
+        const member = allMembersData.find(r => r[0] && r[0].toString().trim().toLowerCase() === id.toString().trim().toLowerCase());
+
+        if (member) {
+            const status = member[6] || "Active";
+            const isExpired = status === "Expired";
+            resDiv.style.backgroundColor = isExpired ? "#fee2e2" : "#dcfce7";
+            resDiv.style.color = isExpired ? "#991b1b" : "#166534";
+            resDiv.innerHTML = `<strong>${member[1]}</strong><br>Status: ${status}`;
+
+            const now = new Date();
+            const timeStr = toEthiopianDate(now.toISOString().split('T')[0]) + " " + now.toLocaleTimeString();
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: "attendance", memberId: member[0], fullName: member[1], scanTime: timeStr, status: status })
+            });
+        } else {
+            resDiv.style.backgroundColor = "#fee2e2";
+            resDiv.style.color = "#991b1b";
+            resDiv.innerText = "Member ID Not Found!";
+        }
+    }
+
     function openReceiptModal(id, name, plan, amount, expiry) {
         document.getElementById('recId').innerText = id;
         document.getElementById('recName').innerText = name;
