@@ -456,7 +456,6 @@
     let revenueChartInstance = null;
     let planChartInstance = null;
     let showOnlyUnpaid = false;
-    let currentPortalMember = null;
 
     let systemConfig = {
         gymName: "FITNESS GYM CLUB",
@@ -1098,48 +1097,9 @@
         a.click();
     }
 
-    function loginMemberPortal() {
-        const idInput = document.getElementById('portalMemberId').value.trim().toLowerCase();
-        const phoneInput = document.getElementById('portalPhone').value.trim();
-        const err = document.getElementById('portalErr');
-
-        if (!idInput || !phoneInput) {
-            err.innerText = "Please enter both Member ID and Phone Number!";
-            err.style.display = "block";
-            return;
-        }
-
-        let member = allMembersData.find(m => 
-            String(m[0]).trim().toLowerCase() === idInput && 
-            String(m[2]).trim().includes(phoneInput)
-        );
-
-        if (member) {
-            currentPortalMember = member;
-            err.style.display = "none";
-            document.getElementById('memberLoginSection').style.display = 'none';
-            document.getElementById('memberDashboardSection').style.display = 'block';
-
-            document.getElementById('portalWelcomeName').innerText = "Welcome, " + member[1] + "!";
-            document.getElementById('portalPlanInfo').innerText = "Plan: " + (member[3] || "Monthly");
-            document.getElementById('portalExpiryInfo').innerText = member[5] || "Active";
-            generateWorkoutTip();
-        } else {
-            err.innerText = "Member ID or Phone Number not found!";
-            err.style.display = "block";
-        }
-    }
-
-    function logoutMemberPortal() {
-        currentPortalMember = null;
-        document.getElementById('portalMemberId').value = "";
-        document.getElementById('portalPhone').value = "";
-        document.getElementById('memberDashboardSection').style.display = 'none';
-        document.getElementById('memberLoginSection').style.display = 'block';
-    }
-
-    // Google Gemini AI Voice Integration
+    // Google Gemini AI Voice Integration for Professional Gym Assistant
 function startLiveOpenAiVoice(lang) {
+        // ቁልፉን ከኮዱ ውስጥ በቀጥታ ከማስቀመጥ ፋንታ በገጹ ላይ ካለው ማስገቢያ ሳጥን (Input) ይወስዳል
         const apiKey = document.getElementById('openAiKeyInput').value.trim();
         if (!apiKey) {
             alert("እባክዎ መጀመሪያ የ Gemini API Key ያስገቡ!");
@@ -1161,7 +1121,7 @@ function startLiveOpenAiVoice(lang) {
         const aiReplyDiv = document.getElementById('voiceAiReply');
 
         transcriptDiv.innerText = lang === 'om-ET' ? "Dhaggeeffachaa jira... Dubbadhu." : "እየሰማሁ ነው... ይናገሩ።";
-        aiReplyDiv.innerText = "Connecting to Gemini AI...";
+        aiReplyDiv.innerText = "Connecting to Gemini AI Consultant...";
 
         recognition.start();
 
@@ -1171,13 +1131,12 @@ function startLiveOpenAiVoice(lang) {
             aiReplyDiv.innerText = "Thinking with Gemini AI...";
 
             try {
-                // v1 ፋንታ v1beta በመጠቀም ጥያቄውን መላክ
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: "You are a helpful gym assistant. Answer concisely in " + (lang === 'om-ET' ? "Afaan Oromoo" : "Amharic") + ": " + speechText }]
+                            parts: [{ text: "You are a professional gym and fitness expert assistant. Answer professionally and concisely in " + (lang === 'om-ET' ? "Afaan Oromoo" : "Amharic") + ": " + speechText }]
                         }]
                     })
                 });
@@ -1212,43 +1171,5 @@ function startLiveOpenAiVoice(lang) {
             tipText = "💡 <strong>Smart AI Tip:</strong> Combine moderate resistance training with stretching for stamina.";
         }
         tipBox.innerHTML = tipText;
-    }
-
-    function bookSession() {
-        const session = document.getElementById('bookingSession').value;
-        const res = document.getElementById('bookingResult');
-        if (!currentPortalMember) return;
-        res.style.display = 'block';
-        res.style.color = '#166534';
-        res.innerText = `✅ Successfully booked ${session}!`;
-
-        fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: "bookSession",
-                memberId: currentPortalMember[0],
-                memberName: currentPortalMember[1],
-                sessionName: session
-            })
-        });
-    }
-
-    function saveWorkoutLog() {
-        const notes = document.getElementById('workoutNotes').value.trim();
-        if (!notes) { alert("Please enter your exercise notes!"); return; }
-        fetch(WEB_APP_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: "saveWorkout",
-                memberId: currentPortalMember[0],
-                memberName: currentPortalMember[1],
-                workout: notes
-            })
-        }).then(() => {
-            alert("Workout log saved successfully!");
-            document.getElementById('workoutNotes').value = "";
-        });
     }
 </script>
