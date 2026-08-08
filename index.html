@@ -3,47 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management System v3.5</title>
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.0</title>
     
-    <!-- External Enterprise CDNs (Chart.js, QR Code, HTML5-QRCode, Google Fonts) -->
+    <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* ==========================================================================
-           1. ENTERPRISE DESIGN SYSTEM & CSS CUSTOM PROPERTIES (FAIDATECH BRANDING)
-           ========================================================================== */
         :root {
-            --faida-primary: #0F385A;       /* Deep Enterprise Navy Blue */
-            --faida-accent: #3C8356;        /* Vibrant Growth Green */
-            --faida-primary-hover: #164e7a;
-            --faida-accent-hover: #2d6441;
-            
+            --faida-primary: #0F385A;
+            --faida-accent: #3C8356;
             --bg-canvas: #F4F7FE;
             --surface-white: #FFFFFF;
             --surface-card: #FFFFFF;
             --text-main: #1B2559;
             --text-muted: #707EAE;
             --border-light: #E0E5F2;
-            
             --success-color: #01B574;
             --danger-color: #EE5D50;
             --warning-color: #FFB547;
             --info-color: #4318FF;
-            
             --sidebar-width: 290px;
             --topbar-height: 85px;
             --radius-smooth: 20px;
             --radius-element: 12px;
-            
             --shadow-enterprise: 0px 18px 40px rgba(112, 144, 176, 0.12);
-            --shadow-subtle: 0px 4px 12px rgba(0, 0, 0, 0.03);
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Dark Mode Overrides for Super-App Flexibility */
         body.dark-mode {
             --bg-canvas: #0B1437;
             --surface-white: #111C44;
@@ -57,650 +46,577 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-canvas); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: var(--transition-smooth); }
 
-        /* ==========================================================================
-           2. ADVANCED LOGIN OVERLAY SCREEN
-           ========================================================================== */
+        /* Login Overlay */
         #enterpriseLoginOverlay {
             position: fixed; inset: 0; background: linear-gradient(135deg, var(--faida-primary), #051c30);
             display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(10px);
         }
         .login-glass-card {
-            background: rgba(255, 255, 255, 0.95); padding: 45px; border-radius: 30px; width: 420px; max-width: 90%;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center; border: 1px solid rgba(255,255,255,0.2);
+            background: var(--surface-card); padding: 45px; border-radius: 30px; width: 420px; max-width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--border-light);
         }
-        .login-glass-card h2 { color: var(--faida-primary); font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+        .login-glass-card h2 { color: var(--text-main); font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
         .login-glass-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
-        .login-input-group { text-align: left; margin-bottom: 18px; }
-        .login-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
-        .login-input-group input {
+        .input-group { text-align: left; margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .input-group input, .input-group select {
             width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid var(--border-light);
             font-size: 1rem; outline: none; transition: var(--transition-smooth); background: var(--bg-canvas); color: var(--text-main);
         }
-        .login-input-group input:focus { border-color: var(--faida-accent); background: white; }
-        .login-submit-btn {
+        .input-group input:focus { border-color: var(--faida-accent); background: var(--surface-white); }
+        .btn-main {
             width: 100%; padding: 14px; background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
             color: white; border: none; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;
             box-shadow: 0 10px 20px rgba(15, 56, 90, 0.2); transition: var(--transition-smooth); margin-top: 10px;
         }
-        .login-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.3); }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.3); }
 
-        /* ==========================================================================
-           3. SIDEBAR NAVIGATION ARCHITECTURE
-           ========================================================================== */
+        /* Sidebar Layout (Left Side) */
         .enterprise-sidebar {
             width: var(--sidebar-width); background: var(--surface-white); border-right: 1px solid var(--border-light);
             display: flex; flex-direction: column; justify-content: space-between; z-index: 100; transition: var(--transition-smooth);
         }
-        .sidebar-brand-wrapper { padding: 30px 25px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-light); }
-        .sidebar-brand-logo { height: 45px; width: auto; object-fit: contain; }
-        .sidebar-brand-text h2 { font-size: 1.15rem; font-weight: 800; color: var(--faida-primary); letter-spacing: -0.5px; }
-        .sidebar-brand-text span { font-size: 0.7rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-brand-wrapper { padding: 25px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-light); }
+        .sidebar-brand-logo { height: 42px; width: auto; object-fit: contain; }
+        .sidebar-brand-text h2 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .sidebar-brand-text span { font-size: 0.7rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; }
 
         .sidebar-menu-scroll { flex: 1; padding: 20px 15px; overflow-y: auto; }
-        .menu-category-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin: 15px 12px 10px 12px; }
+        .menu-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin: 15px 12px 10px 12px; }
         
-        .nav-item-btn {
+        .nav-btn {
             width: 100%; padding: 14px 18px; background: transparent; border: none; border-radius: var(--radius-element);
             color: var(--text-muted); text-align: left; font-size: 0.95rem; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; gap: 14px; transition: var(--transition-smooth); margin-bottom: 6px;
         }
-        .nav-item-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
-        .nav-item-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 10px 20px rgba(15,56,90,0.15); }
+        .nav-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
+        .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 10px 20px rgba(15,56,90,0.15); }
 
-        /* Powered By FaidATech Footer Badge */
+        /* Powered By Footer */
         .faida-powered-footer {
-            margin: 15px; padding: 18px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.04), rgba(60, 131, 86, 0.08));
+            margin: 15px; padding: 16px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.04), rgba(60, 131, 86, 0.08));
             border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.15); text-align: center;
         }
         .faida-powered-footer span { font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
         .faida-footer-logo { height: 26px; width: auto; object-fit: contain; }
 
-        /* ==========================================================================
-           4. WORKSPACE & TOP NAVIGATION HEADER
-           ========================================================================== */
+        /* Workspace (Right Side) */
         .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); }
-        
-        .enterprise-topbar {
+        .topbar {
             height: var(--topbar-height); background: var(--surface-white); padding: 0 35px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);
-            box-shadow: var(--shadow-subtle); z-index: 99;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99;
         }
-        .topbar-title-block h1 { font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
-        .topbar-title-block p { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
-
-        .topbar-actions { display: flex; align-items: center; gap: 15px; }
-        .topbar-badge-pill {
+        .topbar h1 { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
+        .topbar p { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+        .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .badge-pill {
             background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 9px 18px; border-radius: 30px;
-            font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(15,56,90,0.1);
+            font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(15,56,90,0.1);
         }
-        .theme-toggle-btn, .logout-action-btn {
+        .top-action-btn {
             background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
             width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
             cursor: pointer; transition: var(--transition-smooth); font-size: 1rem;
         }
-        .theme-toggle-btn:hover, .logout-action-btn:hover { background: var(--faida-primary); color: white; border-color: var(--faida-primary); }
+        .top-action-btn:hover { background: var(--faida-primary); color: white; border-color: var(--faida-primary); }
 
-        /* ==========================================================================
-           5. CONTENT VIEW AREA & ENTERPRISE CARDS
-           ========================================================================== */
-        .enterprise-content-scroll { flex: 1; padding: 35px; overflow-y: auto; }
-        .app-view-section { display: none; }
-        .app-view-section.active { display: block; animation: fadeInView 0.4s ease forwards; }
+        /* Content Area */
+        .content-scroll { flex: 1; padding: 35px; overflow-y: auto; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeInView {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .metric-box {
+            background: var(--surface-card); padding: 22px; border-radius: var(--radius-smooth);
+            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light);
         }
+        .metric-box span { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .metric-box h3 { font-size: 1.7rem; font-weight: 800; color: var(--text-main); margin-top: 6px; }
 
-        .metrics-grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 30px; }
-        .metric-card-box {
-            background: var(--surface-card); padding: 25px; border-radius: var(--radius-smooth);
-            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between;
-        }
-        .metric-info span { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .metric-info h3 { font-size: 2rem; font-weight: 800; color: var(--text-main); margin-top: 6px; letter-spacing: -1px; }
-        .metric-icon-box {
-            width: 55px; height: 55px; border-radius: 16px; background: rgba(15, 56, 90, 0.08); color: var(--faida-primary);
-            display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 700;
-        }
-
-        .glass-panel-box {
+        .glass-card {
             background: var(--surface-card); padding: 30px; border-radius: var(--radius-smooth);
-            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 30px;
+            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 25px;
         }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th { padding: 14px 16px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); }
+        td { padding: 15px 16px; font-size: 0.9rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
     </style>
 </head>
 <body class="dark-mode">
 
-    <!-- Enterprise Login Overlay -->
+    <!-- Login Overlay -->
     <div id="enterpriseLoginOverlay">
         <div class="login-glass-card">
-            <h2>FaidATech Enterprise</h2>
-            <p>Gym Management Super-App Authentication</p>
-            <div class="login-input-group">
+            <h2 id="loginModalTitle">FaidATech Enterprise</h2>
+            <p>Gym Management Super-App Portal</p>
+            <div class="input-group">
                 <label>Username / Admin ID</label>
-                <input type="text" id="authUsernameInput" value="admin" placeholder="Enter username">
+                <input type="text" id="authUserInput" value="admin">
             </div>
-            <div class="login-input-group">
+            <div class="input-group">
                 <label>Secure Password</label>
-                <input type="password" id="authPasswordInput" value="admin123" placeholder="Enter password">
+                <input type="password" id="authPassInput" value="admin123">
             </div>
-            <button type="button" class="login-submit-btn" onclick="executeEnterpriseLogin()">Authorize Access</button>
-            <p id="authErrorMsg" style="color: var(--danger-color); font-size: 0.85rem; font-weight: 700; margin-top: 15px; display: none;"></p>
+            <button type="button" class="btn-main" onclick="executeLogin()">Authorize Access</button>
+            <p id="loginError" style="color:var(--danger-color); font-size:0.85rem; font-weight:700; margin-top:15px; display:none;"></p>
         </div>
     </div>
 
-    <!-- Main Sidebar Navigation -->
+    <!-- Sidebar (Left) -->
     <aside class="enterprise-sidebar">
         <div>
             <div class="sidebar-brand-wrapper">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
+                <img id="sidebarLogoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
                 <div class="sidebar-brand-text">
-                    <h2 id="sidebarGymNameTitle">GUDDA LIFE</h2>
-                    <span>Enterprise System</span>
+                    <h2 id="sidebarGymName">GUDDA LIFE</h2>
+                    <span>Enterprise v4.0</span>
                 </div>
             </div>
             <div class="sidebar-menu-scroll">
-                <div class="menu-category-title">Core Management</div>
-                <button class="nav-item-btn active" onclick="switchAppView('dashboardView', event)">📊 Executive Dashboard</button>
-                <button class="nav-item-btn" onclick="switchAppView('registerView', event)">➕ Member Registration</button>
-                <button class="nav-item-btn" onclick="switchAppView('membersDirectoryView', event)">👥 Directory & Members</button>
+                <div class="menu-title">Core Management</div>
+                <button class="nav-btn active" onclick="switchView('dashboardView', event)">📊 Executive Dashboard</button>
+                <button class="nav-btn" onclick="switchView('registerView', event)">➕ Member Registration</button>
+                <button class="nav-btn" onclick="switchView('membersView', event)">👥 Members Directory</button>
                 
-                <div class="menu-category-title">Operations & Access</div>
-                <button class="nav-item-btn" onclick="switchAppView('scannerView', event)">📷 QR Access Scanner</button>
-                <button class="nav-item-btn" onclick="switchAppView('attendanceLogsView', event)">📋 Attendance Logs</button>
+                <div class="menu-title">Operations & Access</div>
+                <button class="nav-btn" onclick="switchView('scannerView', event)">📷 QR Access Scanner</button>
+                <button class="nav-btn" onclick="switchView('logsView', event)">📋 Attendance Logs</button>
                 
-                <div class="menu-category-title">System Controls</div>
-                <button class="nav-item-btn" onclick="switchAppView('settingsView', event)">⚙️ Enterprise Settings</button>
+                <div class="menu-title">System Controls</div>
+                <button class="nav-btn" onclick="switchView('settingsView', event)">⚙️ Enterprise Settings</button>
             </div>
         </div>
 
-        <!-- FaidATech Branding Footer Badge -->
+        <!-- Powered By FaidATech Footer (Bottom of Menu) -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="faida-footer-logo" alt="FaidATech">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" id="faidaBrandLogoFooter" class="faida-footer-logo" alt="FaidATech">
         </div>
     </aside>
 
-    <!-- Workspace View -->
+    <!-- Workspace (Right) -->
     <div class="enterprise-workspace">
-        <header class="enterprise-topbar">
-            <div class="topbar-title-block">
-                <h1 id="topbarHeaderTitle">Executive Dashboard Analytics</h1>
-                <p>Real-time telemetry and member lifecycle intelligence</p>
+        <header class="topbar">
+            <div>
+                <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
+                <p>Real-time membership lifecycle and financial telemetry</p>
             </div>
-            <div class="topbar-actions">
-                <div class="topbar-badge-pill" id="headerEthDateContainer">📅 Loading Calendar...</div>
-                <button class="theme-toggle-btn" onclick="toggleColorTheme()" title="Toggle Theme">🌓</button>
-                <button class="logout-action-btn" onclick="executeSystemLogout()" title="Secure Logout">🚪</button>
+            <div class="topbar-right">
+                <div class="badge-pill" id="topbarDateBadge">📅 Loading Calendar...</div>
+                <button class="top-action-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+                <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
             </div>
         </header>
 
-        <div class="enterprise-content-scroll">
-            <!-- PART 1 COMPLETION MARKER & CONTINUATION READY -->
-            <!-- ==========================================================================
-               6. VIEW 1: EXECUTIVE DASHBOARD (CHART.JS ANALYTICS)
-               ========================================================================== -->
-            <div id="dashboardView" class="app-view-section active">
-                <div class="metrics-grid-container">
-                    <div class="metric-card-box">
-                        <div class="metric-info"><span>Total Members</span><h3 id="statTotalMembers">0</h3></div>
-                        <div class="metric-icon-box">👥</div>
+        <div class="content-scroll">
+            <!-- 1. DASHBOARD VIEW (Enhanced with Weekly, Monthly, Yearly Signups & Detailed Charts) -->
+            <div id="dashboardView" class="view-section active">
+                <div class="metrics-grid">
+                    <div class="metric-box"><span>Total Members</span><h3 id="statTotal">0</h3></div>
+                    <div class="metric-box"><span>Active Subscriptions</span><h3 id="statActive" style="color:var(--success-color);">0</h3></div>
+                    <div class="metric-box"><span>Expired Subscriptions</span><h3 id="statExpired" style="color:var(--danger-color);">0</h3></div>
+                    <div class="metric-box"><span>Total Revenue</span><h3 id="statRevenue" style="color:var(--faida-accent);">0 ETB</h3></div>
+                </div>
+
+                <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 25px;">
+                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(67, 24, 255, 0.05), rgba(67, 24, 255, 0.02));">
+                        <span>New Signups (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3>
                     </div>
-                    <div class="metric-card-box">
-                        <div class="metric-info"><span>Active Subscriptions</span><h3 id="statActiveMembers" style="color:var(--success-color);">0</h3></div>
-                        <div class="metric-icon-box">✅</div>
+                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(1, 181, 116, 0.05), rgba(1, 181, 116, 0.02));">
+                        <span>New Signups (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3>
                     </div>
-                    <div class="metric-card-box">
-                        <div class="metric-info"><span>Expired Subscriptions</span><h3 id="statExpiredMembers" style="color:var(--danger-color);">0</h3></div>
-                        <div class="metric-icon-box">⚠️</div>
-                    </div>
-                    <div class="metric-card-box">
-                        <div class="metric-info"><span>Cumulative Revenue</span><h3 id="statTotalRevenue" style="color:var(--faida-accent);">0 ETB</h3></div>
-                        <div class="metric-icon-box">💰</div>
+                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(255, 181, 71, 0.05), rgba(255, 181, 71, 0.02));">
+                        <span>New Signups (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3>
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                    <div class="glass-panel-box" style="height: 400px;">
-                        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">Monthly vs Yearly Revenue Telemetry</h3>
-                        <div style="position: relative; height: 310px; width: 100%;"><canvas id="enterpriseRevenueChart"></canvas></div>
+                    <div class="glass-card" style="height: 400px;">
+                        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 20px;">Revenue Telemetry (Monthly vs Yearly)</h3>
+                        <div style="position:relative; height:310px;"><canvas id="chartRevenue"></canvas></div>
                     </div>
-                    <div class="glass-panel-box" style="height: 400px;">
-                        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">Subscription Distribution</h3>
-                        <div style="position: relative; height: 310px; width: 100%;"><canvas id="enterprisePlanChart"></canvas></div>
+                    <div class="glass-card" style="height: 400px;">
+                        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 20px;">Subscription Plan Breakdown</h3>
+                        <div style="position:relative; height:310px;"><canvas id="chartPlans"></canvas></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ==========================================================================
-               7. VIEW 2: ADVANCED MEMBER REGISTRATION FORM
-               ========================================================================== -->
-            <div id="registerView" class="app-view-section">
-                <div class="glass-panel-box" style="max-width: 850px; margin: 0 auto;">
-                    <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">New Member Onboarding Portal</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Register a new athlete, configure automated billing, and generate secure QR identification.</p>
+            <!-- 2. MEMBER REGISTRATION VIEW -->
+            <div id="registerView" class="view-section">
+                <div class="glass-card" style="max-width: 850px; margin: 0 auto;">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">New Member Onboarding Portal</h2>
+                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Register athlete profile, compute automated pricing, and print receipt.</p>
                     
-                    <form id="enterpriseMemberForm" onsubmit="event.preventDefault(); submitEnterpriseRegistration();">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 25px;">
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Assigned Member ID</label>
-                                <input type="text" id="regFormMemberId" readonly style="background: rgba(0,0,0,0.04); font-weight: 700;">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Full Legal Name</label>
-                                <input type="text" id="regFormFullName" required placeholder="e.g. Abebe Kebede">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Contact Phone Number</label>
-                                <input type="tel" id="regFormPhone" required placeholder="0911000000">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Athlete Gender</label>
-                                <select id="regFormGender" onchange="triggerAutoPricingCalculation()" style="width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-size: 1rem; font-weight: 600;">
+                    <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Abebe Kebede"></div>
+                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0911000000"></div>
+                            <div class="input-group">
+                                <label>Gender</label>
+                                <select id="regGender" onchange="calcPrice()">
                                     <option value="Male">Male (ወንድ)</option>
                                     <option value="Female">Female (ሴት)</option>
                                 </select>
                             </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
+                            <div class="input-group">
                                 <label>Membership Plan</label>
-                                <select id="regFormPlan" onchange="triggerAutoPricingCalculation()" style="width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-size: 1rem; font-weight: 600;">
-                                    <option value="Monthly">Monthly Subscription (1 Month)</option>
-                                    <option value="3 Months">Quarterly Subscription (3 Months)</option>
+                                <select id="regPlan" onchange="calcPrice()">
+                                    <option value="Monthly">Monthly Subscription</option>
+                                    <option value="3 Months">Quarterly Subscription (3M)</option>
                                     <option value="Yearly">Annual Subscription (1 Year)</option>
                                 </select>
                             </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Amount Paid (ETB)</label>
-                                <input type="number" id="regFormAmountPaid" required placeholder="0.00">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Join Date (Gregorian)</label>
-                                <input type="date" id="regFormGregDate" onchange="computeEthiopianCalendarDates()" style="width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-size: 1rem; font-weight: 600;">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Join Date (Ethiopian Calendar)</label>
-                                <input type="text" id="regFormEthJoin" readonly style="background: rgba(0,0,0,0.04);">
-                            </div>
-                            <div class="login-input-group" style="margin-bottom:0;">
-                                <label>Expiry Date (Ethiopian Calendar)</label>
-                                <input type="text" id="regFormEthExpiry" readonly style="background: rgba(0,0,0,0.04);">
-                            </div>
+                            <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
+                            <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
+                            <div class="input-group"><label>Join Date (Ethiopian Calendar)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Expiry Date (Ethiopian Calendar)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
                         </div>
-                        <button type="submit" class="login-submit-btn" id="regFormSubmitBtn" style="padding: 16px; font-size: 1.05rem;">Complete Registration & Print Receipt</button>
+                        <button type="submit" class="btn-main" id="regSubmitBtn" style="padding:16px;">Complete Registration & Generate Receipt</button>
                     </form>
                 </div>
             </div>
-            <!-- ==========================================================================
-               8. VIEW 3: MEMBERS DIRECTORY & MANAGEMENT TABLE
-               ========================================================================== -->
-            <div id="membersDirectoryView" class="app-view-section">
-                <div class="glass-panel-box">
+
+            <!-- 3. MEMBERS DIRECTORY VIEW -->
+            <div id="membersView" class="view-section">
+                <div class="glass-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
                         <div>
-                            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);">Registered Members Directory</h2>
-                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Search, filter, renew subscriptions, or manage athlete records.</p>
+                            <h2 style="font-size: 1.3rem; font-weight: 800;">Registered Members Directory</h2>
+                            <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Search, filter, or manage athlete database.</p>
                         </div>
-                        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                            <input type="text" id="enterpriseSearchInput" placeholder="Search by name, ID or phone..." onkeyup="executeDirectorySearch()" style="padding: 12px 18px; border-radius: 12px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); width: 280px; outline: none; font-size: 0.9rem;">
-                            <button type="button" class="login-submit-btn" style="width: auto; padding: 12px 20px; margin-top:0;" onclick="exportDirectoryToCSV()">Export CSV</button>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <input type="text" id="searchInput" placeholder="Search name, ID, phone..." onkeyup="filterDirectory()" style="padding: 12px 18px; border-radius: 12px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); width: 280px; outline:none;">
+                            <button type="button" class="btn-main" style="width:auto; padding:12px 20px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
                         </div>
                     </div>
-                    
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                        <table>
                             <thead>
-                                <tr style="background: rgba(15, 56, 90, 0.04);">
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Member ID</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Full Name</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Phone Number</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Plan</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Paid (ETB)</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Expiry Date</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Status</th>
-                                    <th style="padding: 15px; text-align: center; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Actions</th>
-                                </tr>
+                                <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Plan</th><th>Paid</th><th>Expiry (EC)</th><th>Status</th><th style="text-align:center;">Actions</th></tr>
                             </thead>
-                            <tbody id="enterpriseDirectoryTableBody">
-                                <!-- Dynamic Rows Injected via JS -->
-                            </tbody>
+                            <tbody id="directoryTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ==========================================================================
-               9. VIEW 4: QR CODE ACCESS SCANNER & VERIFICATION
-               ========================================================================== -->
-            <div id="scannerView" class="app-view-section">
-                <div class="glass-panel-box" style="max-width: 650px; margin: 0 auto; text-align: center;">
-                    <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Enterprise QR Access Scanner</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Scan member QR identification cards for automated entry verification.</p>
-                    
-                    <div id="enterpriseQrCameraBox" style="width: 100%; border-radius: 20px; overflow: hidden; border: 2px dashed var(--border-light); background: rgba(0,0,0,0.02); min-height: 300px; display: flex; justify-content: center; align-items: center;"></div>
-                    
-                    <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-                        <button type="button" class="login-submit-btn" style="width: auto; padding: 12px 25px; margin-top:0;" onclick="initializeScannerEngine('environment')">Start Back Camera</button>
-                        <button type="button" class="login-submit-btn" style="width: auto; padding: 12px 25px; margin-top:0; background: var(--danger-color);" onclick="terminateScannerEngine()">Stop Scanner</button>
+            <!-- 4. QR ACCESS SCANNER VIEW -->
+            <div id="scannerView" class="view-section">
+                <div class="glass-card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">Enterprise QR Access Scanner</h2>
+                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Scan athlete QR code for automated entry authorization.</p>
+                    <div id="qrCameraBox" style="width:100%; min-height:280px; border-radius:20px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    <div style="margin-top:25px; display:flex; justify-content:center; gap:15px;">
+                        <button type="button" class="btn-main" style="width:auto; padding:12px 25px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:12px 25px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop Camera</button>
                     </div>
-
-                    <div id="scannerTelemetryAlert" style="margin-top: 25px; padding: 18px; border-radius: 16px; font-weight: 700; display: none; font-size: 1rem; text-align: center;"></div>
+                    <div id="scanAlert" style="margin-top:25px; padding:18px; border-radius:16px; font-weight:700; display:none;"></div>
                 </div>
             </div>
 
-            <!-- ==========================================================================
-               10. VIEW 5: ATTENDANCE LOGS TELEMETRY
-               ========================================================================== -->
-            <div id="attendanceLogsView" class="app-view-section">
-                <div class="glass-panel-box">
+            <!-- 5. ATTENDANCE LOGS VIEW -->
+            <div id="logsView" class="view-section">
+                <div class="glass-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <div>
-                            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);">Daily Attendance Logs History</h2>
-                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Live timestamp telemetry of entry permissions and access statuses.</p>
+                            <h2 style="font-size: 1.3rem; font-weight: 800;">Daily Attendance Logs History</h2>
+                            <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Live timestamp audit trail.</p>
                         </div>
-                        <button type="button" class="login-submit-btn" style="width: auto; padding: 10px 18px; margin-top:0;" onclick="fetchAttendanceLogEntries()">🔄 Refresh Logs</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh Logs</button>
                     </div>
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
-                            <thead>
-                                <tr style="background: rgba(15, 56, 90, 0.04);">
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Member ID</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Full Name</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Scan Timestamp (EC)</th>
-                                    <th style="padding: 15px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Access Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendanceLogsTableBody">
-                                <!-- Dynamic Log Rows -->
-                            </tbody>
+                        <table>
+                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Access Status</th></tr></thead>
+                            <tbody id="logsTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ==========================================================================
-               11. VIEW 6: ENTERPRISE SETTINGS PANEL
-               ========================================================================== -->
-            <div id="settingsView" class="app-view-section">
-                <div class="glass-panel-box" style="max-width: 750px; margin: 0 auto;">
-                    <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Enterprise Configuration Settings</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Modify gym parameters, pricing tiers, and hardware timeout rules.</p>
+            <!-- 6. ENTERPRISE SETTINGS VIEW (Now with Logo & Password Change Options) -->
+            <div id="settingsView" class="view-section">
+                <div class="glass-card" style="max-width: 750px; margin: 0 auto;">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">Enterprise Configuration Settings</h2>
+                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Configure gym parameters, branding logo URL, and security passwords.</p>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
-                        <div class="login-input-group" style="margin-bottom:0;">
-                            <label>Gym Organization Name</label>
-                            <input type="text" id="settingGymNameInput">
-                        </div>
-                        <div class="login-input-group" style="margin-bottom:0;">
-                            <label>Organization Phone Number</label>
-                            <input type="text" id="settingGymPhoneInput">
-                        </div>
-                        <div class="login-input-group" style="margin-bottom:0;">
-                            <label>Male Monthly Fee (ETB)</label>
-                            <input type="number" id="settingMalePriceInput">
-                        </div>
-                        <div class="login-input-group" style="margin-bottom:0;">
-                            <label>Female Monthly Fee (ETB)</label>
-                            <input type="number" id="settingFemalePriceInput">
-                        </div>
-                        <div class="login-input-group" style="margin-bottom:0;">
-                            <label>Duplicate Scan Timeout (Minutes)</label>
-                            <input type="number" id="settingScanTimeoutInput">
-                        </div>
+                        <div class="input-group"><label>Gym Organization Name</label><input type="text" id="setGymName"></div>
+                        <div class="input-group"><label>Organization Phone</label><input type="text" id="setGymPhone"></div>
+                        <div class="input-group"><label>Male Monthly Fee (ETB)</label><input type="number" id="setMalePrice"></div>
+                        <div class="input-group"><label>Female Monthly Fee (ETB)</label><input type="number" id="setFemalePrice"></div>
+                        <div class="input-group"><label>Duplicate Scan Timeout (Minutes)</label><input type="number" id="setScanTimeout"></div>
+                        <div class="input-group"><label>Branding Logo Image URL</label><input type="text" id="setLogoUrl" placeholder="https://... image link"></div>
+                        <div class="input-group"><label>New Admin Password</label><input type="password" id="setNewPassword" placeholder="Leave blank to keep current"></div>
                     </div>
-                    <button type="button" class="login-submit-btn" style="padding: 15px;" onclick="saveEnterpriseSettings()">Save System Configuration</button>
+                    <button type="button" class="btn-main" style="padding:15px;" onclick="saveSettings()">Save System Configuration</button>
                 </div>
             </div>
-            <!-- ==========================================================================
-       12. RECEIPT MODAL DIALOG POPUP
-       ========================================================================== -->
-    <div id="enterpriseReceiptModal" style="position: fixed; inset: 0; background: rgba(11, 20, 55, 0.6); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000;">
-        <div style="background: var(--surface-card); padding: 35px; border-radius: 24px; width: 450px; max-width: 90%; box-shadow: var(--shadow-enterprise); text-align: center; border: 1px solid var(--border-light);">
-            <h3 id="receiptModalGymName" style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);">Enterprise Receipt</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 8px 0 20px 0;">---------------------------------------------------------</p>
-            <div style="text-align: left; font-size: 0.95rem; display: flex; flex-direction: column; gap: 10px; color: var(--text-main); margin-bottom: 25px;">
-                <p><b>Member ID:</b> <span id="recModalId"></span></p>
-                <p><b>Full Name:</b> <span id="recModalName"></span></p>
-                <p><b>Subscription Plan:</b> <span id="recModalPlan"></span></p>
-                <p><b>Amount Paid:</b> <span id="recModalAmount"></span> ETB</p>
-                <p><b>Expiry Date (EC):</b> <span id="recModalExpiry"></span></p>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">---------------------------------------------------------</p>
-            <button type="button" class="login-submit-btn" style="margin-bottom: 12px;" onclick="window.print()">Print Official Receipt</button>
-            <button type="button" class="login-submit-btn" style="background: var(--text-muted);" onclick="closeEnterpriseReceiptModal()">Close Portal</button>
         </div>
     </div>
 
-    <!-- ==========================================================================
-       13. CORE ENTERPRISE JAVASCRIPT LOGIC ENGINE
-       ========================================================================== -->
+    <!-- Receipt Modal -->
+    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.6); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:10000;">
+        <div style="background:var(--surface-card); padding:35px; border-radius:24px; width:450px; max-width:90%; box-shadow:var(--shadow-enterprise); text-align:center; border:1px solid var(--border-light);">
+            <h3 id="recGymName" style="font-size:1.3rem; font-weight:800;">Official Receipt</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:8px 0 20px 0;">---------------------------------------------------------</p>
+            <div style="text-align:left; font-size:0.95rem; display:flex; flex-direction:column; gap:10px; margin-bottom:25px;">
+                <p><b>Member ID:</b> <span id="recId"></span></p>
+                <p><b>Full Name:</b> <span id="recName"></span></p>
+                <p><b>Plan:</b> <span id="recPlan"></span></p>
+                <p><b>Amount Paid:</b> <span id="recAmount"></span> ETB</p>
+                <p><b>Expiry Date (EC):</b> <span id="recExpiry"></span></p>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">---------------------------------------------------------</p>
+            <button type="button" class="btn-main" style="margin-bottom:12px;" onclick="window.print()">Print Official Receipt</button>
+            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('receiptModal').style.display='none'">Close Portal</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Engine -->
     <script>
-        // Google Apps Script Cloud Web App Endpoint
-        const ENTERPRISE_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
+        const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
 
-        let enterpriseMembersCache = [];
-        let html5QrCodeScannerInstance = null;
-        let chartRevenueInstance = null;
-        let chartPlanInstance = null;
+        let membersCache = [];
+        let qrScanner = null;
+        let chartRev = null;
+        let chartPlan = null;
 
-        let systemGlobalSettings = {
+        let systemSettings = {
             gymName: "GUDDA LIFE FITNESS",
             gymPhone: "0911000000",
             malePrice: 2000,
             femalePrice: 1500,
-            scanTimeout: 5
+            scanTimeout: 5,
+            logoUrl: "",
+            adminPass: "admin123"
         };
 
-        let activeScanSessionMap = {};
-        let latestScannedCodeCache = "";
-        let latestScanTimestampMs = 0;
+        let scanCache = {};
+        let lastCode = "";
+        let lastTime = 0;
 
         window.onload = function() {
-            document.getElementById('regFormGregDate').valueAsDate = new Date();
-            renderTopHeaderCalendar();
-            fetchSystemSettingsFromServer();
+            document.getElementById('regGregDate').valueAsDate = new Date();
+            renderCalendarHeader();
+            fetchSettings();
         };
 
-        function executeEnterpriseLogin() {
-            const user = document.getElementById('authUsernameInput').value.trim();
-            const pass = document.getElementById('authPasswordInput').value.trim();
-            if (user === "admin" && pass === "admin123") {
+        function executeLogin() {
+            let u = document.getElementById('authUserInput').value.trim();
+            let p = document.getElementById('authPassInput').value.trim();
+            if (u === "admin" && p === systemSettings.adminPass) {
                 document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-                synchronizeMembersDataset();
+                syncMembers();
             } else {
-                const err = document.getElementById('authErrorMsg');
+                let err = document.getElementById('loginError');
                 err.style.display = 'block';
-                err.innerText = "Invalid credentials. Use admin / admin123";
+                err.innerText = "Invalid credentials. Check password.";
             }
         }
 
-        function executeSystemLogout() {
+        function executeLogout() {
             document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
         }
 
-        function toggleColorTheme() {
+        function toggleTheme() {
             document.body.classList.toggle('dark-mode');
         }
 
-        function renderTopHeaderCalendar() {
-            const ethMonthNames = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-            const engMonthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        function renderCalendarHeader() {
+            const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+            const enMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             let now = new Date();
-            let engMonth = engMonthNames[now.getMonth()];
-            let ethMonth = ethMonthNames[now.getMonth()];
-            document.getElementById('headerEthDateContainer').innerText = `📅 ${engMonth} / ${ethMonth} E.C`;
+            document.getElementById('topbarDateBadge').innerText = `📅 ${enMonths[now.getMonth()]} / ${amMonths[now.getMonth()]} E.C`;
         }
 
-        function switchAppView(sectionId, evt) {
-            document.querySelectorAll('.app-view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-item-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(sectionId).classList.add('active');
+        function switchView(viewId, evt) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
             if (evt) evt.currentTarget.classList.add('active');
 
-            const titleMap = {
+            const titles = {
                 'dashboardView': ['Executive Dashboard Analytics', 'Real-time telemetry and member lifecycle intelligence'],
                 'registerView': ['New Member Onboarding Portal', 'Register athletes and configure automated billing'],
-                'membersDirectoryView': ['Registered Members Directory', 'Search, filter, and manage membership profiles'],
+                'membersView': ['Registered Members Directory', 'Search, filter, and manage membership profiles'],
                 'scannerView': ['Enterprise QR Access Scanner', 'Automated hardware entry validation'],
-                'attendanceLogsView': ['Daily Attendance Logs History', 'Live audit trail of gym entry access'],
-                'settingsView': ['Enterprise Configuration Settings', 'System pricing rules and organizational parameters']
+                'logsView': ['Daily Attendance Logs History', 'Live audit trail of gym entry access'],
+                'settingsView': ['Enterprise Configuration Settings', 'System pricing rules and organization parameters']
             };
-
-            if (titleMap[sectionId]) {
-                document.getElementById('topbarHeaderTitle').innerText = titleMap[sectionId][0];
-            }
-            if (sectionId === 'attendanceLogsView') fetchAttendanceLogEntries();
+            if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId][0];
+            if (viewId === 'logsView') fetchLogs();
         }
 
-        function fetchSystemSettingsFromServer() {
-            fetch(ENTERPRISE_API_ENDPOINT + "?action=getSettings")
+        function fetchSettings() {
+            fetch(API_ENDPOINT + "?action=getSettings")
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    systemGlobalSettings = {
+                    systemSettings = {
                         gymName: data.gymName || "GUDDA LIFE FITNESS",
                         gymPhone: data.gymPhone || "0911000000",
                         malePrice: parseFloat(data.malePrice) || 2000,
                         femalePrice: parseFloat(data.femalePrice) || 1500,
-                        scanTimeout: parseInt(data.scanTimeout) || 5
+                        scanTimeout: parseInt(data.scanTimeout) || 5,
+                        logoUrl: data.logoUrl || "",
+                        adminPass: data.adminPass || "admin123"
                     };
-                    applySettingsToUI();
+                    applySettings();
                 }
             })
-            .catch(() => applySettingsToUI());
+            .catch(() => applySettings());
         }
 
-        function applySettingsToUI() {
-            document.getElementById('settingGymNameInput').value = systemGlobalSettings.gymName;
-            document.getElementById('settingGymPhoneInput').value = systemGlobalSettings.gymPhone;
-            document.getElementById('settingMalePriceInput').value = systemGlobalSettings.malePrice;
-            document.getElementById('settingFemalePriceInput').value = systemGlobalSettings.femalePrice;
-            document.getElementById('settingScanTimeoutInput').value = systemGlobalSettings.scanTimeout;
+        function applySettings() {
+            document.getElementById('setGymName').value = systemSettings.gymName;
+            document.getElementById('setGymPhone').value = systemSettings.gymPhone;
+            document.getElementById('setMalePrice').value = systemSettings.malePrice;
+            document.getElementById('setFemalePrice').value = systemSettings.femalePrice;
+            document.getElementById('setScanTimeout').value = systemSettings.scanTimeout;
+            document.getElementById('setLogoUrl').value = systemSettings.logoUrl;
 
-            document.getElementById('sidebarGymNameTitle').innerText = systemGlobalSettings.gymName;
-            document.getElementById('receiptModalGymName').innerText = systemGlobalSettings.gymName + " Receipt";
-            triggerAutoPricingCalculation();
+            document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
+            document.getElementById('recGymName').innerText = systemSettings.gymName + " Receipt";
+            
+            if (systemSettings.logoUrl) {
+                document.getElementById('sidebarLogoImg').src = systemSettings.logoUrl;
+                document.getElementById('faidaBrandLogoFooter').src = systemSettings.logoUrl;
+            }
+            calcPrice();
         }
 
-        function saveEnterpriseSettings() {
-            systemGlobalSettings.gymName = document.getElementById('settingGymNameInput').value || "GUDDA LIFE FITNESS";
-            systemGlobalSettings.gymPhone = document.getElementById('settingGymPhoneInput').value || "0911000000";
-            systemGlobalSettings.malePrice = parseFloat(document.getElementById('settingMalePriceInput').value) || 2000;
-            systemGlobalSettings.femalePrice = parseFloat(document.getElementById('settingFemalePriceInput').value) || 1500;
-            systemGlobalSettings.scanTimeout = parseInt(document.getElementById('settingScanTimeoutInput').value) || 5;
+        function saveSettings() {
+            systemSettings.gymName = document.getElementById('setGymName').value || "GUDDA LIFE FITNESS";
+            systemSettings.gymPhone = document.getElementById('setGymPhone').value || "0911000000";
+            systemSettings.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
+            systemSettings.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
+            systemSettings.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
+            systemSettings.logoUrl = document.getElementById('setLogoUrl').value || "";
+            
+            let newPass = document.getElementById('setNewPassword').value.trim();
+            if (newPass) systemSettings.adminPass = newPass;
 
-            fetch(ENTERPRISE_API_ENDPOINT, {
+            fetch(API_ENDPOINT, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "saveSettings", ...systemGlobalSettings })
+                body: JSON.stringify({ action: "saveSettings", ...systemSettings })
             }).then(() => {
-                applySettingsToUI();
-                alert("Enterprise Settings Synchronized Successfully!");
+                applySettings();
+                alert("Settings and Logo Updated Successfully!");
             });
         }
 
-        function triggerAutoPricingCalculation() {
-            const gender = document.getElementById('regFormGender').value;
-            const plan = document.getElementById('regFormPlan').value;
-            let baseRate = (gender === "Female") ? systemGlobalSettings.femalePrice : systemGlobalSettings.malePrice;
-            let computedTotal = baseRate;
-            if (plan === "3 Months") computedTotal = baseRate * 3;
-            else if (plan === "Yearly") computedTotal = baseRate * 12;
-            document.getElementById('regFormAmountPaid').value = computedTotal;
-            computeEthiopianCalendarDates();
+        function calcPrice() {
+            let gender = document.getElementById('regGender').value;
+            let plan = document.getElementById('regPlan').value;
+            let base = (gender === "Female") ? systemSettings.femalePrice : systemSettings.malePrice;
+            let total = base;
+            if (plan === "3 Months") total = base * 3;
+            else if (plan === "Yearly") total = base * 12;
+            document.getElementById('regAmount').value = total;
+            calcEthDates();
         }
 
-        function convertToEthiopianDateString(gregorianDateInput) {
-            let dateObj = new Date(gregorianDateInput);
-            if (isNaN(dateObj.getTime())) return "";
-            let baseAnchor = new Date(2026, 7, 8);
-            let diffDaysCount = Math.round((dateObj - baseAnchor) / (1000 * 60 * 60 * 24));
-            let ethDay = 2 + diffDaysCount;
-            let ethMonth = 12;
-            let ethYear = 2018;
+        function toEthDate(gregDate) {
+            let d = new Date(gregDate);
+            if (isNaN(d.getTime())) return "";
+            let anchor = new Date(2026, 7, 8);
+            let diff = Math.round((d - anchor) / (1000 * 60 * 60 * 24));
+            let eDay = 2 + diff, eMonth = 12, eYear = 2018;
 
-            while (ethDay > 30) {
-                if (ethMonth === 13) {
-                    let pagumeExtra = (ethYear % 4 === 3) ? 6 : 5;
-                    if (ethDay > pagumeExtra) { ethDay -= pagumeExtra; ethMonth = 1; ethYear += 1; } else break;
-                } else if (ethMonth === 12) { ethDay -= 30; ethMonth = 13; } else { ethDay -= 30; ethMonth += 1; }
+            while (eDay > 30) {
+                if (eMonth === 13) {
+                    let pag = (eYear % 4 === 3) ? 6 : 5;
+                    if (eDay > pag) { eDay -= pag; eMonth = 1; eYear++; } else break;
+                } else if (eMonth === 12) { eDay -= 30; eMonth = 13; } else { eDay -= 30; eMonth++; }
             }
-            while (ethDay < 1) {
-                if (ethMonth === 1) {
-                    ethMonth = 13; ethYear -= 1;
-                    let pagumeExtra = (ethYear % 4 === 3) ? 6 : 5; ethDay += pagumeExtra;
-                } else { ethMonth -= 1; ethDay += 30; }
+            while (eDay < 1) {
+                if (eMonth === 1) {
+                    eMonth = 13; eYear--;
+                    let pag = (eYear % 4 === 3) ? 6 : 5; eDay += pag;
+                } else { eMonth--; eDay += 30; }
             }
-
-            const ethMonthsList = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-            return `${ethDay}/${ethMonth}/${ethYear} E.C (${ethMonthsList[ethMonth - 1]} ${ethDay})`;
+            const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+            return `${eDay}/${eMonth}/${eYear} E.C (${amMonths[eMonth - 1]} ${eDay})`;
         }
 
-        function computeEthiopianCalendarDates() {
-            let gregValue = document.getElementById('regFormGregDate').value;
-            if (!gregValue) return;
-            let joinDateObj = new Date(gregValue);
-            document.getElementById('regFormEthJoin').value = convertToEthiopianDateString(joinDateObj);
+        function calcEthDates() {
+            let val = document.getElementById('regGregDate').value;
+            if (!val) return;
+            let join = new Date(val);
+            document.getElementById('regEthJoin').value = toEthDate(join);
 
-            let planType = document.getElementById('regFormPlan').value;
-            let expiryDateObj = new Date(joinDateObj);
-            if (planType === "Monthly") expiryDateObj.setMonth(expiryDateObj.getMonth() + 1);
-            else if (planType === "3 Months") expiryDateObj.setMonth(expiryDateObj.getMonth() + 3);
-            else if (planType === "Yearly") expiryDateObj.setFullYear(expiryDateObj.getFullYear() + 1);
+            let plan = document.getElementById('regPlan').value;
+            let exp = new Date(join);
+            if (plan === "Monthly") exp.setMonth(exp.getMonth() + 1);
+            else if (plan === "3 Months") exp.setMonth(exp.getMonth() + 3);
+            else if (plan === "Yearly") exp.setFullYear(exp.getFullYear() + 1);
 
-            document.getElementById('regFormEthExpiry').value = convertToEthiopianDateString(expiryDateObj);
+            document.getElementById('regEthExpiry').value = toEthDate(exp);
         }
 
-        function generateUniqueMemberIdNumber() {
-            let sequenceNum = enterpriseMembersCache.length + 1;
-            return "GYM-" + String(sequenceNum).padStart(3, '0');
-        }
-
-        function synchronizeMembersDataset() {
-            fetch(ENTERPRISE_API_ENDPOINT)
+        function syncMembers() {
+            fetch(API_ENDPOINT)
             .then(res => res.json())
-            .then(payloadData => {
-                if (payloadData && payloadData.length > 1) {
-                    enterpriseMembersCache = payloadData.slice(1);
-                    renderDirectoryTable(enterpriseMembersCache);
-                    renderExecutiveAnalyticsDashboard(enterpriseMembersCache);
+            .then(data => {
+                if (data && data.length > 1) {
+                    membersCache = data.slice(1);
+                    renderDirectory(membersCache);
+                    renderDashboardAnalytics(membersCache);
                 }
-                document.getElementById('regFormMemberId').value = generateUniqueMemberIdNumber();
+                document.getElementById('regId').value = "GYM-" + String(membersCache.length + 1).padStart(3, '0');
             })
-            .catch(err => console.error("Telemetry Sync Error:", err));
+            .catch(err => console.error("Sync error:", err));
         }
 
-        function renderExecutiveAnalyticsDashboard(membersArray) {
-            let totalCount = membersArray.length;
-            let activeCount = 0, expiredCount = 0, cumulativeRevenue = 0;
-            let planDistributionMap = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
-            let monthlyRevTotal = 0, yearlyRevTotal = 0;
+        function renderDashboardAnalytics(members) {
+            let total = members.length;
+            let active = 0, expired = 0, rev = 0;
+            let weekNew = 0, monthNew = 0, yearNew = 0;
+            let plans = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
+            let mRev = 0, yRev = 0;
 
-            membersArray.forEach(m => {
-                let statusVal = m[6] || "Active";
-                if (statusVal === "Active") activeCount++; else expiredCount++;
-                let amountVal = parseFloat(m[7]) || 0;
-                cumulativeRevenue += amountVal;
-                let planVal = m[3] || "Monthly";
-                if (planVal === "Yearly") yearlyRevTotal += amountVal; else monthlyRevTotal += amountVal;
-                if (planDistributionMap[planVal] !== undefined) planDistributionMap[planVal]++;
+            let now = new Date();
+
+            members.forEach(m => {
+                let st = m[6] || "Active";
+                if (st === "Active") active++; else expired++;
+                let amt = parseFloat(m[7]) || 0;
+                rev += amt;
+                let pl = m[3] || "Monthly";
+                if (pl === "Yearly") yRev += amt; else mRev += amt;
+                if (plans[pl] !== undefined) plans[pl]++;
+
+                // Parse join date for weekly/monthly/yearly signups calculation
+                let jDate = new Date(m[4] || now);
+                let diffDays = (now - jDate) / (1000 * 60 * 60 * 24);
+                if (diffDays <= 7) weekNew++;
+                if (diffDays <= 30) monthNew++;
+                if (diffDays <= 365) yearNew++;
             });
 
-            document.getElementById('statTotalMembers').innerText = totalCount;
-            document.getElementById('statActiveMembers').innerText = activeCount;
-            document.getElementById('statExpiredMembers').innerText = expiredCount;
-            document.getElementById('statTotalRevenue').innerText = cumulativeRevenue.toLocaleString() + " ETB";
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statActive').innerText = active;
+            document.getElementById('statExpired').innerText = expired;
+            document.getElementById('statRevenue').innerText = rev.toLocaleString() + " ETB";
+            
+            document.getElementById('statWeekNew').innerText = weekNew;
+            document.getElementById('statMonthNew').innerText = monthNew;
+            document.getElementById('statYearNew').innerText = yearNew;
 
-            renderChartVisualizations(monthlyRevTotal, yearlyRevTotal, planDistributionMap);
+            renderCharts(mRev, yRev, plans);
         }
 
-        function renderChartVisualizations(mRev, yRev, planDist) {
-            if (chartRevenueInstance) chartRevenueInstance.destroy();
-            if (chartPlanInstance) chartPlanInstance.destroy();
+        function renderCharts(mRev, yRev, plans) {
+            if (chartRev) chartRev.destroy();
+            if (chartPlan) chartPlan.destroy();
 
-            const ctxRev = document.getElementById('enterpriseRevenueChart').getContext('2d');
-            chartRevenueInstance = new Chart(ctxRev, {
+            chartRev = new Chart(document.getElementById('chartRevenue').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ['Monthly Revenue', 'Yearly Revenue'],
@@ -709,207 +625,172 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            const ctxPlan = document.getElementById('enterprisePlanChart').getContext('2d');
-            chartPlanInstance = new Chart(ctxPlan, {
+            chartPlan = new Chart(document.getElementById('chartPlans').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(planDist),
-                    datasets: [{ data: Object.values(planDist), backgroundColor: ['#4318FF', '#FFB547', '#01B574'] }]
+                    labels: Object.keys(plans),
+                    datasets: [{ data: Object.values(plans), backgroundColor: ['#4318FF', '#FFB547', '#01B574'] }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        function renderDirectoryTable(dataset) {
-            const tableBody = document.getElementById('enterpriseDirectoryTableBody');
-            tableBody.innerHTML = '';
-            if (!dataset || dataset.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:25px; color:var(--text-muted);">No member records found.</td></tr>';
+        function renderDirectory(data) {
+            let tbody = document.getElementById('directoryTableBody');
+            tbody.innerHTML = '';
+            if (!data.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No records found.</td></tr>';
                 return;
             }
-            dataset.forEach(m => {
-                let id = String(m[0]||''), name = String(m[1]||''), phone = String(m[2]||''), plan = String(m[3]||'Monthly');
-                let expiry = String(m[5]||''), status = String(m[6]||'Active'), paid = m[7]||0;
-                
-                let row = document.createElement('tr');
-                row.style.borderBottom = '1px solid var(--border-light)';
-                row.innerHTML = `
-                    <td style="padding: 15px; font-weight: 700; color: var(--faida-primary);">${id}</td>
-                    <td style="padding: 15px; font-weight: 600;">${name}</td>
-                    <td style="padding: 15px; color: var(--text-muted);">${phone}</td>
-                    <td style="padding: 15px;">${plan}</td>
-                    <td style="padding: 15px; font-weight: 700;">${paid} ETB</td>
-                    <td style="padding: 15px; color: var(--text-muted);">${expiry}</td>
-                    <td style="padding: 15px;"><span style="padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; background: ${status === 'Active' ? 'rgba(1, 181, 116, 0.1)' : 'rgba(238, 93, 80, 0.1)'}; color: ${status === 'Active' ? 'var(--success-color)' : 'var(--danger-color)'};">${status}</span></td>
-                    <td style="padding: 15px; text-align: center;">
-                        <button type="button" class="login-submit-btn" style="width: auto; padding: 6px 14px; font-size: 0.75rem; margin-top:0;" onclick="openEnterpriseReceiptModal('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
-                        <button type="button" class="login-submit-btn" style="width: auto; padding: 6px 14px; font-size: 0.75rem; margin-top:0; background: var(--danger-color);" onclick="deleteMemberRow('${id}')">Delete</button>
+            data.forEach(m => {
+                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0;
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:var(--faida-primary);">${id}</td>
+                    <td style="font-weight:600;">${name}</td>
+                    <td style="color:var(--text-muted);">${phone}</td>
+                    <td>${plan}</td>
+                    <td style="font-weight:700;">${paid} ETB</td>
+                    <td style="color:var(--text-muted);">${expiry}</td>
+                    <td><span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-main" style="width:auto; padding:6px 14px; font-size:0.75rem; margin-top:0;" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:6px 14px; font-size:0.75rem; margin-top:0; background:var(--danger-color);" onclick="deleteMember('${id}')">Delete</button>
                     </td>
                 `;
-                tableBody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
 
-        function executeDirectorySearch() {
-            let query = document.getElementById('enterpriseSearchInput').value.toLowerCase();
-            let filtered = enterpriseMembersCache.filter(m => String(m[0]).toLowerCase().includes(query) || String(m[1]).toLowerCase().includes(query) || String(m[2]).includes(query));
-            renderDirectoryTable(filtered);
+        function filterDirectory() {
+            let q = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = membersCache.filter(m => String(m[0]).toLowerCase().includes(q) || String(m[1]).toLowerCase().includes(q) || String(m[2]).includes(q));
+            renderDirectory(filtered);
         }
 
-        function submitEnterpriseRegistration() {
-            const submitBtn = document.getElementById('regFormSubmitBtn');
-            submitBtn.innerText = "Processing Telemetry...";
-            submitBtn.disabled = true;
+        function submitRegistration() {
+            let btn = document.getElementById('regSubmitBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
 
-            const payloadData = {
+            let payload = {
                 action: "register",
-                memberId: document.getElementById('regFormMemberId').value,
-                fullName: document.getElementById('regFormFullName').value,
-                phone: document.getElementById('regFormPhone').value,
-                gender: document.getElementById('regFormGender').value,
-                plan: document.getElementById('regFormPlan').value,
-                amountPaid: document.getElementById('regFormAmountPaid').value,
-                joinDate: document.getElementById('regFormEthJoin').value,
-                expiryDate: document.getElementById('regFormEthExpiry').value,
+                memberId: document.getElementById('regId').value,
+                fullName: document.getElementById('regName').value,
+                phone: document.getElementById('regPhone').value,
+                gender: document.getElementById('regGender').value,
+                plan: document.getElementById('regPlan').value,
+                amountPaid: document.getElementById('regAmount').value,
+                joinDate: document.getElementById('regEthJoin').value,
+                expiryDate: document.getElementById('regEthExpiry').value,
                 status: "Active"
             };
 
-            fetch(ENTERPRISE_API_ENDPOINT, {
+            fetch(API_ENDPOINT, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payloadData)
+                body: JSON.stringify(payload)
             }).then(() => {
-                submitBtn.innerText = "Complete Registration & Print Receipt";
-                submitBtn.disabled = false;
-                openEnterpriseReceiptModal(payloadData.memberId, payloadData.fullName, payloadData.plan, payloadData.amountPaid, payloadData.expiryDate);
-                document.getElementById('enterpriseMemberForm').reset();
-                document.getElementById('regFormGregDate').valueAsDate = new Date();
-                synchronizeMembersDataset();
+                btn.innerText = "Complete Registration & Generate Receipt";
+                btn.disabled = false;
+                openReceipt(payload.memberId, payload.fullName, payload.plan, payload.amountPaid, payload.expiryDate);
+                document.getElementById('regForm').reset();
+                document.getElementById('regGregDate').valueAsDate = new Date();
+                syncMembers();
             });
         }
 
-        function openEnterpriseReceiptModal(id, name, plan, amount, expiry) {
-            document.getElementById('recModalId').innerText = id;
-            document.getElementById('recModalName').innerText = name;
-            document.getElementById('recModalPlan').innerText = plan;
-            document.getElementById('recModalAmount').innerText = amount;
-            document.getElementById('recModalExpiry').innerText = expiry;
-            document.getElementById('enterpriseReceiptModal').style.display = 'flex';
+        function openReceipt(id, name, plan, amt, exp) {
+            document.getElementById('recId').innerText = id;
+            document.getElementById('recName').innerText = name;
+            document.getElementById('recPlan').innerText = plan;
+            document.getElementById('recAmount').innerText = amt;
+            document.getElementById('recExpiry').innerText = exp;
+            document.getElementById('receiptModal').style.display = 'flex';
         }
 
-        function closeEnterpriseReceiptModal() {
-            document.getElementById('enterpriseReceiptModal').style.display = 'none';
-        }
-
-        function deleteMemberRow(memberId) {
-            if (confirm("Permanently delete member profile " + memberId + "?")) {
-                fetch(ENTERPRISE_API_ENDPOINT, {
+        function deleteMember(id) {
+            if (confirm("Delete member " + id + "?")) {
+                fetch(API_ENDPOINT, {
                     method: 'POST', mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "deleteMember", memberId: memberId })
-                }).then(() => synchronizeMembersDataset());
+                    body: JSON.stringify({ action: "deleteMember", memberId: id })
+                }).then(() => syncMembers());
             }
         }
 
-        function initializeScannerEngine(facingMode) {
-            if (html5QrCodeScannerInstance) terminateScannerEngine();
-            html5QrCodeScannerInstance = new Html5Qrcode("enterpriseQrCameraBox");
-            html5QrCodeScannerInstance.start({ facingMode: facingMode }, { fps: 10, qrbox: 260 }, (scannedText) => processAccessVerificationScan(scannedText));
+        function startScanner(mode) {
+            if (qrScanner) stopScanner();
+            qrScanner = new Html5Qrcode("qrCameraBox");
+            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 250 }, (text) => processScan(text));
         }
 
-        function terminateScannerEngine() {
-            if (html5QrCodeScannerInstance) {
-                html5QrCodeScannerInstance.stop().then(() => html5QrCodeScannerInstance.clear()).catch(() => {});
-            }
+        function stopScanner() {
+            if (qrScanner) qrScanner.stop().then(() => qrScanner.clear()).catch(() => {});
         }
 
-        function processAccessVerificationScan(scannedMemberId) {
-            let currentTimeMs = new Date().getTime();
-            if (scannedMemberId === latestScannedCodeCache && (currentTimeMs - latestScanTimestampMs) < 3000) return;
-            latestScannedCodeCache = scannedMemberId;
-            latestScanTimestampMs = currentTimeMs;
+        function processScan(id) {
+            let now = new Date().getTime();
+            if (id === lastCode && (now - lastTime) < 3000) return;
+            lastCode = id; lastTime = now;
 
-            const alertBox = document.getElementById('scannerTelemetryAlert');
+            let alertBox = document.getElementById('scanAlert');
             alertBox.style.display = 'block';
 
-            let matchedMember = enterpriseMembersCache.find(m => String(m[0]).trim().toLowerCase() === scannedMemberId.trim().toLowerCase());
-
-            if (!matchedMember) {
-                alertBox.style.background = 'rgba(238, 93, 80, 0.1)';
-                alertBox.style.color = 'var(--danger-color)';
-                alertBox.innerText = `❌ Access Denied: Member ID '${scannedMemberId}' Not Found!`;
+            let m = membersCache.find(item => String(item[0]).trim().toLowerCase() === id.trim().toLowerCase());
+            if (!m) {
+                alertBox.style.background = 'rgba(238,93,80,0.1)'; alertBox.style.color = 'var(--danger-color)';
+                alertBox.innerText = `❌ Member ID '${id}' Not Found!`;
                 return;
             }
 
-            let nowTimestamp = new Date();
-            let timeoutLimitMs = systemGlobalSettings.scanTimeout * 60 * 1000;
-
-            if (activeScanSessionMap[scannedMemberId] && (nowTimestamp - activeScanSessionMap[scannedMemberId]) < timeoutLimitMs) {
-                let remainingMins = Math.ceil((timeoutLimitMs - (nowTimestamp - activeScanSessionMap[scannedMemberId])) / 60000);
-                alertBox.style.background = 'rgba(255, 181, 71, 0.1)';
-                alertBox.style.color = 'var(--warning-color)';
-                alertBox.innerText = `⚠️ Duplicate Scan: ${matchedMember[1]} already checked in. Wait ${remainingMins} mins.`;
-                return;
-            }
-
-            let memberStatus = matchedMember[6] || "Active";
-            if (memberStatus === "Active") {
-                activeScanSessionMap[scannedMemberId] = nowTimestamp;
-                alertBox.style.background = 'rgba(1, 181, 116, 0.1)';
-                alertBox.style.color = 'var(--success-color)';
-                alertBox.innerText = `✅ Access Granted: Welcome, ${matchedMember[1]}!`;
-                transmitAttendanceTelemetryRecord(matchedMember[0], matchedMember[1], "Granted");
+            let status = m[6] || "Active";
+            if (status === "Active") {
+                alertBox.style.background = 'rgba(1,181,116,0.1)'; alertBox.style.color = 'var(--success-color)';
+                alertBox.innerText = `✅ Access Granted: Welcome, ${m[1]}!`;
+                sendAttendance(m[0], m[1], "Granted");
             } else {
-                activeScanSessionMap[scannedMemberId] = nowTimestamp;
-                alertBox.style.background = 'rgba(238, 93, 80, 0.1)';
-                alertBox.style.color = 'var(--danger-color)';
-                alertBox.innerText = `❌ Access Denied: ${matchedMember[1]} - Membership Expired!`;
-                transmitAttendanceTelemetryRecord(matchedMember[0], matchedMember[1], "Denied (Expired)");
+                alertBox.style.background = 'rgba(238,93,80,0.1)'; alertBox.style.color = 'var(--danger-color)';
+                alertBox.innerText = `❌ Access Denied: ${m[1]} - Subscription Expired!`;
+                sendAttendance(m[0], m[1], "Denied (Expired)");
             }
         }
 
-        function transmitAttendanceTelemetryRecord(id, name, status) {
-            let timestampString = convertToEthiopianDateString(new Date()) + " " + new Date().toLocaleTimeString();
-            fetch(ENTERPRISE_API_ENDPOINT, {
+        function sendAttendance(id, name, status) {
+            let timeStr = toEthDate(new Date()) + " " + new Date().toLocaleTimeString();
+            fetch(API_ENDPOINT, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: timestampString, status: status })
+                body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: timeStr, status: status })
             });
         }
 
-        function fetchAttendanceLogEntries() {
-            fetch(ENTERPRISE_API_ENDPOINT + "?action=getAttendance")
+        function fetchLogs() {
+            fetch(API_ENDPOINT + "?action=getAttendance")
             .then(res => res.json())
             .then(data => {
-                const logsBody = document.getElementById('attendanceLogsTableBody');
-                logsBody.innerHTML = '';
+                let tbody = document.getElementById('logsTableBody');
+                tbody.innerHTML = '';
                 if (data && data.length > 1) {
-                    let logRows = data.slice(1).reverse();
-                    logRows.forEach(l => {
-                        let rowItem = document.createElement('tr');
-                        rowItem.style.borderBottom = '1px solid var(--border-light)';
-                        rowItem.innerHTML = `
-                            <td style="padding: 15px; font-weight: 700; color: var(--faida-primary);">${l[0]}</td>
-                            <td style="padding: 15px; font-weight: 600;">${l[1]}</td>
-                            <td style="padding: 15px; color: var(--text-muted);">${l[2]}</td>
-                            <td style="padding: 15px; font-weight: 700;">${l[3]}</td>
-                        `;
-                        logsBody.appendChild(rowItem);
+                    data.slice(1).reverse().forEach(l => {
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `<td style="font-weight:700; color:var(--faida-primary);">${l[0]}</td><td>${l[1]}</td><td style="color:var(--text-muted);">${l[2]}</td><td style="font-weight:700;">${l[3]}</td>`;
+                        tbody.appendChild(tr);
                     });
                 }
             });
         }
 
-        function exportDirectoryToCSV() {
-            let csvContent = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
-            enterpriseMembersCache.forEach(m => {
-                csvContent += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+        function exportCSV() {
+            let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
+            membersCache.forEach(m => {
+                csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
             });
-            let csvBlob = new Blob([csvContent], { type: 'text/csv' });
-            let downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(csvBlob);
-            downloadLink.download = 'FaidATech_Enterprise_Gym_Directory.csv';
-            downloadLink.click();
+            let blob = new Blob([csv], { type: 'text/csv' });
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'FaidATech_Gym_Members.csv';
+            a.click();
         }
     </script>
 </body>
