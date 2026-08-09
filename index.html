@@ -1713,29 +1713,33 @@ function sendAttendance(id, name, status) {
     let now = new Date();
     let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
 
-    // URLSearchParams በመጠቀም በሞባይል ላይ Payload የመጣል ችግርን ይፈታል
-    let params = new URLSearchParams();
-    params.append("action", "attendance");
-    params.append("memberId", id);
-    params.append("fullName", name);
-    params.append("scanTime", timeStr);
-    params.append("status", status);
+    // GET Query Parameters + POST Body ድብልቅ (መረጃው እንዳይጠፋ ዋስትና ይሰጣል)
+    let urlWithParams = endpoint + "?action=attendance&memberId=" + encodeURIComponent(id) + 
+                        "&fullName=" + encodeURIComponent(name) + 
+                        "&scanTime=" + encodeURIComponent(timeStr) + 
+                        "&status=" + encodeURIComponent(status);
 
-    fetch(endpoint, {
+    fetch(urlWithParams, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+            action: "attendance",
+            memberId: id,
+            fullName: name,
+            scanTime: timeStr,
+            status: status
+        })
     }).then(() => {
-        console.log("Attendance recorded successfully.");
+        console.log("Attendance sent successfully.");
+        // ከ1 ሰከንድ በኋላ ሰንጠረዡን ያድሳል
         setTimeout(() => {
             if (typeof fetchLogs === 'function') fetchLogs();
-        }, 1200);
+        }, 1000);
     }).catch(err => {
         console.error("Attendance Error:", err);
     });
 }
-
 function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
