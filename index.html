@@ -735,8 +735,8 @@
     <!-- 1. AUTHENTICATION OVERLAY -->
     <div id="enterpriseLoginOverlay">
         <div class="login-glass-card">
-            <h2>FaidATech Enterprise</h2>
-            <p>Gym Management Super-App Portal</p>
+            <h2>FaidATech</h2>
+            <p>Gym Management</p>
             <div class="input-group">
                 <label>Username / Admin ID</label>
                 <input type="text" id="authUserInput" value="admin">
@@ -777,7 +777,7 @@
         <!-- Developer Branding Footer Fixed at Bottom -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
-            <div class="faida-tech-brand">FaidATech Enterprise</div>
+            <div class="faida-tech-brand">FaidATech</div>
             <div class="dev-links-row">
                 <a href="tel:+251912292150" class="dev-link-btn">📞 Call</a>
                 <a href="javascript:void(0)" onclick="downloadVCard()" class="dev-link-btn">🎴 vCard</a>
@@ -845,7 +845,7 @@
                             <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.15);"></div>
                             <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="e.g. Abebe Kebede"></div>
                             <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0912132353"></div>
-                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="EDID-FAN-2589341592"></div>
+                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="121357102589341592"></div>
                             <div class="input-group">
                                 <label>Gender</label>
                                 <select id="regGender" onchange="calcPrice()">
@@ -1700,9 +1700,6 @@ function processScan(scannedData) {
     }
 }
 
-/* =========================================================
-   ATTENDANCE & AUDIT LOGS ENGINE (URLSearchParams FIXED)
-   ========================================================= */
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) {
@@ -1713,33 +1710,23 @@ function sendAttendance(id, name, status) {
     let now = new Date();
     let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
 
-    // GET Query Parameters + POST Body ድብልቅ (መረጃው እንዳይጠፋ ዋስትና ይሰጣል)
-    let urlWithParams = endpoint + "?action=attendance&memberId=" + encodeURIComponent(id) + 
-                        "&fullName=" + encodeURIComponent(name) + 
-                        "&scanTime=" + encodeURIComponent(timeStr) + 
-                        "&status=" + encodeURIComponent(status);
+    // በጥያቄ አድራሻ (GET) ብቻ መረጃውን መላክ የRedirect ችግርን ሙሉ በሙሉ ይፈታል
+    let url = endpoint + "?action=attendance" +
+              "&memberId=" + encodeURIComponent(id) + 
+              "&fullName=" + encodeURIComponent(name) + 
+              "&scanTime=" + encodeURIComponent(timeStr) + 
+              "&status=" + encodeURIComponent(status);
 
-    fetch(urlWithParams, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-            action: "attendance",
-            memberId: id,
-            fullName: name,
-            scanTime: timeStr,
-            status: status
-        })
-    }).then(() => {
-        console.log("Attendance sent successfully.");
-        // ከ1 ሰከንድ በኋላ ሰንጠረዡን ያድሳል
+    fetch(url, { mode: 'no-cors' })
+    .then(() => {
+        console.log("Attendance request sent via GET.");
         setTimeout(() => {
             if (typeof fetchLogs === 'function') fetchLogs();
-        }, 1000);
-    }).catch(err => {
-        console.error("Attendance Error:", err);
-    });
+        }, 1200);
+    })
+    .catch(err => console.error("Attendance Error:", err));
 }
+        
 function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
