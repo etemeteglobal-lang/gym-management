@@ -2,8 +2,8 @@
 <html lang="am" class="dark-theme-enabled">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.7</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.8</title>
     
     <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -49,24 +49,24 @@
         /* Login Overlay */
         #enterpriseLoginOverlay {
             position: fixed; inset: 0; background: linear-gradient(135deg, var(--faida-primary), #051c30);
-            display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 99999; backdrop-filter: blur(10px);
         }
         .login-glass-card {
-            background: var(--surface-card); padding: 40px; border-radius: 30px; width: 420px; max-width: 90%;
+            background: var(--surface-card); padding: 35px 25px; border-radius: 24px; width: 400px; max-width: 90%;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--border-light);
         }
-        .login-glass-card h2 { color: var(--text-main); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+        .login-glass-card h2 { color: var(--text-main); font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
         .login-glass-card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
         .input-group { text-align: left; margin-bottom: 16px; }
         .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
         .input-group input, .input-group select {
-            width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid var(--border-light);
-            font-size: 0.95rem; outline: none; transition: var(--transition-smooth); background: var(--bg-canvas); color: var(--text-main);
+            width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--border-light);
+            font-size: 0.9rem; outline: none; transition: var(--transition-smooth); background: var(--bg-canvas); color: var(--text-main);
         }
         .input-group input:focus { border-color: var(--faida-accent); background: var(--surface-white); }
         .btn-main {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
-            color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            width: 100%; padding: 13px; background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
+            color: white; border: none; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
             box-shadow: 0 10px 20px rgba(15, 56, 90, 0.2); transition: var(--transition-smooth); margin-top: 10px;
         }
         .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.3); }
@@ -87,7 +87,7 @@
         
         .nav-btn {
             width: 100%; padding: 12px 16px; background: transparent; border: none; border-radius: var(--radius-element);
-            color: var(--text-muted); text-align: left; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            color: var(--text-muted); text-align: left; font-size: 0.88rem; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; gap: 12px; transition: var(--transition-smooth); margin-bottom: 4px;
         }
         .nav-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
@@ -99,74 +99,83 @@
             border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.15); text-align: center;
         }
         .faida-powered-footer span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .faida-footer-logo { height: 26px; width: auto; object-fit: contain; }
+        .faida-footer-logo { height: 24px; width: auto; object-fit: contain; }
 
         /* Workspace (Right Side) */
         .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); width: calc(100% - var(--sidebar-width)); }
         .topbar {
-            height: var(--topbar-height); background: var(--surface-white); padding: 0 25px; display: flex;
+            height: var(--topbar-height); background: var(--surface-white); padding: 0 20px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99; flex-shrink: 0;
         }
-        .topbar-left { display: flex; align-items: center; gap: 15px; }
-        .topbar h1 { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
-        .topbar p { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
-        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .topbar h1 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topbar p { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         
         .menu-toggle-btn {
             display: none; background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
-            width: 40px; height: 40px; border-radius: 50%; justify-content: center; align-items: center; cursor: pointer; font-size: 1.1rem;
+            width: 38px; height: 38px; border-radius: 50%; justify-content: center; align-items: center; cursor: pointer; font-size: 1.1rem; flex-shrink: 0;
         }
 
         .badge-pill {
-            background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 8px 15px; border-radius: 30px;
-            font-weight: 700; font-size: 0.8rem; border: 1px solid rgba(15,56,90,0.1);
+            background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 6px 12px; border-radius: 30px;
+            font-weight: 700; font-size: 0.75rem; border: 1px solid rgba(15,56,90,0.1); white-space: nowrap;
         }
         .top-action-btn {
             background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
-            width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: var(--transition-smooth); font-size: 0.95rem;
+            width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: var(--transition-smooth); font-size: 0.9rem; flex-shrink: 0;
         }
         .top-action-btn:hover { background: var(--faida-primary); color: white; border-color: var(--faida-primary); }
 
         /* Content Area */
-        .content-scroll { flex: 1; padding: 25px; overflow-y: auto; }
+        .content-scroll { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 20px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .metric-box {
-            background: var(--surface-card); padding: 20px; border-radius: var(--radius-smooth);
+            background: var(--surface-card); padding: 18px; border-radius: var(--radius-smooth);
             box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light);
         }
-        .metric-box span { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-        .metric-box h3 { font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-top: 6px; }
+        .metric-box span { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .metric-box h3 { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-top: 4px; }
 
         .glass-card {
-            background: var(--surface-card); padding: 25px; border-radius: var(--radius-smooth);
+            background: var(--surface-card); padding: 20px; border-radius: var(--radius-smooth);
             box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 20px;
         }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        th { padding: 12px 14px; text-align: left; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); }
-        td { padding: 14px; font-size: 0.85rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+        /* Responsive Table */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 650px; }
+        th { padding: 12px 14px; text-align: left; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); white-space: nowrap; }
+        td { padding: 12px 14px; font-size: 0.85rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
 
-        /* Mobile Media Query for Sidebar Toggle Overlay */
+        /* Action Buttons Grid in Table */
+        .action-btn-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; min-width: 140px; }
+        .btn-action {
+            padding: 6px 10px; font-size: 0.7rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: white; transition: var(--transition-smooth);
+        }
+        .btn-action.receipt { background: var(--faida-primary); }
+        .btn-action.edit { background: var(--warning-color); color: #000; }
+        .btn-action.qrcode { background: var(--info-color); }
+        .btn-action.delete { background: var(--danger-color); }
+
+        /* Mobile Adjustments */
         @media (max-width: 900px) {
-            .enterprise-sidebar {
-                position: fixed; left: -280px; top: 0; bottom: 0; z-index: 9999;
-            }
-            .enterprise-sidebar.mobile-open {
-                left: 0;
-                box-shadow: 15px 0 50px rgba(0,0,0,0.5);
-            }
-            .menu-toggle-btn {
-                display: flex;
-            }
-            .enterprise-workspace {
-                width: 100%;
-            }
+            :root { var(--topbar-height): 70px; }
+            .enterprise-sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 9999; }
+            .enterprise-sidebar.mobile-open { left: 0; box-shadow: 15px 0 50px rgba(0,0,0,0.5); }
+            .menu-toggle-btn { display: flex; }
+            .enterprise-workspace { width: 100%; }
+            .topbar { padding: 0 12px; }
+            .topbar p { display: none; }
+            .content-scroll { padding: 15px 12px 80px 12px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .charts-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -190,14 +199,14 @@
         </div>
     </div>
 
-    <!-- Sidebar (Left Side Menu) -->
+    <!-- Sidebar Navigation -->
     <aside class="enterprise-sidebar" id="sidebarNav">
         <div>
             <div class="sidebar-brand-wrapper">
                 <img id="sidebarLogoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
                 <div class="sidebar-brand-text">
                     <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
-                    <span>Enterprise v4.7</span>
+                    <span>Enterprise v4.8</span>
                 </div>
             </div>
             <div class="sidebar-menu-scroll">
@@ -215,21 +224,20 @@
             </div>
         </div>
 
-        <!-- Powered By FaidATech Footer -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" id="faidaBrandLogoFooter" class="faida-footer-logo" alt="FaidATech">
         </div>
     </aside>
 
-    <!-- Workspace (Right Side Content) -->
+    <!-- Main Workspace -->
     <div class="enterprise-workspace">
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
                 <div>
                     <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
-                    <p>Real-time membership lifecycle and financial telemetry</p>
+                    <p>Real-time membership lifecycle telemetry</p>
                 </div>
             </div>
             <div class="topbar-right">
@@ -244,31 +252,25 @@
             <div id="dashboardView" class="view-section active">
                 <div class="metrics-grid">
                     <div class="metric-box"><span>Total Members</span><h3 id="statTotal">0</h3></div>
-                    <div class="metric-box"><span>Active Subscriptions</span><h3 id="statActive" style="color:var(--success-color);">0</h3></div>
-                    <div class="metric-box"><span>Expired Subscriptions</span><h3 id="statExpired" style="color:var(--danger-color);">0</h3></div>
+                    <div class="metric-box"><span>Active Subs</span><h3 id="statActive" style="color:var(--success-color);">0</h3></div>
+                    <div class="metric-box"><span>Expired Subs</span><h3 id="statExpired" style="color:var(--danger-color);">0</h3></div>
                     <div class="metric-box"><span>Total Revenue</span><h3 id="statRevenue" style="color:var(--faida-accent);">0 ETB</h3></div>
                 </div>
 
-                <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
-                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(67, 24, 255, 0.05), rgba(67, 24, 255, 0.02));">
-                        <span>New (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3>
-                    </div>
-                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(1, 181, 116, 0.05), rgba(1, 181, 116, 0.02));">
-                        <span>New (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3>
-                    </div>
-                    <div class="metric-box" style="background: linear-gradient(135deg, rgba(255, 181, 71, 0.05), rgba(255, 181, 71, 0.02));">
-                        <span>New (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3>
-                    </div>
+                <div class="metrics-grid" style="margin-bottom: 20px;">
+                    <div class="metric-box"><span>New (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3></div>
+                    <div class="metric-box"><span>New (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3></div>
+                    <div class="metric-box"><span>New (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3></div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div class="glass-card" style="height: 380px;">
-                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 15px;">Revenue Telemetry (Monthly vs Yearly)</h3>
-                        <div style="position:relative; height:290px;"><canvas id="chartRevenue"></canvas></div>
+                <div class="charts-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <div class="glass-card" style="height: 350px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Revenue Telemetry</h3>
+                        <div style="position:relative; height:270px;"><canvas id="chartRevenue"></canvas></div>
                     </div>
-                    <div class="glass-card" style="height: 380px;">
-                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 15px;">Subscription Plan Breakdown</h3>
-                        <div style="position:relative; height:290px;"><canvas id="chartPlans"></canvas></div>
+                    <div class="glass-card" style="height: 350px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Plan Breakdown</h3>
+                        <div style="position:relative; height:270px;"><canvas id="chartPlans"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -276,11 +278,11 @@
             <!-- 2. MEMBER REGISTRATION VIEW -->
             <div id="registerView" class="view-section">
                 <div class="glass-card" style="max-width: 800px; margin: 0 auto;">
-                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">New Member Onboarding Portal</h2>
-                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Register athlete profile, compute automated pricing, and print receipt.</p>
+                    <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">Member Onboarding Portal</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Register new athlete or renew active profile.</p>
                     
                     <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 16px;">
                             <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.04);"></div>
                             <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Abebe Kebede"></div>
                             <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0911000000"></div>
@@ -304,7 +306,7 @@
                             <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
                             <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
                         </div>
-                        <button type="submit" class="btn-main" id="regSubmitBtn" style="padding:14px;">Complete Registration & Generate Receipt</button>
+                        <button type="submit" class="btn-main" id="regSubmitBtn">Complete Registration & Receipt</button>
                     </form>
                 </div>
             </div>
@@ -312,20 +314,20 @@
             <!-- 3. MEMBERS DIRECTORY VIEW -->
             <div id="membersView" class="view-section">
                 <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
                         <div>
-                            <h2 style="font-size: 1.2rem; font-weight: 800;">Registered Members Directory</h2>
-                            <p style="color:var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Search, filter, or manage athlete database.</p>
+                            <h2 style="font-size: 1.1rem; font-weight: 800;">Members Directory</h2>
+                            <p style="color:var(--text-muted); font-size: 0.78rem;">Search and manage gym members.</p>
                         </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="text" id="searchInput" placeholder="Search name, ID, phone..." onkeyup="filterDirectory()" style="padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); width: 250px; outline:none;">
-                            <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+                        <div style="display: flex; gap: 8px; width: 100%; max-width: 400px;">
+                            <input type="text" id="searchInput" placeholder="Search name, ID..." onkeyup="filterDirectory()" style="flex:1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
+                            <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0;" onclick="exportCSV()">Export</button>
                         </div>
                     </div>
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table>
                             <thead>
-                                <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Plan</th><th>Paid</th><th>Expiry (EC)</th><th>Status</th><th style="text-align:center;">Actions</th></tr>
+                                <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Plan</th><th>Paid</th><th>Expiry (EC)</th><th>Status</th><th style="text-align:center;">Actions (4)</th></tr>
                             </thead>
                             <tbody id="directoryTableBody"></tbody>
                         </table>
@@ -335,31 +337,31 @@
 
             <!-- 4. QR ACCESS SCANNER VIEW -->
             <div id="scannerView" class="view-section">
-                <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
-                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">Enterprise QR Access Scanner</h2>
-                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Scan athlete QR code for automated entry authorization.</p>
-                    <div id="qrCameraBox" style="width:100%; min-height:260px; border-radius:18px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
-                    <div style="margin-top:20px; display:flex; justify-content:center; gap:12px;">
-                        <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
-                        <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop Camera</button>
+                <div class="glass-card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                    <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Scan athlete QR code for entry authorization.</p>
+                    <div id="qrCameraBox" style="width:100%; min-height:240px; border-radius:16px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    <div style="margin-top:16px; display:flex; justify-content:center; gap:10px;">
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop</button>
                     </div>
-                    <div id="scanAlert" style="margin-top:20px; padding:15px; border-radius:14px; font-weight:700; display:none;"></div>
+                    <div id="scanAlert" style="margin-top:16px; padding:12px; border-radius:12px; font-weight:700; display:none;"></div>
                 </div>
             </div>
 
             <!-- 5. ATTENDANCE LOGS VIEW -->
             <div id="logsView" class="view-section">
                 <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <div>
-                            <h2 style="font-size: 1.2rem; font-weight: 800;">Daily Attendance Logs History</h2>
-                            <p style="color:var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Live timestamp audit trail.</p>
+                            <h2 style="font-size: 1.1rem; font-weight: 800;">Attendance Logs</h2>
+                            <p style="color:var(--text-muted); font-size: 0.78rem;">Live access audit trail.</p>
                         </div>
-                        <button type="button" class="btn-main" style="width:auto; padding:8px 15px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:8px 14px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh</button>
                     </div>
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table>
-                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Access Status</th></tr></thead>
+                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Status</th></tr></thead>
                             <tbody id="logsTableBody"></tbody>
                         </table>
                     </div>
@@ -368,47 +370,55 @@
 
             <!-- 6. ENTERPRISE SETTINGS VIEW -->
             <div id="settingsView" class="view-section">
-                <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
-                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">Enterprise Configuration Settings</h2>
-                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Configure gym parameters, upload organizational logo from file, and update passwords.</p>
+                <div class="glass-card" style="max-width: 650px; margin: 0 auto; margin-bottom: 40px;">
+                    <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">Configuration Settings</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Manage fees, logo, and admin security.</p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                        <div class="input-group"><label>Gym Organization Name</label><input type="text" id="setGymName"></div>
-                        <div class="input-group"><label>Organization Phone</label><input type="text" id="setGymPhone"></div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
+                        <div class="input-group"><label>Gym Name</label><input type="text" id="setGymName"></div>
+                        <div class="input-group"><label>Phone</label><input type="text" id="setGymPhone"></div>
                         <div class="input-group"><label>Male Monthly Fee (ETB)</label><input type="number" id="setMalePrice"></div>
                         <div class="input-group"><label>Female Monthly Fee (ETB)</label><input type="number" id="setFemalePrice"></div>
-                        <div class="input-group"><label>Duplicate Scan Timeout (Minutes)</label><input type="number" id="setScanTimeout"></div>
+                        <div class="input-group"><label>Scan Timeout (Mins)</label><input type="number" id="setScanTimeout"></div>
                         <div class="input-group">
-                            <label>Upload Logo Image (From File)</label>
-                            <input type="file" id="setLogoFile" accept="image/*" style="padding: 10px;">
+                            <label>Upload Logo Image</label>
+                            <input type="file" id="setLogoFile" accept="image/*">
                         </div>
                         <div class="input-group"><label>New Admin Password</label><input type="password" id="setNewPassword" placeholder="Leave blank to keep current"></div>
                     </div>
-                    <button type="button" class="btn-main" style="padding:14px;" onclick="saveSettings()">Save System Configuration</button>
+                    <button type="button" class="btn-main" style="padding:12px; margin-bottom:15px;" onclick="saveSettings()">Save System Configuration</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Receipt Modal -->
-    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.6); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:10000;">
-        <div style="background:var(--surface-card); padding:30px; border-radius:22px; width:420px; max-width:90%; box-shadow:var(--shadow-enterprise); text-align:center; border:1px solid var(--border-light);">
-            <h3 id="recGymName" style="font-size:1.2rem; font-weight:800;">Official Receipt</h3>
-            <p style="color:var(--text-muted); font-size:0.8rem; margin:6px 0 16px 0;">---------------------------------------------------------</p>
-            <div style="text-align:left; font-size:0.9rem; display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.7); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
+        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:380px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
+            <h3 id="recGymName" style="font-size:1.1rem; font-weight:800;">Official Receipt</h3>
+            <div style="margin:12px 0; border-bottom:1px dashed var(--border-light);"></div>
+            <div style="text-align:left; font-size:0.85rem; display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
                 <p><b>Member ID:</b> <span id="recId"></span></p>
                 <p><b>Full Name:</b> <span id="recName"></span></p>
                 <p><b>Plan:</b> <span id="recPlan"></span></p>
                 <p><b>Amount Paid:</b> <span id="recAmount"></span> ETB</p>
                 <p><b>Expiry Date (EC):</b> <span id="recExpiry"></span></p>
             </div>
-            <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">---------------------------------------------------------</p>
-            <button type="button" class="btn-main" style="margin-bottom:10px;" onclick="window.print()">Print Official Receipt</button>
-            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('receiptModal').style.display='none'">Close Portal</button>
+            <button type="button" class="btn-main" style="margin-bottom:8px;" onclick="window.print()">Print Receipt</button>
+            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('receiptModal').style.display='none'">Close</button>
         </div>
     </div>
 
-    <!-- JavaScript Engine -->
+    <!-- QR Code Card View Modal -->
+    <div id="qrModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.7); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
+        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:340px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
+            <h3 style="font-size:1rem; font-weight:800;" id="qrCardName">Member Digital ID</h3>
+            <p style="color:var(--text-muted); font-size:0.75rem; margin-top:2px;" id="qrCardId"></p>
+            <div id="qrcodeBox" style="display:flex; justify-content:center; margin:18px 0;"></div>
+            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('qrModal').style.display='none'">Close ID</button>
+        </div>
+    </div>
+
     <script>
         const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
 
@@ -427,9 +437,7 @@
             adminPass: "admin123"
         };
 
-        let scanCache = {};
-        let lastCode = "";
-        let lastTime = 0;
+        let lastCode = "", lastTime = 0;
 
         window.onload = function() {
             document.getElementById('regGregDate').valueAsDate = new Date();
@@ -464,7 +472,7 @@
 
         function renderCalendarHeader() {
             const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-            const enMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             let now = new Date();
             document.getElementById('topbarDateBadge').innerText = `📅 ${enMonths[now.getMonth()]} / ${amMonths[now.getMonth()]} E.C`;
         }
@@ -478,14 +486,14 @@
             document.getElementById('sidebarNav').classList.remove('mobile-open');
 
             const titles = {
-                'dashboardView': ['Executive Dashboard Analytics', 'Real-time telemetry and member lifecycle intelligence'],
-                'registerView': ['New Member Onboarding Portal', 'Register athletes and configure automated billing'],
-                'membersView': ['Registered Members Directory', 'Search, filter, and manage membership profiles'],
-                'scannerView': ['Enterprise QR Access Scanner', 'Automated hardware entry validation'],
-                'logsView': ['Daily Attendance Logs History', 'Live audit trail of gym entry access'],
-                'settingsView': ['Enterprise Configuration Settings', 'System pricing rules and organization parameters']
+                'dashboardView': 'Executive Dashboard Analytics',
+                'registerView': 'Member Onboarding Portal',
+                'membersView': 'Members Directory',
+                'scannerView': 'QR Access Scanner',
+                'logsView': 'Attendance Logs',
+                'settingsView': 'Configuration Settings'
             };
-            if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId][0];
+            if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId];
             if (viewId === 'logsView') fetchLogs();
         }
 
@@ -667,8 +675,8 @@
             chartRev = new Chart(document.getElementById('chartRevenue').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Monthly Revenue', 'Yearly Revenue'],
-                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#3C8356'], borderRadius: 10 }]
+                    labels: ['Monthly', 'Yearly'],
+                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#3C8356'], borderRadius: 8 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -683,6 +691,7 @@
             });
         }
 
+        /* 4 Complete Actions: Receipt, Edit/Renew, QR Code, Delete */
         function renderDirectory(data) {
             let tbody = document.getElementById('directoryTableBody');
             tbody.innerHTML = '';
@@ -700,10 +709,14 @@
                     <td>${plan}</td>
                     <td style="font-weight:700;">${paid} ETB</td>
                     <td style="color:var(--text-muted);">${expiry}</td>
-                    <td><span style="padding:5px 12px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
+                    <td><span style="padding:4px 10px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-main" style="width:auto; padding:5px 12px; font-size:0.7rem; margin-top:0;" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
-                        <button type="button" class="btn-main" style="width:auto; padding:5px 12px; font-size:0.7rem; margin-top:0; background:var(--danger-color);" onclick="deleteMember('${id}')">Delete</button>
+                        <div class="action-btn-group">
+                            <button type="button" class="btn-action receipt" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
+                            <button type="button" class="btn-action edit" onclick="editMember('${id}','${name}','${phone}','${plan}')">Edit/Renew</button>
+                            <button type="button" class="btn-action qrcode" onclick="showQRCode('${id}','${name}')">QR Code</button>
+                            <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -739,7 +752,7 @@
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             }).then(() => {
-                btn.innerText = "Complete Registration & Generate Receipt";
+                btn.innerText = "Complete Registration & Receipt";
                 btn.disabled = false;
                 openReceipt(payload.memberId, payload.fullName, payload.plan, payload.amountPaid, payload.expiryDate);
                 document.getElementById('regForm').reset();
@@ -757,6 +770,24 @@
             document.getElementById('receiptModal').style.display = 'flex';
         }
 
+        function editMember(id, name, phone, plan) {
+            switchView('registerView');
+            document.getElementById('regId').value = id;
+            document.getElementById('regName').value = name;
+            document.getElementById('regPhone').value = phone;
+            document.getElementById('regPlan').value = plan;
+            calcPrice();
+        }
+
+        function showQRCode(id, name) {
+            document.getElementById('qrCardName').innerText = name;
+            document.getElementById('qrCardId').innerText = "ID: " + id;
+            let container = document.getElementById('qrcodeBox');
+            container.innerHTML = "";
+            new QRCode(container, { text: id, width: 160, height: 160 });
+            document.getElementById('qrModal').style.display = 'flex';
+        }
+
         function deleteMember(id) {
             if (confirm("Delete member " + id + "?")) {
                 fetch(API_ENDPOINT, {
@@ -770,7 +801,7 @@
         function startScanner(mode) {
             if (qrScanner) stopScanner();
             qrScanner = new Html5Qrcode("qrCameraBox");
-            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 240 }, (text) => processScan(text));
+            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 220 }, (text) => processScan(text));
         }
 
         function stopScanner() {
