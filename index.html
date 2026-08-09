@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v5.2</title>
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v6.0</title>
+    
     <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
@@ -16,12 +17,12 @@
             --faida-accent: #3C8356;
             --brand-orange: #FF6B00;
             --brand-dark: #121212;
-            --bg-canvas: #F4F7FE;
-            --surface-white: #FFFFFF;
-            --surface-card: #FFFFFF;
-            --text-main: #1B2559;
-            --text-muted: #707EAE;
-            --border-light: #E0E5F2;
+            --bg-canvas: #0B1437;
+            --surface-white: #111C44;
+            --surface-card: #1B2559;
+            --text-main: #FFFFFF;
+            --text-muted: #A3AED0;
+            --border-light: #2B3674;
             --success-color: #01B574;
             --danger-color: #EE5D50;
             --warning-color: #FFB547;
@@ -29,18 +30,8 @@
             --sidebar-width: 280px;
             --radius-smooth: 20px;
             --radius-element: 12px;
-            --shadow-enterprise: 0px 18px 40px rgba(112, 144, 176, 0.12);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.dark-mode {
-            --bg-canvas: #0B1437;
-            --surface-white: #111C44;
-            --surface-card: #1B2559;
-            --text-main: #FFFFFF;
-            --text-muted: #A3AED0;
-            --border-light: #2B3674;
             --shadow-enterprise: 0px 18px 40px rgba(0, 0, 0, 0.4);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -53,7 +44,7 @@
         }
         .login-glass-card {
             background: var(--surface-card); padding: 35px 25px; border-radius: 24px; width: 400px; max-width: 90%;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--border-light);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border-light);
         }
         .login-glass-card h2 { color: var(--text-main); font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
         .login-glass-card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
@@ -67,22 +58,22 @@
         .btn-main {
             width: 100%; padding: 13px; background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
             color: white; border: none; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(15, 56, 90, 0.2); transition: var(--transition-smooth); margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(15, 56, 90, 0.4); transition: var(--transition-smooth); margin-top: 10px;
         }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.3); }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.5); }
 
-        /* Sidebar Layout */
+        /* Mobile Scroll Fixed Sidebar Layout */
         .enterprise-sidebar {
             width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--surface-white); border-right: 1px solid var(--border-light);
             display: flex; flex-direction: column; justify-content: space-between; z-index: 1000; transition: var(--transition-smooth);
-            height: 100vh; position: relative; overflow-y: auto;
+            height: 100vh; max-height: 100vh; overflow: hidden; position: relative;
         }
-        .sidebar-brand-wrapper { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-light); }
+        .sidebar-brand-wrapper { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-light); flex-shrink: 0; }
         .sidebar-brand-logo { height: 42px; width: 42px; object-fit: contain; border-radius: 8px; background: var(--bg-canvas); padding: 2px; }
         .sidebar-brand-text h2 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
         .sidebar-brand-text span { font-size: 0.65rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; }
 
-        .sidebar-menu-scroll { flex: 1; padding: 15px 12px; }
+        .sidebar-menu-scroll { flex: 1; padding: 15px 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .menu-title { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin: 12px 10px 8px 10px; }
         
         .nav-btn {
@@ -90,21 +81,20 @@
             color: var(--text-muted); text-align: left; font-size: 0.88rem; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; gap: 12px; transition: var(--transition-smooth); margin-bottom: 4px;
         }
-        .nav-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
-        .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 8px 16px rgba(15,56,90,0.15); }
+        .nav-btn:hover { background: var(--bg-canvas); color: #58A6FF; }
+        .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 8px 16px rgba(15,56,90,0.3); }
 
-        /* Enhanced Developer Branding Footer with vCARD & Links */
+        /* Developer Branding Footer Fixed at Bottom */
         .faida-powered-footer {
-            margin: 12px; padding: 14px 12px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.08), rgba(60, 131, 86, 0.15));
-            border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.25); text-align: center; flex-shrink: 0;
+            margin: 10px; padding: 12px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.2), rgba(60, 131, 86, 0.3));
+            border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.3); text-align: center; flex-shrink: 0;
         }
         .faida-powered-footer span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .faida-tech-brand { font-size: 0.85rem; font-weight: 800; color: var(--faida-primary); letter-spacing: 0.5px; }
-        body.dark-mode .faida-tech-brand { color: #58A6FF; }
+        .faida-tech-brand { font-size: 0.85rem; font-weight: 800; color: #58A6FF; letter-spacing: 0.5px; }
 
-        .dev-links-row { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+        .dev-links-row { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
         .dev-link-btn {
-            padding: 4px 8px; font-size: 0.65rem; font-weight: 700; border-radius: 6px; background: var(--surface-card);
+            padding: 5px 8px; font-size: 0.65rem; font-weight: 700; border-radius: 6px; background: var(--surface-card);
             color: var(--text-main); border: 1px solid var(--border-light); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
         }
 
@@ -114,7 +104,7 @@
         .topbar {
             min-height: 70px; background: var(--surface-white); padding: 10px 20px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99; flex-wrap: wrap; gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 99; flex-wrap: wrap; gap: 10px;
         }
         .topbar-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
         .topbar h1 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
@@ -127,10 +117,9 @@
         }
 
         .badge-pill {
-            background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 6px 12px; border-radius: 30px;
-            font-weight: 700; font-size: 0.75rem; border: 1px solid rgba(15,56,90,0.1); white-space: nowrap;
+            background: rgba(88, 166, 255, 0.1); color: #58A6FF; padding: 6px 12px; border-radius: 30px;
+            font-weight: 700; font-size: 0.75rem; border: 1px solid rgba(88, 166, 255, 0.2); white-space: nowrap;
         }
-        body.dark-mode .badge-pill { color: #58A6FF; background: rgba(88, 166, 255, 0.1); }
 
         .top-action-btn {
             background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
@@ -161,7 +150,7 @@
         /* Table Responsive */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid var(--border-light); background: var(--surface-card); }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
-        th { padding: 14px 16px; text-align: left; font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.04); white-space: nowrap; border-bottom: 2px solid var(--border-light); }
+        th { padding: 14px 16px; text-align: left; font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.3); white-space: nowrap; border-bottom: 2px solid var(--border-light); }
         td { padding: 14px 16px; font-size: 0.85rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; white-space: nowrap; }
 
         .action-btn-group { display: flex; gap: 6px; align-items: center; justify-content: flex-start; min-width: 280px; }
@@ -171,14 +160,14 @@
         .btn-action.qrcode { background: var(--brand-orange); }
         .btn-action.delete { background: var(--danger-color); }
 
-        /* Professional Flip Smart ID Card Layout */
+        /* Flip Smart ID Card Layout */
         .smart-id-card-wrap {
             width: 320px; min-height: 480px; background: #FFFFFF; border-radius: 20px; overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3); color: #111; margin: 0 auto; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); color: #111; margin: 0 auto; text-align: center;
             border: 2px solid var(--brand-orange); position: relative; font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex; flex-direction: column; justify-content: space-between;
         }
-        .id-header { background: linear-gradient(135deg, #FF6B00, #111111); padding: 16px 10px 40px 10px; color: white; position: relative; }
+        .id-header { background: linear-gradient(135deg, #FF6B00, #111111); padding: 16px 10px 45px 10px; color: white; position: relative; }
         .id-header img { height: 38px; width: 38px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
         .id-header h4 { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; margin-top: 4px; }
         .id-header p { font-size: 0.6rem; opacity: 0.9; font-weight: 700; }
@@ -186,7 +175,7 @@
         .id-photo-frame {
             width: 95px; height: 95px; border-radius: 50%; border: 4px solid var(--brand-orange);
             margin: -48px auto 6px auto; background: #fff; overflow: hidden; position: relative; z-index: 5;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
         .id-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -200,17 +189,10 @@
         
         .id-qr-box { background: var(--brand-orange); padding: 10px; border-radius: 14px; display: inline-block; margin-top: 8px; }
 
-        /* ID Back Page Design */
-        .id-back-page { padding: 20px 16px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
-        .payment-qrs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .pay-qr-card { background: #f8fafc; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; text-align: center; }
-        .pay-qr-card img { width: 100px; height: 100px; object-fit: contain; }
-        .pay-qr-card span { font-size: 0.68rem; font-weight: 800; color: #0F385A; display: block; margin-top: 4px; }
-
-        /* Mobile Responsive */
+        /* Mobile Screens Fixed Overlay */
         @media (max-width: 900px) {
             .enterprise-sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 9999; }
-            .enterprise-sidebar.mobile-open { left: 0; box-shadow: 15px 0 50px rgba(0,0,0,0.5); }
+            .enterprise-sidebar.mobile-open { left: 0; box-shadow: 15px 0 50px rgba(0,0,0,0.8); }
             .menu-toggle-btn { display: flex; }
             .enterprise-workspace { width: 100%; }
             .topbar { padding: 10px 14px; }
@@ -220,7 +202,7 @@
         }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
     <!-- Login Portal -->
     <div id="enterpriseLoginOverlay">
@@ -242,30 +224,29 @@
 
     <!-- Left Sidebar Navigation -->
     <aside class="enterprise-sidebar" id="sidebarNav">
-        <div>
-            <div class="sidebar-brand-wrapper">
-                <img id="sidebarLogoImg" src="https://via.placeholder.com/40" class="sidebar-brand-logo" alt="Logo">
-                <div class="sidebar-brand-text">
-                    <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
-                    <span>Enterprise v5.2</span>
-                </div>
-            </div>
-            <div class="sidebar-menu-scroll">
-                <div class="menu-title">Core Management</div>
-                <button class="nav-btn active" onclick="switchView('dashboardView', event)">📊 Executive Dashboard</button>
-                <button class="nav-btn" onclick="switchView('registerView', event)">➕ Member Registration</button>
-                <button class="nav-btn" onclick="switchView('membersView', event)">👥 Members Directory</button>
-                
-                <div class="menu-title">Operations & Access</div>
-                <button class="nav-btn" onclick="switchView('scannerView', event)">📷 QR Access Scanner</button>
-                <button class="nav-btn" onclick="switchView('logsView', event)">📋 Attendance Logs</button>
-                
-                <div class="menu-title">System Controls</div>
-                <button class="nav-btn" onclick="switchView('settingsView', event)">⚙️ Enterprise Settings</button>
+        <div class="sidebar-brand-wrapper">
+            <img id="sidebarLogoImg" src="https://via.placeholder.com/40" class="sidebar-brand-logo" alt="Logo">
+            <div class="sidebar-brand-text">
+                <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
+                <span>Enterprise v6.0</span>
             </div>
         </div>
 
-        <!-- Developer Branding Footer with Direct vCARD & Link Actions -->
+        <div class="sidebar-menu-scroll">
+            <div class="menu-title">Core Management</div>
+            <button class="nav-btn active" onclick="switchView('dashboardView', event)">📊 Executive Dashboard</button>
+            <button class="nav-btn" onclick="switchView('registerView', event)">➕ Member Registration</button>
+            <button class="nav-btn" onclick="switchView('membersView', event)">👥 Members Directory</button>
+            
+            <div class="menu-title">Operations & Access</div>
+            <button class="nav-btn" onclick="switchView('scannerView', event)">📷 QR Access Scanner</button>
+            <button class="nav-btn" onclick="switchView('logsView', event)">📋 Attendance Logs</button>
+            
+            <div class="menu-title">System Controls</div>
+            <button class="nav-btn" onclick="switchView('settingsView', event)">⚙️ Enterprise Settings</button>
+        </div>
+
+        <!-- Developer Branding Footer Fixed at Bottom -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
             <div class="faida-tech-brand">FaidATech Enterprise</div>
@@ -289,7 +270,6 @@
             </div>
             <div class="topbar-right">
                 <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
-                <button class="top-action-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
                 <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
             </div>
         </header>
@@ -330,7 +310,7 @@
                     
                     <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 16px;">
-                            <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.2);"></div>
                             <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Abebe Kebede"></div>
                             <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0912132353"></div>
                             <div class="input-group"><label>FAIDA EDID</label><input type="text" id="regEdid" placeholder="EDID-FAN-2589341592"></div>
@@ -351,8 +331,8 @@
                             </div>
                             <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
                             <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
-                            <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
-                            <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.2);"></div>
+                            <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.2);"></div>
                             <div class="input-group" style="grid-column: 1 / -1;">
                                 <label>Upload Athlete Photo</label>
                                 <input type="file" id="regPhotoFile" accept="image/*">
@@ -403,7 +383,7 @@
                     <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
                     <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Scan athlete QR code for entry authorization.</p>
                     
-                    <div id="qrCameraBox" style="width:100%; min-height:250px; border-radius:16px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    <div id="qrCameraBox" style="width:100%; min-height:260px; border-radius:16px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.2); display:flex; justify-content:center; align-items:center;"></div>
                     
                     <div style="margin-top:16px; display:flex; justify-content:center; gap:10px;">
                         <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
@@ -465,7 +445,7 @@
         </div>
     </div>
 
-    <!-- Official Smart ID Card Modal (Front & Back Flip Design) -->
+    <!-- Official Smart ID Card Modal -->
     <div id="smartIdModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.85); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto;">
         <div style="background:transparent; text-align:center; max-width:340px; width:100%;">
             
@@ -498,20 +478,19 @@
                     </div>
                 </div>
 
-                <!-- Back Page Container (Payments QRs & Gym Info) -->
-                <div id="idCardBackView" style="display:none;" class="id-back-page">
-                    <div>
-                        <h3 style="color:#0F385A; font-weight:800; font-size:1rem; margin-bottom:2px;">ABOUT OUR GYM</h3>
-                        <p style="font-size:0.65rem; color:#666; line-height:1.4;">"Gudda Life Fitness ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
-                    </div>
-                    <div class="payment-qrs-grid">
-                        <div class="pay-qr-card">
-                            <img id="cardCbeQr" src="https://via.placeholder.com/100?text=CBE+QR" alt="CBE QR">
-                            <span>CBE BIRR</span>
+                <!-- Back Page Container -->
+                <div id="idCardBackView" style="display:none; padding:20px 16px; text-align:center; height:100%;">
+                    <h3 style="color:#0F385A; font-weight:800; font-size:1rem; margin-bottom:6px;">GUDDA LIFE FITNESS</h3>
+                    <p style="font-size:0.68rem; color:#555; line-height:1.4; margin-bottom:15px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+                        <div style="background:#f8fafc; padding:8px; border-radius:10px; border:1px solid #e2e8f0;">
+                            <img id="cardCbeQr" src="https://via.placeholder.com/100?text=CBE+QR" style="width:100px; height:100px; object-fit:contain;">
+                            <span style="font-size:0.68rem; font-weight:800; color:#0F385A; display:block; margin-top:4px;">CBE BIRR</span>
                         </div>
-                        <div class="pay-qr-card">
-                            <img id="cardTeleQr" src="https://via.placeholder.com/100?text=Telebirr+QR" alt="Telebirr QR">
-                            <span>TELEBIRR</span>
+                        <div style="background:#f8fafc; padding:8px; border-radius:10px; border:1px solid #e2e8f0;">
+                            <img id="cardTeleQr" src="https://via.placeholder.com/100?text=Telebirr+QR" style="width:100px; height:100px; object-fit:contain;">
+                            <span style="font-size:0.68rem; font-weight:800; color:#0F385A; display:block; margin-top:4px;">TELEBIRR</span>
                         </div>
                     </div>
                     <div style="font-size:0.65rem; color:#333; font-weight:700; border-top:1px dashed #ccc; padding-top:8px;">
@@ -528,23 +507,6 @@
         </div>
     </div>
 
-    <!-- Receipt Modal -->
-    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.8); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
-        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:360px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
-            <h3 id="recGymName" style="font-size:1.1rem; font-weight:800;">Official Receipt</h3>
-            <div style="margin:12px 0; border-bottom:1px dashed var(--border-light);"></div>
-            <div style="text-align:left; font-size:0.85rem; display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
-                <p><b>Member ID:</b> <span id="recId"></span></p>
-                <p><b>Full Name:</b> <span id="recName"></span></p>
-                <p><b>Plan:</b> <span id="recPlan"></span></p>
-                <p><b>Amount Paid:</b> <span id="recAmount"></span> ETB</p>
-                <p><b>Expiry Date (EC):</b> <span id="recExpiry"></span></p>
-            </div>
-            <button type="button" class="btn-main" style="margin-bottom:8px;" onclick="window.print()">Print Receipt</button>
-            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('receiptModal').style.display='none'">Close</button>
-        </div>
-    </div>
-
     <script>
         const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
 
@@ -552,7 +514,7 @@
         let qrScanner = null;
         let chartRev = null;
         let chartPlan = null;
-        let activePhotoBase64 = "";
+        let scanHistory = {};
 
         let systemSettings = {
             gymName: "GUDDA LIFE FITNESS",
@@ -564,9 +526,6 @@
             teleQrBase64: "",
             adminPass: "admin123"
         };
-
-        /* Scan Timeout Anti-Duplicate Tracking */
-        let scanHistory = {};
 
         window.onload = function() {
             document.getElementById('regGregDate').valueAsDate = new Date();
@@ -593,10 +552,6 @@
 
         function executeLogout() {
             document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
         }
 
         function renderCalendarHeader() {
@@ -655,7 +610,6 @@
 
             document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
             document.getElementById('cardGymName').innerText = systemSettings.gymName;
-            document.getElementById('recGymName').innerText = systemSettings.gymName + " Receipt";
             
             if (systemSettings.gymLogoBase64) {
                 document.getElementById('sidebarLogoImg').src = systemSettings.gymLogoBase64;
@@ -704,7 +658,7 @@
                 body: JSON.stringify({ action: "saveSettings", ...systemSettings })
             }).then(() => {
                 applySettings();
-                alert("Settings Updated & Saved Successfully!");
+                alert("Settings Saved Successfully!");
             });
         }
 
@@ -789,11 +743,9 @@
                 if (pl === "Yearly") yRev += amt; else mRev += amt;
                 if (plans[pl] !== undefined) plans[pl]++;
 
-                let jDate = new Date(m[4] || now);
-                let diffDays = (now - jDate) / (1000 * 60 * 60 * 24);
-                if (diffDays <= 7) weekNew++;
-                if (diffDays <= 30) monthNew++;
-                if (diffDays <= 365) yearNew++;
+                let jStr = m[4] || "";
+                if (jStr.includes("E.C")) weekNew++; 
+                monthNew++; yearNew++;
             });
 
             document.getElementById('statTotal').innerText = total;
@@ -839,10 +791,10 @@
                 return;
             }
             data.forEach(m => {
-                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0, edid = m[8] || 'EDID-FAN-2589341592', photo = m[9] || 'https://via.placeholder.com/100';
+                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0, gender = m[8] || 'Male', edid = m[9] || 'EDID-FAN-2589341592', photo = m[10] || 'https://via.placeholder.com/100';
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight:700; color:var(--faida-primary);">${id}</td>
+                    <td style="font-weight:700; color:#58A6FF;">${id}</td>
                     <td style="font-weight:600;">${name}</td>
                     <td style="color:var(--text-muted);">${phone}</td>
                     <td>${plan}</td>
@@ -851,7 +803,6 @@
                     <td><span style="padding:4px 10px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
                     <td>
                         <div class="action-btn-group">
-                            <button type="button" class="btn-action receipt" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
                             <button type="button" class="btn-action edit" onclick="editMember('${id}','${name}','${phone}','${plan}')">Edit/Renew</button>
                             <button type="button" class="btn-action qrcode" onclick="showSmartIdCard('${id}','${name}','${phone}','${edid}','${expiry}','${photo}')">🪪 Smart ID</button>
                             <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
@@ -937,15 +888,6 @@
             }
         }
 
-        function openReceipt(id, name, plan, amt, exp) {
-            document.getElementById('recId').innerText = id;
-            document.getElementById('recName').innerText = name;
-            document.getElementById('recPlan').innerText = plan;
-            document.getElementById('recAmount').innerText = amt;
-            document.getElementById('recExpiry').innerText = exp;
-            document.getElementById('receiptModal').style.display = 'flex';
-        }
-
         function editMember(id, name, phone, plan) {
             switchView('registerView');
             document.getElementById('regId').value = id;
@@ -975,17 +917,15 @@
             if (qrScanner) qrScanner.stop().then(() => qrScanner.clear()).catch(() => {});
         }
 
-        /* Scan Processor with 15-Second Anti-Duplicate Cooldown & Yellow Warning */
         function processScan(id) {
             let now = new Date().getTime();
             let resultCard = document.getElementById('scanProfileResult');
             resultCard.style.display = 'block';
 
-            // Cooldown logic (15 Seconds)
             if (scanHistory[id] && (now - scanHistory[id]) < 15000) {
                 let remaining = Math.ceil((15000 - (now - scanHistory[id])) / 1000);
                 resultCard.innerHTML = `
-                    <div style="background:rgba(255,181,71,0.15); border:1px solid var(--warning-color); color:#B7791F; padding:12px; border-radius:12px; font-weight:800; text-align:center;">
+                    <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:12px; border-radius:12px; font-weight:800; text-align:center;">
                         ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
                     </div>
                 `;
@@ -1005,14 +945,14 @@
                 return;
             }
 
-            scanHistory[id] = now; // Update scan timestamp
+            scanHistory[id] = now;
 
             let name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || "Active";
 
             if (status === "Active") {
                 resultCard.innerHTML = `
                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(1,181,116,0.1); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.4rem; font-weight:800;">✓</div>
+                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.4rem; font-weight:800;">✓</div>
                         <div>
                             <h3 style="font-size:1rem; font-weight:800; color:var(--text-main);">${name}</h3>
                             <p style="font-size:0.75rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
@@ -1028,7 +968,7 @@
             } else {
                 resultCard.innerHTML = `
                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(238,93,80,0.1); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.4rem; font-weight:800;">✕</div>
+                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.4rem; font-weight:800;">✕</div>
                         <div>
                             <h3 style="font-size:1rem; font-weight:800; color:var(--text-main);">${name}</h3>
                             <p style="font-size:0.75rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
@@ -1070,7 +1010,7 @@
                     data.slice(1).reverse().forEach(l => {
                         let tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td style="font-weight:700; color:var(--faida-primary);">${l[0]}</td>
+                            <td style="font-weight:700; color:#58A6FF;">${l[0]}</td>
                             <td>${l[1]}</td>
                             <td style="color:var(--text-muted);">${l[2]}</td>
                             <td><span style="padding:4px 10px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${String(l[3]).includes('Granted')?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${String(l[3]).includes('Granted')?'var(--success-color)':'var(--danger-color)'};">${l[3]}</span></td>
