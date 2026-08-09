@@ -1414,48 +1414,88 @@ function renderDirectory(data) {
             renderDirectory(filtered);
         }
 
-        function submitRegistration() {
-            let btn = document.getElementById('regSubmitBtn');
-            btn.innerText = "በማስመዝገብ ላይ..."; btn.disabled = true;
+/* =========================================================
+   UPDATED MEMBER REGISTRATION ENGINE (IMMEDIATE UI SYNC)
+   ========================================================= */
+function submitRegistration() {
+    let btn = document.getElementById('regSubmitBtn');
+    if (btn) { btn.innerText = "በማስመዝገብ ላይ..."; btn.disabled = true; }
 
-            let photoFile = document.getElementById('regPhotoFile').files[0];
+    let photoFile = document.getElementById('regPhotoFile').files[0];
 
-            let processSubmit = (photoBase64) => {
-                let payload = {
-                    action: "register",
-                    memberId: document.getElementById('regId').value,
-                    fullName: document.getElementById('regName').value,
-                    phone: document.getElementById('regPhone').value,
-                    edid: document.getElementById('regEdid').value || "EDID-FAN-2589341592",
-                    gender: document.getElementById('regGender').value,
-                    plan: document.getElementById('regPlan').value,
-                    amountPaid: document.getElementById('regAmount').value,
-                    joinDate: document.getElementById('regEthJoin').value,
-                    expiryDate: document.getElementById('regEthExpiry').value,
-                    photoBase64: photoBase64 || "https://via.placeholder.com/100",
-                    status: "Active"
-                };
+    let processSubmit = (photoBase64) => {
+        let payload = {
+            action: "register",
+            memberId: document.getElementById('regId').value.trim(),
+            fullName: document.getElementById('regName').value.trim(),
+            phone: document.getElementById('regPhone').value.trim(),
+            edid: document.getElementById('regEdid').value.trim() || "EDID-FAN-2589341592",
+            gender: document.getElementById('regGender').value,
+            plan: document.getElementById('regPlan').value,
+            amountPaid: document.getElementById('regAmount').value,
+            joinDate: document.getElementById('regEthJoin').value,
+            expiryDate: document.getElementById('regEthExpiry').value,
+            photoBase64: photoBase64 || "https://via.placeholder.com/100",
+            status: "Active"
+        };
 
-                fetch(API_ENDPOINT, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                }).then(() => {
-                    btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false;
-                    showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
-                    document.getElementById('regForm').reset();
-                    document.getElementById('regGregDate').valueAsDate = new Date();
-                    syncMembers();
-                });
-            };
-
-            if (photoFile) {
-                fileToBase64(photoFile).then(b => processSubmit(b));
+        fetch(API_ENDPOINT, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            
+            // 1. Show Smart ID Card Modal
+            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
+            
+            // 2. Clear Form Input
+            document.getElementById('regForm').reset();
+            document.getElementById('regGregDate').valueAsDate = new Date();
+            
+            // 3. Local Cache Update (ወዲያውኑ አፑ ላይ እንዲታይ ማድረግ)
+            let newMemberRow = [
+                payload.memberId, 
+                payload.fullName, 
+                payload.phone, 
+                payload.plan, 
+                payload.joinDate, 
+                payload.expiryDate, 
+                payload.status, 
+                payload.amountPaid, 
+                payload.gender, 
+                payload.edid, 
+                payload.photoBase64
+            ];
+            
+            // Check if member already exists in cache (Update vs Append)
+            let existingIdx = membersCache.findIndex(m => String(m[0]).trim().toLowerCase() === payload.memberId.toLowerCase());
+            if (existingIdx >= 0) {
+                membersCache[existingIdx] = newMemberRow;
             } else {
-                processSubmit("https://via.placeholder.com/100");
+                membersCache.push(newMemberRow);
             }
-        }
 
+            // Render Directory immediately without waiting for server response
+            renderDirectory(membersCache);
+
+            // 4. Server Re-Sync (ከሰርቨሩ ጋር በቋሚነት ለማረጋገጥ ከ1.5 ሰከንድ በኋላ መረጃውን ያመጣል)
+            setTimeout(() => {
+                syncMembers();
+            }, 1500);
+        }).catch(err => {
+            console.error("Registration Error:", err);
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            alert("መመዝገብ አልተቻለም፤ እባክዎን የኔትወርክ ግንኙነትዎን ያረጋግጡ።");
+        });
+    };
+
+    if (photoFile) {
+        fileToBase64(photoFile).then(b => processSubmit(b));
+    } else {
+        processSubmit("https://via.placeholder.com/100");
+    }
+}
         function showSmartIdCard(id, name, phone, edid, expiry, photo) {
             document.getElementById('cardMemberId').innerText = id;
             document.getElementById('cardMemberName').innerText = name.toUpperCase();
@@ -1652,36 +1692,67 @@ function processScan(scannedData) {
     }
 }
 
-        function sendAttendance(id, name, status) {
-            let timeStr = toEthDate(new Date()) + " " + new Date().toLocaleTimeString();
-            fetch(API_ENDPOINT, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "attendance", memberId: id, fullName: name, scanTime: timeStr, status: status })
-            });
-        }
+/* =========================================================
+   1. ATTENDANCE & AUDIT LOGS ENGINE (FIXED)
+   ========================================================= */
+function sendAttendance(id, name, status) {
+    let now = new Date();
+    let timeStr = "";
+    
+    try {
+        timeStr = toEthDate(now) + " " + now.toLocaleTimeString();
+    } catch (e) {
+        timeStr = now.toLocaleString();
+    }
 
-        function fetchLogs() {
-            fetch(API_ENDPOINT + "?action=getAttendance")
-            .then(res => res.json())
-            .then(data => {
-                let tbody = document.getElementById('logsTableBody');
-                tbody.innerHTML = '';
-                if (data && data.length > 1) {
-                    data.slice(1).reverse().forEach(l => {
-                        let tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td style="font-weight:800; color:#58A6FF;">${l[0]}</td>
-                            <td style="font-weight:700;">${l[1]}</td>
-                            <td style="color:var(--text-muted);">${l[2]}</td>
-                            <td><span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${String(l[3]).includes('Granted')?'rgba(1,181,116,0.15)':'rgba(238,93,80,0.15)'}; color:${String(l[3]).includes('Granted')?'var(--success-color)':'var(--danger-color)'};">${l[3]}</span></td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-            });
-        }
+    let payload = { 
+        action: "attendance", 
+        memberId: id, 
+        fullName: name, 
+        scanTime: timeStr, 
+        status: status 
+    };
 
+    fetch(API_ENDPOINT, {
+        method: 'POST', 
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        console.log("Attendance sent successfully.");
+    }).catch(err => console.error("Attendance Error:", err));
+}
+
+function fetchLogs() {
+    fetch(API_ENDPOINT + "?action=getAttendance")
+    .then(res => res.json())
+    .then(data => {
+        let tbody = document.getElementById('logsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        if (data && data.length > 1) {
+            data.slice(1).reverse().forEach(l => {
+                let tr = document.createElement('tr');
+                let isGranted = String(l[3]).includes('Granted');
+                tr.innerHTML = `
+                    <td style="font-weight:800; color:#58A6FF;">${l[0] || ''}</td>
+                    <td style="font-weight:700;">${l[1] || ''}</td>
+                    <td style="color:var(--text-muted);">${l[2] || ''}</td>
+                    <td>
+                        <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${isGranted ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isGranted ? 'var(--success-color)' : 'var(--danger-color)'};">
+                            ${l[3] || ''}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
+        }
+    })
+    .catch(err => console.error("Fetch Logs Error:", err));
+}
         function downloadVCard() {
             let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
             let blob = new Blob([vcardData], { type: 'text/vcard' });
