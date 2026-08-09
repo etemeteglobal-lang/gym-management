@@ -685,18 +685,29 @@
             margin-top: 8px;
         }
 
-        /* Mobile Layout Enhancements */
-        @media (max-width: 900px) {
+@media (max-width: 900px) {
             .enterprise-sidebar {
                 position: fixed;
                 left: -280px;
                 top: 0;
                 bottom: 0;
+                height: 100dvh; /* Uses dynamic viewport height */
                 z-index: 9999;
+                display: flex;
+                flex-direction: column;
             }
             .enterprise-sidebar.mobile-open {
                 left: 0;
                 box-shadow: 20px 0 60px rgba(0,0,0,0.8);
+            }
+            .sidebar-menu-scroll {
+                flex: 1;
+                overflow-y: auto;
+                padding-bottom: 20px;
+            }
+            .faida-powered-footer {
+                flex-shrink: 0;
+                margin-bottom: 15px;
             }
             .menu-toggle-btn {
                 display: flex;
@@ -1340,35 +1351,62 @@
             });
         }
 
-        function renderDirectory(data) {
-            let tbody = document.getElementById('directoryTableBody');
-            tbody.innerHTML = '';
-            if (!data.length) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">ምንም አይነት መረጃ አልተገኘም።</td></tr>';
-                return;
-            }
-            data.forEach(m => {
-                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0, gender = m[8] || 'Male', edid = m[9] || 'EDID-FAN-2589341592', photo = m[10] || 'https://via.placeholder.com/100';
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:800; color:#58A6FF;">${id}</td>
-                    <td style="font-weight:700;">${name}</td>
-                    <td style="color:var(--text-muted);">${phone}</td>
-                    <td>${plan}</td>
-                    <td style="font-weight:800; color:var(--faida-accent);">${paid} ETB</td>
-                    <td style="color:var(--text-muted);">${expiry}</td>
-                    <td><span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.15)':'rgba(238,93,80,0.15)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
-                    <td>
-                        <div class="action-btn-group">
-                            <button type="button" class="btn-action edit" onclick="editMember('${id}','${name}','${phone}','${plan}')">Edit/Renew</button>
-                            <button type="button" class="btn-action qrcode" onclick="showSmartIdCard('${id}','${name}','${phone}','${edid}','${expiry}','${photo}')">🪪 Smart ID</button>
-                            <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+/* =========================================================
+   UPDATED DIRECTORY RENDER FUNCTION (DATA MAPPING FIX)
+   ========================================================= */
+function renderDirectory(data) {
+    let tbody = document.getElementById('directoryTableBody');
+    tbody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding: 20px;">ምንም አይነት መረጃ አልተገኘም።</td></tr>';
+        return;
+    }
+
+    data.forEach(m => {
+        // Safe mapping & fallback default values matching Google Sheets columns
+        let id = m[0] || '';
+        let name = m[1] || '';
+        let phone = m[2] || '';
+        let plan = m[3] || '';
+        let expiry = m[5] || '';
+        let status = m[6] || 'Active';
+        let paid = m[7] || 0;
+        let gender = m[8] || 'Male';
+        let edid = m[9] || 'EDID-FAN-2589341592';
+        let photo = m[10] || 'https://via.placeholder.com/100';
+
+        // Escaping single quotes for button click attributes
+        let safeName = String(name).replace(/'/g, "\\'");
+        let safePhone = String(phone).replace(/'/g, "\\'");
+        let safeEdid = String(edid).replace(/'/g, "\\'");
+        let safeExpiry = String(expiry).replace(/'/g, "\\'");
+        let safePhoto = String(photo).replace(/'/g, "\\'");
+
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:800; color:#58A6FF;">${id}</td>
+            <td style="font-weight:700;">${name}</td>
+            <td style="color:var(--text-muted);">${phone}</td>
+            <td>${plan}</td>
+            <td style="font-weight:800; color:var(--faida-accent);">${paid} ETB</td>
+            <td style="color:var(--text-muted);">${expiry}</td>
+            <td>
+                <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${status === 'Active' ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${status === 'Active' ? 'var(--success-color)' : 'var(--danger-color)'};">
+                    ${status}
+                </span>
+            </td>
+            <td>
+                <div class="action-btn-group">
+                    <button type="button" class="btn-action edit" onclick="editMember('${id}','${safeName}','${safePhone}','${plan}')">Edit/Renew</button>
+                    <button type="button" class="btn-action qrcode" onclick="showSmartIdCard('${id}','${safeName}','${safePhone}','${safeEdid}','${safeExpiry}','${safePhoto}')">🪪 Smart ID</button>
+                    <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
         function filterDirectory() {
             let q = document.getElementById('searchInput').value.toLowerCase();
@@ -1463,93 +1501,156 @@
                 }).then(() => syncMembers());
             }
         }
+/* =========================================================
+   FIXED QR SCANNER & SMART PARSER LOGIC
+   ========================================================= */
 
-        /* =========================================================
-           QR SCANNER & ATTENDANCE LOGIC
-           ========================================================= */
-        function startScanner(mode) {
-            if (qrScanner) stopScanner();
-            qrScanner = new Html5Qrcode("qrCameraBox");
-            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 220 }, (text) => processScan(text));
+// Start Camera Stream with Dynamic Aspect Ratio & Better Focus
+async function startScanner(mode = 'environment') {
+    if (qrScanner) {
+        await stopScanner();
+    }
+
+    try {
+        await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+    } catch (err) {
+        alert("እባክዎን ካሜራውን ለመክፈት ለአሳሽዎ (Browser) የካሜራ ፈቃድ ይስጡት።");
+        return;
+    }
+
+    qrScanner = new Html5Qrcode("qrCameraBox");
+    
+    // Improved Scanning Box and Higher FPS for Mobile Responsiveness
+    const config = { 
+        fps: 15, 
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.70; // 70% of screen box
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            return {
+                width: Math.floor(minEdgeSize * minEdgePercentage),
+                height: Math.floor(minEdgeSize * minEdgePercentage)
+            };
+        },
+        aspectRatio: 1.0
+    };
+
+    qrScanner.start(
+        { facingMode: mode },
+        config,
+        (decodedText) => {
+            // QR Code Detected Success
+            processScan(decodedText);
+        },
+        (errorMessage) => {
+            // Scanning continuously...
         }
+    ).catch(err => {
+        console.error("Camera Init Error:", err);
+        alert("ካሜራውን ማስነሳት አልተቻለም፦ " + err);
+    });
+}
 
-        function stopScanner() {
-            if (qrScanner) qrScanner.stop().then(() => qrScanner.clear()).catch(() => {});
+// Stop Camera Safely
+async function stopScanner() {
+    if (qrScanner) {
+        try {
+            await qrScanner.stop();
+            qrScanner.clear();
+        } catch (e) {
+            console.log("Scanner already stopped.");
         }
+    }
+}
 
-        function processScan(id) {
-            let now = new Date().getTime();
-            let resultCard = document.getElementById('scanProfileResult');
-            resultCard.style.display = 'block';
+// Smart QR Code Processor (Handles JSON and Plain Text IDs)
+function processScan(scannedData) {
+    let now = new Date().getTime();
+    let resultCard = document.getElementById('scanProfileResult');
+    resultCard.style.display = 'block';
 
-            if (scanHistory[id] && (now - scanHistory[id]) < 15000) {
-                let remaining = Math.ceil((15000 - (now - scanHistory[id])) / 1000);
-                resultCard.innerHTML = `
-                    <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:14px; border-radius:14px; font-weight:800; text-align:center;">
-                        ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
-                    </div>
-                `;
-                speakAlert("Already Checked In.");
-                return;
-            }
+    let extractedId = scannedData.trim();
 
-            let m = membersCache.find(item => String(item[0]).trim().toLowerCase() === id.trim().toLowerCase());
-            
-            if (!m) {
-                resultCard.innerHTML = `
-                    <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center;">
-                        ❌ Access Denied: Unknown QR Code (${id})
-                    </div>
-                `;
-                speakAlert("Access Denied. Unknown Member ID");
-                return;
-            }
-
-            scanHistory[id] = now;
-
-            let name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || "Active";
-
-            if (status === "Active") {
-                resultCard.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                        <div style="width:52px; height:52px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.6rem; font-weight:800;">✓</div>
-                        <div>
-                            <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                            <p style="font-size:0.8rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
-                        </div>
-                    </div>
-                    <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                        <p><b>Member ID:</b> ${id} | <b>Plan:</b> ${plan}</p>
-                        <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
-                    </div>
-                `;
-                speakAlert("Welcome " + name + ". Access Granted.");
-                sendAttendance(id, name, "Granted");
-            } else {
-                resultCard.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                        <div style="width:52px; height:52px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.6rem; font-weight:800;">✕</div>
-                        <div>
-                            <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                            <p style="font-size:0.8rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
-                        </div>
-                    </div>
-                    <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                        <p><b>Member ID:</b> ${id} | <b>Plan:</b> ${plan}</p>
-                        <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
-                    </div>
-                `;
-                speakAlert("Access Denied. Subscription Expired.");
-                sendAttendance(id, name, "Denied (Expired)");
-            }
+    // 1. Try Parsing if QR Code contains JSON Data
+    try {
+        let parsed = JSON.parse(scannedData);
+        if (parsed.id) {
+            extractedId = String(parsed.id).trim();
+        } else if (parsed.memberId) {
+            extractedId = String(parsed.memberId).trim();
         }
+    } catch (e) {
+        // Not JSON, treat scannedData directly as ID string
+        extractedId = scannedData.trim();
+    }
 
-        function speakAlert(text) {
-            if ('speechSynthesis' in window) {
-                let msg = new SpeechSynthesisUtterance(text);
-                msg.rate = 1; window.speechSynthesis.speak(msg);
-            }
-        }
+    // 2. Prevent Duplicate Scanning (Cooldown of 10 seconds)
+    if (scanHistory[extractedId] && (now - scanHistory[extractedId]) < 10000) {
+        let remaining = Math.ceil((10000 - (now - scanHistory[extractedId])) / 1000);
+        resultCard.innerHTML = `
+            <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:14px; border-radius:14px; font-weight:800; text-align:center;">
+                ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
+            </div>
+        `;
+        return;
+    }
+
+    // 3. Search Member in Loaded Cache
+    let m = membersCache.find(item => String(item[0]).trim().toLowerCase() === extractedId.toLowerCase());
+    
+    if (!m) {
+        resultCard.innerHTML = `
+            <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center; padding:12px; background:rgba(238,93,80,0.1); border-radius:12px; border:1px solid var(--danger-color);">
+                ❌ Access Denied: Unknown Member ID (${extractedId})
+            </div>
+        `;
+        speakAlert("Access Denied. Unknown Member ID");
+        return;
+    }
+
+    // Record Scan Timestamp
+    scanHistory[extractedId] = now;
+
+    // Extract Details
+    let name = m[1] || "Member", 
+        phone = m[2] || "N/A", 
+        plan = m[3] || "Monthly", 
+        expiry = m[5] || "N/A", 
+        status = m[6] || "Active";
+
+    if (status === "Active") {
+        resultCard.innerHTML = `
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.6rem; font-weight:800;">✓</div>
+                <div>
+                    <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                    <p style="font-size:0.8rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
+                </div>
+            </div>
+            <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
+                <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
+                <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
+            </div>
+        `;
+        speakAlert("Welcome " + name + ". Access Granted.");
+        sendAttendance(extractedId, name, "Granted");
+    } else {
+        resultCard.innerHTML = `
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.6rem; font-weight:800;">✕</div>
+                <div>
+                    <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                    <p style="font-size:0.8rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
+                </div>
+            </div>
+            <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
+                <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
+                <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
+            </div>
+        `;
+        speakAlert("Access Denied. Subscription Expired.");
+        sendAttendance(extractedId, name, "Denied (Expired)");
+    }
+}
 
         function sendAttendance(id, name, status) {
             let timeStr = toEthDate(new Date()) + " " + new Date().toLocaleTimeString();
