@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.8</title>
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.9</title>
     
     <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,7 +26,6 @@
             --warning-color: #FFB547;
             --info-color: #4318FF;
             --sidebar-width: 280px;
-            --topbar-height: 80px;
             --radius-smooth: 20px;
             --radius-element: 12px;
             --shadow-enterprise: 0px 18px 40px rgba(112, 144, 176, 0.12);
@@ -101,16 +100,17 @@
         .faida-powered-footer span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
         .faida-footer-logo { height: 24px; width: auto; object-fit: contain; }
 
-        /* Workspace (Right Side) */
+        /* Workspace Header Fixes */
         .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); width: calc(100% - var(--sidebar-width)); }
+        
         .topbar {
-            height: var(--topbar-height); background: var(--surface-white); padding: 0 20px; display: flex;
+            min-height: 70px; background: var(--surface-white); padding: 10px 20px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99; flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99; flex-wrap: wrap; gap: 10px;
         }
-        .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-        .topbar h1 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .topbar p { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topbar-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px; }
+        .topbar h1 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+        .topbar p { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
         .topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         
         .menu-toggle-btn {
@@ -129,7 +129,7 @@
         }
         .top-action-btn:hover { background: var(--faida-primary); color: white; border-color: var(--faida-primary); }
 
-        /* Content Area */
+        /* Main Content Container */
         .content-scroll { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease forwards; }
@@ -146,34 +146,76 @@
         .glass-card {
             background: var(--surface-card); padding: 20px; border-radius: var(--radius-smooth);
             box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 20px;
+            overflow: hidden;
         }
 
-        /* Responsive Table */
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 650px; }
-        th { padding: 12px 14px; text-align: left; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); white-space: nowrap; }
-        td { padding: 12px 14px; font-size: 0.85rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+        /* Fully Fixed Responsive Table Container */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            background: var(--surface-card);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px; /* Stretch Table Horizontally */
+        }
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            background: rgba(15,56,90,0.04);
+            white-space: nowrap;
+            border-bottom: 2px solid var(--border-light);
+        }
+        td {
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            white-space: nowrap; /* Prevent Data Text Wrapping / Overlapping */
+        }
 
-        /* Action Buttons Grid in Table */
-        .action-btn-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; min-width: 140px; }
+        /* 4 Action Buttons Horizontal Row */
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: flex-start;
+            min-width: 280px;
+        }
         .btn-action {
-            padding: 6px 10px; font-size: 0.7rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: white; transition: var(--transition-smooth);
+            padding: 7px 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            transition: var(--transition-smooth);
+            white-space: nowrap;
         }
         .btn-action.receipt { background: var(--faida-primary); }
         .btn-action.edit { background: var(--warning-color); color: #000; }
         .btn-action.qrcode { background: var(--info-color); }
         .btn-action.delete { background: var(--danger-color); }
 
-        /* Mobile Adjustments */
+        /* Mobile Screens Optimization */
         @media (max-width: 900px) {
-            :root { var(--topbar-height): 70px; }
             .enterprise-sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 9999; }
             .enterprise-sidebar.mobile-open { left: 0; box-shadow: 15px 0 50px rgba(0,0,0,0.5); }
             .menu-toggle-btn { display: flex; }
             .enterprise-workspace { width: 100%; }
-            .topbar { padding: 0 12px; }
+            .topbar { padding: 10px 14px; }
             .topbar p { display: none; }
-            .content-scroll { padding: 15px 12px 80px 12px; }
+            .content-scroll { padding: 15px 10px 80px 10px; }
             .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .charts-grid { grid-template-columns: 1fr !important; }
         }
@@ -181,7 +223,7 @@
 </head>
 <body class="dark-mode">
 
-    <!-- Login Overlay -->
+    <!-- Login Portal -->
     <div id="enterpriseLoginOverlay">
         <div class="login-glass-card">
             <h2>FaidATech Enterprise</h2>
@@ -199,14 +241,14 @@
         </div>
     </div>
 
-    <!-- Sidebar Navigation -->
+    <!-- Left Sidebar Navigation -->
     <aside class="enterprise-sidebar" id="sidebarNav">
         <div>
             <div class="sidebar-brand-wrapper">
                 <img id="sidebarLogoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
                 <div class="sidebar-brand-text">
                     <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
-                    <span>Enterprise v4.8</span>
+                    <span>Enterprise v4.9</span>
                 </div>
             </div>
             <div class="sidebar-menu-scroll">
@@ -230,14 +272,14 @@
         </div>
     </aside>
 
-    <!-- Main Workspace -->
+    <!-- Right Workspace Area -->
     <div class="enterprise-workspace">
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
                 <div>
                     <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
-                    <p>Real-time membership lifecycle telemetry</p>
+                    <p>Real-time membership telemetry</p>
                 </div>
             </div>
             <div class="topbar-right">
@@ -324,10 +366,21 @@
                             <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0;" onclick="exportCSV()">Export</button>
                         </div>
                     </div>
+                    
+                    <!-- Fixed Horizontally Stretched Table -->
                     <div class="table-responsive">
                         <table>
                             <thead>
-                                <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Plan</th><th>Paid</th><th>Expiry (EC)</th><th>Status</th><th style="text-align:center;">Actions (4)</th></tr>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Phone</th>
+                                    <th>Plan</th>
+                                    <th>Paid</th>
+                                    <th>Expiry (EC)</th>
+                                    <th>Status</th>
+                                    <th style="text-align:left;">Actions (4)</th>
+                                </tr>
                             </thead>
                             <tbody id="directoryTableBody"></tbody>
                         </table>
@@ -497,6 +550,7 @@
             if (viewId === 'logsView') fetchLogs();
         }
 
+        /* Realtime Multi-Device Settings Sync Functionality */
         function fetchSettings() {
             fetch(API_ENDPOINT + "?action=getSettings")
             .then(res => res.json())
@@ -564,7 +618,7 @@
                 body: JSON.stringify({ action: "saveSettings", ...systemSettings })
             }).then(() => {
                 applySettings();
-                alert("Settings and Logo Updated Successfully!");
+                alert("Settings Updated and Synced Across All Devices!");
             });
         }
 
@@ -691,7 +745,7 @@
             });
         }
 
-        /* 4 Complete Actions: Receipt, Edit/Renew, QR Code, Delete */
+        /* Clean Table Rendering with Horizontal Action Group */
         function renderDirectory(data) {
             let tbody = document.getElementById('directoryTableBody');
             tbody.innerHTML = '';
@@ -710,7 +764,7 @@
                     <td style="font-weight:700;">${paid} ETB</td>
                     <td style="color:var(--text-muted);">${expiry}</td>
                     <td><span style="padding:4px 10px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
-                    <td style="text-align:center;">
+                    <td>
                         <div class="action-btn-group">
                             <button type="button" class="btn-action receipt" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
                             <button type="button" class="btn-action edit" onclick="editMember('${id}','${name}','${phone}','${plan}')">Edit/Renew</button>
