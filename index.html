@@ -1702,59 +1702,103 @@ function processScan(scannedData) {
 }
 
 /* =========================================================
-   1. ATTENDANCE & AUDIT LOGS ENGINE (FIXED)
+   ATTENDANCE & AUDIT LOGS ENGINE (URLSearchParams FIXED)
    ========================================================= */
 function sendAttendance(id, name, status) {
-    // API URL ጥበቃ (API_ENDPOINT ወይም SCRIPT_URL ቢሆንም ይሰራል)
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
-    
     if (!endpoint) {
         console.error("API Endpoint URL አልተገኘም!");
         return;
     }
 
     let now = new Date();
-    let timeStr = now.toLocaleString("en-US", { timeZone: "Africa/Addis_Ababa" });
+    let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
 
-    let payload = {
-        action: "attendance",
-        memberId: id,
-        fullName: name,
-        scanTime: timeStr,
-        status: status
-    };
+    // URLSearchParams በመጠቀም በሞባይል ላይ Payload የመጣል ችግርን ይፈታል
+    let params = new URLSearchParams();
+    params.append("action", "attendance");
+    params.append("memberId", id);
+    params.append("fullName", name);
+    params.append("scanTime", timeStr);
+    params.append("status", status);
 
     fetch(endpoint, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
     }).then(() => {
-        console.log("Attendance record request sent successfully.");
+        console.log("Attendance recorded successfully.");
+        setTimeout(() => {
+            if (typeof fetchLogs === 'function') fetchLogs();
+        }, 1200);
     }).catch(err => {
         console.error("Attendance Error:", err);
     });
 }
-        function downloadVCard() {
-            let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
-            let blob = new Blob([vcardData], { type: 'text/vcard' });
-            let a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'FaidATech_Contact.vcf';
-            a.click();
-        }
 
-        function exportCSV() {
-            let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
-            membersCache.forEach(m => {
-                csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+function fetchLogs() {
+    let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+    if (!endpoint) return;
+
+    fetch(endpoint + "?action=getAttendance")
+    .then(res => res.json())
+    .then(data => {
+        let tbody = document.getElementById('logsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        let rows = (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && data[0][0] === "Member ID") 
+                   ? data.slice(1) 
+                   : data;
+
+        if (rows && rows.length > 0) {
+            rows.reverse().forEach(l => {
+                let tr = document.createElement('tr');
+                let statusText = l[3] || 'Granted';
+                let isGranted = String(statusText).includes('Granted');
+                tr.innerHTML = `
+                    <td style="font-weight:800; color:#58A6FF;">${l[0] || ''}</td>
+                    <td style="font-weight:700;">${l[1] || ''}</td>
+                    <td style="color:var(--text-muted);">${l[2] || ''}</td>
+                    <td>
+                        <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${isGranted ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isGranted ? 'var(--success-color)' : 'var(--danger-color)'};">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
-            let blob = new Blob([csv], { type: 'text/csv' });
-            let a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'FaidATech_Gym_Members.csv';
-            a.click();
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
         }
-    </script>
+    })
+    .catch(err => console.error("Fetch Logs Error:", err));
+}
+
+/* =========================================================
+   UTILITY EXPORT & VCARD FUNCTIONS
+   ========================================================= */
+function downloadVCard() {
+    let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
+    let blob = new Blob([vcardData], { type: 'text/vcard' });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FaidATech_Contact.vcf';
+    a.click();
+}
+
+function exportCSV() {
+    let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
+    membersCache.forEach(m => {
+        csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+    });
+    let blob = new Blob([csv], { type: 'text/csv' });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FaidATech_Gym_Members.csv';
+    a.click();
+}
+</script>
 </body>
 </html>
