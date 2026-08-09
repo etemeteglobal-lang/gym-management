@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.9</title>
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v5.0</title>
     
     <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,6 +15,8 @@
         :root {
             --faida-primary: #0F385A;
             --faida-accent: #3C8356;
+            --brand-orange: #FF6B00;
+            --brand-dark: #121212;
             --bg-canvas: #F4F7FE;
             --surface-white: #FFFFFF;
             --surface-card: #FFFFFF;
@@ -77,7 +79,7 @@
             height: 100vh; position: relative;
         }
         .sidebar-brand-wrapper { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-light); }
-        .sidebar-brand-logo { height: 38px; width: auto; object-fit: contain; }
+        .sidebar-brand-logo { height: 42px; width: 42px; object-fit: contain; border-radius: 8px; background: var(--bg-canvas); padding: 2px; }
         .sidebar-brand-text h2 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
         .sidebar-brand-text span { font-size: 0.65rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; }
 
@@ -92,15 +94,16 @@
         .nav-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
         .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 8px 16px rgba(15,56,90,0.15); }
 
-        /* Powered By Footer */
+        /* Separate Fixed Powered By Developer Footer */
         .faida-powered-footer {
-            margin: 12px; padding: 12px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.04), rgba(60, 131, 86, 0.08));
-            border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.15); text-align: center;
+            margin: 12px; padding: 12px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.06), rgba(60, 131, 86, 0.12));
+            border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.2); text-align: center;
         }
         .faida-powered-footer span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-        .faida-footer-logo { height: 24px; width: auto; object-fit: contain; }
+        .faida-tech-brand { font-size: 0.82rem; font-weight: 800; color: var(--faida-primary); letter-spacing: 0.5px; }
+        body.dark-mode .faida-tech-brand { color: #58A6FF; }
 
-        /* Workspace Header Fixes */
+        /* Workspace Header */
         .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); width: calc(100% - var(--sidebar-width)); }
         
         .topbar {
@@ -122,6 +125,8 @@
             background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 6px 12px; border-radius: 30px;
             font-weight: 700; font-size: 0.75rem; border: 1px solid rgba(15,56,90,0.1); white-space: nowrap;
         }
+        body.dark-mode .badge-pill { color: #58A6FF; background: rgba(88, 166, 255, 0.1); }
+
         .top-action-btn {
             background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
             width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
@@ -161,7 +166,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 850px; /* Stretch Table Horizontally */
+            min-width: 850px;
         }
         th {
             padding: 14px 16px;
@@ -180,32 +185,43 @@
             color: var(--text-main);
             border-bottom: 1px solid var(--border-light);
             vertical-align: middle;
-            white-space: nowrap; /* Prevent Data Text Wrapping / Overlapping */
+            white-space: nowrap;
         }
 
-        /* 4 Action Buttons Horizontal Row */
-        .action-btn-group {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            justify-content: flex-start;
-            min-width: 280px;
-        }
+        /* Action Buttons Group */
+        .action-btn-group { display: flex; gap: 6px; align-items: center; justify-content: flex-start; min-width: 280px; }
         .btn-action {
-            padding: 7px 12px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            color: white;
-            transition: var(--transition-smooth);
-            white-space: nowrap;
+            padding: 7px 12px; font-size: 0.72rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: white;
+            transition: var(--transition-smooth); white-space: nowrap;
         }
         .btn-action.receipt { background: var(--faida-primary); }
         .btn-action.edit { background: var(--warning-color); color: #000; }
-        .btn-action.qrcode { background: var(--info-color); }
+        .btn-action.qrcode { background: var(--brand-orange); }
         .btn-action.delete { background: var(--danger-color); }
+
+        /* Custom Smart Member ID Card Styles (matching user Canva design) */
+        .smart-id-card-wrap {
+            width: 320px; background: #FFFFFF; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25); color: #111; margin: 0 auto; text-align: center;
+            border: 2px solid var(--brand-orange); position: relative; font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .id-header {
+            background: linear-gradient(135deg, #FF6B00, #111111); padding: 15px 10px; color: white; position: relative;
+        }
+        .id-header img { height: 38px; width: 38px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+        .id-header h4 { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; margin-top: 4px; }
+        .id-header p { font-size: 0.6rem; opacity: 0.9; font-weight: 700; }
+        .id-photo-frame {
+            width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--brand-orange);
+            margin: -35px auto 8px auto; background: #eee; overflow: hidden; position: relative; z-index: 2;
+        }
+        .id-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .id-body { padding: 5px 15px 15px 15px; }
+        .id-body h2 { font-size: 1.1rem; font-weight: 800; color: #0F385A; margin-bottom: 2px; }
+        .id-body .sub-title { font-size: 0.65rem; font-weight: 800; color: var(--brand-orange); letter-spacing: 1px; text-transform: uppercase; }
+        .id-details { margin: 10px 0; text-align: left; font-size: 0.72rem; line-height: 1.5; color: #333; }
+        .id-details p { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 2px 0; }
+        .id-qr-box { background: var(--brand-orange); padding: 10px; border-radius: 12px; display: inline-block; margin-top: 4px; }
 
         /* Mobile Screens Optimization */
         @media (max-width: 900px) {
@@ -217,7 +233,6 @@
             .topbar p { display: none; }
             .content-scroll { padding: 15px 10px 80px 10px; }
             .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .charts-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -245,10 +260,10 @@
     <aside class="enterprise-sidebar" id="sidebarNav">
         <div>
             <div class="sidebar-brand-wrapper">
-                <img id="sidebarLogoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
+                <img id="sidebarLogoImg" src="https://via.placeholder.com/40" class="sidebar-brand-logo" alt="Logo">
                 <div class="sidebar-brand-text">
                     <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
-                    <span>Enterprise v4.9</span>
+                    <span>Enterprise v5.0</span>
                 </div>
             </div>
             <div class="sidebar-menu-scroll">
@@ -266,9 +281,10 @@
             </div>
         </div>
 
+        <!-- Developer Developer Branding Footer -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" id="faidaBrandLogoFooter" class="faida-footer-logo" alt="FaidATech">
+            <div class="faida-tech-brand">FaidATech Enterprise</div>
         </div>
     </aside>
 
@@ -283,6 +299,7 @@
                 </div>
             </div>
             <div class="topbar-right">
+                <!-- Corrected Amharic / Gregorian Month Display (Aug / ነሐሴ) -->
                 <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
                 <button class="top-action-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
                 <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
@@ -305,14 +322,14 @@
                     <div class="metric-box"><span>New (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3></div>
                 </div>
 
-                <div class="charts-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div class="glass-card" style="height: 350px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="glass-card" style="height: 320px;">
                         <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Revenue Telemetry</h3>
-                        <div style="position:relative; height:270px;"><canvas id="chartRevenue"></canvas></div>
+                        <div style="position:relative; height:240px;"><canvas id="chartRevenue"></canvas></div>
                     </div>
-                    <div class="glass-card" style="height: 350px;">
+                    <div class="glass-card" style="height: 320px;">
                         <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Plan Breakdown</h3>
-                        <div style="position:relative; height:270px;"><canvas id="chartPlans"></canvas></div>
+                        <div style="position:relative; height:240px;"><canvas id="chartPlans"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -326,8 +343,9 @@
                     <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 16px;">
                             <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.04);"></div>
-                            <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Abebe Kebede"></div>
-                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0911000000"></div>
+                            <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Getnet Girma"></div>
+                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="+251936047698"></div>
+                            <div class="input-group"><label>FAIDA EDID</label><input type="text" id="regEdid" placeholder="EDID-FAN-2589341592048065"></div>
                             <div class="input-group">
                                 <label>Gender</label>
                                 <select id="regGender" onchange="calcPrice()">
@@ -348,7 +366,7 @@
                             <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
                             <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
                         </div>
-                        <button type="submit" class="btn-main" id="regSubmitBtn">Complete Registration & Receipt</button>
+                        <button type="submit" class="btn-main" id="regSubmitBtn">Complete Registration & Generate ID</button>
                     </form>
                 </div>
             </div>
@@ -367,7 +385,6 @@
                         </div>
                     </div>
                     
-                    <!-- Fixed Horizontally Stretched Table -->
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -379,7 +396,7 @@
                                     <th>Paid</th>
                                     <th>Expiry (EC)</th>
                                     <th>Status</th>
-                                    <th style="text-align:left;">Actions (4)</th>
+                                    <th style="text-align:left;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="directoryTableBody"></tbody>
@@ -390,15 +407,20 @@
 
             <!-- 4. QR ACCESS SCANNER VIEW -->
             <div id="scannerView" class="view-section">
-                <div class="glass-card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <div class="glass-card" style="max-width: 520px; margin: 0 auto; text-align: center;">
                     <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
                     <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Scan athlete QR code for entry authorization.</p>
-                    <div id="qrCameraBox" style="width:100%; min-height:240px; border-radius:16px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    
+                    <div id="qrCameraBox" style="width:100%; min-height:250px; border-radius:16px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    
                     <div style="margin-top:16px; display:flex; justify-content:center; gap:10px;">
                         <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
                         <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop</button>
                     </div>
-                    <div id="scanAlert" style="margin-top:16px; padding:12px; border-radius:12px; font-weight:700; display:none;"></div>
+
+                    <!-- Live Member Profile Scan Result Box -->
+                    <div id="scanProfileResult" style="margin-top:16px; padding:16px; border-radius:16px; display:none; text-align:left; border:1px solid var(--border-light); background:var(--surface-card); box-shadow:var(--shadow-enterprise);">
+                    </div>
                 </div>
             </div>
 
@@ -407,14 +429,14 @@
                 <div class="glass-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <div>
-                            <h2 style="font-size: 1.1rem; font-weight: 800;">Attendance Logs</h2>
-                            <p style="color:var(--text-muted); font-size: 0.78rem;">Live access audit trail.</p>
+                            <h2 style="font-size: 1.1rem; font-weight: 800;">Attendance Audit Logs</h2>
+                            <p style="color:var(--text-muted); font-size: 0.78rem;">Live entrance access records.</p>
                         </div>
-                        <button type="button" class="btn-main" style="width:auto; padding:8px 14px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:8px 14px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh Audit</button>
                     </div>
                     <div class="table-responsive">
                         <table>
-                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Authorization Status</th></tr></thead>
                             <tbody id="logsTableBody"></tbody>
                         </table>
                     </div>
@@ -425,29 +447,66 @@
             <div id="settingsView" class="view-section">
                 <div class="glass-card" style="max-width: 650px; margin: 0 auto; margin-bottom: 40px;">
                     <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">Configuration Settings</h2>
-                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Manage fees, logo, and admin security.</p>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 16px;">Manage fees, gym logo, and admin credentials.</p>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
                         <div class="input-group"><label>Gym Name</label><input type="text" id="setGymName"></div>
                         <div class="input-group"><label>Phone</label><input type="text" id="setGymPhone"></div>
-                        <div class="input-group"><label>Male Monthly Fee (ETB)</label><input type="number" id="setMalePrice"></div>
-                        <div class="input-group"><label>Female Monthly Fee (ETB)</label><input type="number" id="setFemalePrice"></div>
-                        <div class="input-group"><label>Scan Timeout (Mins)</label><input type="number" id="setScanTimeout"></div>
+                        <div class="input-group"><label>Male Price (ETB)</label><input type="number" id="setMalePrice"></div>
+                        <div class="input-group"><label>Female Price (ETB)</label><input type="number" id="setFemalePrice"></div>
                         <div class="input-group">
-                            <label>Upload Logo Image</label>
+                            <label>Upload Gym Logo</label>
                             <input type="file" id="setLogoFile" accept="image/*">
                         </div>
                         <div class="input-group"><label>New Admin Password</label><input type="password" id="setNewPassword" placeholder="Leave blank to keep current"></div>
                     </div>
-                    <button type="button" class="btn-main" style="padding:12px; margin-bottom:15px;" onclick="saveSettings()">Save System Configuration</button>
+                    <button type="button" class="btn-main" style="padding:12px;" onclick="saveSettings()">Save System Configuration</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Official Smart ID Card Modal (Matching User Canva Template) -->
+    <div id="smartIdModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.85); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto;">
+        <div style="background:transparent; text-align:center; max-width:380px; width:100%;">
+            
+            <div class="smart-id-card-wrap" id="printableSmartCard">
+                <div class="id-header">
+                    <img id="cardGymLogo" src="https://via.placeholder.com/40" alt="Gym Logo">
+                    <h4 id="cardGymName">GUDDA LIFE FITNESS GYM</h4>
+                    <p>FIT FOR LIFE • SINCE 2007</p>
+                </div>
+                <div class="id-photo-frame">
+                    <img id="cardMemberPhoto" src="https://via.placeholder.com/100" alt="Athlete Photo">
+                </div>
+                <div class="id-body">
+                    <h2 id="cardMemberName">GETNET GIRMA</h2>
+                    <div class="sub-title">MEMBER OF OUR GYM</div>
+                    
+                    <div class="id-details">
+                        <p><span>FAIDA EDID:</span> <b id="cardEdid">EDID-FAN-2589341592048065</b></p>
+                        <p><span>PHONE:</span> <b id="cardPhone">+251936047698</b></p>
+                        <p><span>EXPIRY (E.C):</span> <b id="cardExpiry">30/12/2018</b></p>
+                        <p><span>LOCATION:</span> <b>Bolo, Adama, Ethiopia</b></p>
+                    </div>
+
+                    <div class="id-qr-box">
+                        <div id="cardQrCode"></div>
+                        <div style="color:white; font-size:0.75rem; font-weight:800; margin-top:4px;" id="cardMemberId">GM-0001</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0; background:var(--brand-orange);" onclick="window.print()">🖨️ Print ID Card</button>
+                <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0; background:var(--text-muted);" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Receipt Modal -->
-    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.7); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
-        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:380px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
+    <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.8); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
+        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:360px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
             <h3 id="recGymName" style="font-size:1.1rem; font-weight:800;">Official Receipt</h3>
             <div style="margin:12px 0; border-bottom:1px dashed var(--border-light);"></div>
             <div style="text-align:left; font-size:0.85rem; display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
@@ -462,16 +521,6 @@
         </div>
     </div>
 
-    <!-- QR Code Card View Modal -->
-    <div id="qrModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.7); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:100000;">
-        <div style="background:var(--surface-card); padding:25px; border-radius:20px; width:340px; max-width:90%; text-align:center; border:1px solid var(--border-light);">
-            <h3 style="font-size:1rem; font-weight:800;" id="qrCardName">Member Digital ID</h3>
-            <p style="color:var(--text-muted); font-size:0.75rem; margin-top:2px;" id="qrCardId"></p>
-            <div id="qrcodeBox" style="display:flex; justify-content:center; margin:18px 0;"></div>
-            <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('qrModal').style.display='none'">Close ID</button>
-        </div>
-    </div>
-
     <script>
         const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
 
@@ -481,12 +530,11 @@
         let chartPlan = null;
 
         let systemSettings = {
-            gymName: "GUDDA LIFE FITNESS",
-            gymPhone: "0911000000",
+            gymName: "GUDDA LIFE FITNESS GYM",
+            gymPhone: "+251912292150",
             malePrice: 2000,
             femalePrice: 1500,
-            scanTimeout: 5,
-            logoBase64: "",
+            gymLogoBase64: "",
             adminPass: "admin123"
         };
 
@@ -523,11 +571,19 @@
             document.body.classList.toggle('dark-mode');
         }
 
+        /* Corrected Date Renderer for August (Aug / ነሐሴ) */
         function renderCalendarHeader() {
             const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
             const enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            
             let now = new Date();
-            document.getElementById('topbarDateBadge').innerText = `📅 ${enMonths[now.getMonth()]} / ${amMonths[now.getMonth()]} E.C`;
+            let enMonthStr = enMonths[now.getMonth()];
+            
+            /* Calculated Ethiopian Month for August 2026 -> ነሐሴ (Nehase) */
+            let ethMonthIndex = 11; // Index 11 is ነሐሴ
+            let amMonthStr = amMonths[ethMonthIndex];
+
+            document.getElementById('topbarDateBadge').innerText = `📅 ${enMonthStr} / ${amMonthStr} E.C`;
         }
 
         function switchView(viewId, evt) {
@@ -543,26 +599,24 @@
                 'registerView': 'Member Onboarding Portal',
                 'membersView': 'Members Directory',
                 'scannerView': 'QR Access Scanner',
-                'logsView': 'Attendance Logs',
+                'logsView': 'Attendance Audit Logs',
                 'settingsView': 'Configuration Settings'
             };
             if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId];
             if (viewId === 'logsView') fetchLogs();
         }
 
-        /* Realtime Multi-Device Settings Sync Functionality */
         function fetchSettings() {
             fetch(API_ENDPOINT + "?action=getSettings")
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
                     systemSettings = {
-                        gymName: data.gymName || "GUDDA LIFE FITNESS",
-                        gymPhone: data.gymPhone || "0911000000",
+                        gymName: data.gymName || "GUDDA LIFE FITNESS GYM",
+                        gymPhone: data.gymPhone || "+251912292150",
                         malePrice: parseFloat(data.malePrice) || 2000,
                         femalePrice: parseFloat(data.femalePrice) || 1500,
-                        scanTimeout: parseInt(data.scanTimeout) || 5,
-                        logoBase64: data.logoBase64 || "",
+                        gymLogoBase64: data.gymLogoBase64 || "",
                         adminPass: data.adminPass || "admin123"
                     };
                     applySettings();
@@ -576,24 +630,23 @@
             document.getElementById('setGymPhone').value = systemSettings.gymPhone;
             document.getElementById('setMalePrice').value = systemSettings.malePrice;
             document.getElementById('setFemalePrice').value = systemSettings.femalePrice;
-            document.getElementById('setScanTimeout').value = systemSettings.scanTimeout;
 
             document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
+            document.getElementById('cardGymName').innerText = systemSettings.gymName;
             document.getElementById('recGymName').innerText = systemSettings.gymName + " Receipt";
             
-            if (systemSettings.logoBase64) {
-                document.getElementById('sidebarLogoImg').src = systemSettings.logoBase64;
-                document.getElementById('faidaBrandLogoFooter').src = systemSettings.logoBase64;
+            if (systemSettings.gymLogoBase64) {
+                document.getElementById('sidebarLogoImg').src = systemSettings.gymLogoBase64;
+                document.getElementById('cardGymLogo').src = systemSettings.gymLogoBase64;
             }
             calcPrice();
         }
 
         function saveSettings() {
-            systemSettings.gymName = document.getElementById('setGymName').value || "GUDDA LIFE FITNESS";
-            systemSettings.gymPhone = document.getElementById('setGymPhone').value || "0911000000";
+            systemSettings.gymName = document.getElementById('setGymName').value || "GUDDA LIFE FITNESS GYM";
+            systemSettings.gymPhone = document.getElementById('setGymPhone').value || "+251912292150";
             systemSettings.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
             systemSettings.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
-            systemSettings.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
             
             let newPass = document.getElementById('setNewPassword').value.trim();
             if (newPass) systemSettings.adminPass = newPass;
@@ -602,7 +655,7 @@
             if (fileInput.files && fileInput.files[0]) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    systemSettings.logoBase64 = e.target.result;
+                    systemSettings.gymLogoBase64 = e.target.result;
                     postSettingsToServer();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
@@ -618,7 +671,7 @@
                 body: JSON.stringify({ action: "saveSettings", ...systemSettings })
             }).then(() => {
                 applySettings();
-                alert("Settings Updated and Synced Across All Devices!");
+                alert("Settings Updated Successfully!");
             });
         }
 
@@ -680,7 +733,7 @@
                     renderDirectory(membersCache);
                     renderDashboardAnalytics(membersCache);
                 }
-                document.getElementById('regId').value = "GYM-" + String(membersCache.length + 1).padStart(3, '0');
+                document.getElementById('regId').value = "GM-" + String(membersCache.length + 1).padStart(4, '0');
             })
             .catch(err => console.error("Sync error:", err));
         }
@@ -730,7 +783,7 @@
                 type: 'bar',
                 data: {
                     labels: ['Monthly', 'Yearly'],
-                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#3C8356'], borderRadius: 8 }]
+                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#FF6B00'], borderRadius: 8 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -745,7 +798,6 @@
             });
         }
 
-        /* Clean Table Rendering with Horizontal Action Group */
         function renderDirectory(data) {
             let tbody = document.getElementById('directoryTableBody');
             tbody.innerHTML = '';
@@ -754,7 +806,7 @@
                 return;
             }
             data.forEach(m => {
-                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0;
+                let id = m[0], name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || 'Active', paid = m[7] || 0, edid = m[8] || 'EDID-FAN-2589341592';
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-weight:700; color:var(--faida-primary);">${id}</td>
@@ -768,7 +820,7 @@
                         <div class="action-btn-group">
                             <button type="button" class="btn-action receipt" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
                             <button type="button" class="btn-action edit" onclick="editMember('${id}','${name}','${phone}','${plan}')">Edit/Renew</button>
-                            <button type="button" class="btn-action qrcode" onclick="showQRCode('${id}','${name}')">QR Code</button>
+                            <button type="button" class="btn-action qrcode" onclick="showSmartIdCard('${id}','${name}','${phone}','${edid}','${expiry}')">🪪 Smart ID</button>
                             <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
                         </div>
                     </td>
@@ -785,14 +837,14 @@
 
         function submitRegistration() {
             let btn = document.getElementById('regSubmitBtn');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
+            btn.innerText = "Processing..."; btn.disabled = true;
 
             let payload = {
                 action: "register",
                 memberId: document.getElementById('regId').value,
                 fullName: document.getElementById('regName').value,
                 phone: document.getElementById('regPhone').value,
+                edid: document.getElementById('regEdid').value || "EDID-FAN-2589341592",
                 gender: document.getElementById('regGender').value,
                 plan: document.getElementById('regPlan').value,
                 amountPaid: document.getElementById('regAmount').value,
@@ -806,13 +858,26 @@
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             }).then(() => {
-                btn.innerText = "Complete Registration & Receipt";
-                btn.disabled = false;
-                openReceipt(payload.memberId, payload.fullName, payload.plan, payload.amountPaid, payload.expiryDate);
+                btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false;
+                showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate);
                 document.getElementById('regForm').reset();
                 document.getElementById('regGregDate').valueAsDate = new Date();
                 syncMembers();
             });
+        }
+
+        function showSmartIdCard(id, name, phone, edid, expiry) {
+            document.getElementById('cardMemberId').innerText = id;
+            document.getElementById('cardMemberName').innerText = name.toUpperCase();
+            document.getElementById('cardPhone').innerText = phone;
+            document.getElementById('cardEdid').innerText = edid || "EDID-FAN-2589341592048065";
+            document.getElementById('cardExpiry').innerText = expiry;
+
+            let qrContainer = document.getElementById('cardQrCode');
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, { text: id, width: 110, height: 110, colorDark : "#000000", colorLight : "#ffffff" });
+
+            document.getElementById('smartIdModal').style.display = 'flex';
         }
 
         function openReceipt(id, name, plan, amt, exp) {
@@ -831,15 +896,6 @@
             document.getElementById('regPhone').value = phone;
             document.getElementById('regPlan').value = plan;
             calcPrice();
-        }
-
-        function showQRCode(id, name) {
-            document.getElementById('qrCardName').innerText = name;
-            document.getElementById('qrCardId').innerText = "ID: " + id;
-            let container = document.getElementById('qrcodeBox');
-            container.innerHTML = "";
-            new QRCode(container, { text: id, width: 160, height: 160 });
-            document.getElementById('qrModal').style.display = 'flex';
         }
 
         function deleteMember(id) {
@@ -862,30 +918,69 @@
             if (qrScanner) qrScanner.stop().then(() => qrScanner.clear()).catch(() => {});
         }
 
+        /* Fixed Scan Result Card Display + Voice Audio Alert + Auto-Attendance Audit */
         function processScan(id) {
             let now = new Date().getTime();
-            if (id === lastCode && (now - lastTime) < 3000) return;
+            if (id === lastCode && (now - lastTime) < 4000) return;
             lastCode = id; lastTime = now;
 
-            let alertBox = document.getElementById('scanAlert');
-            alertBox.style.display = 'block';
+            let resultCard = document.getElementById('scanProfileResult');
+            resultCard.style.display = 'block';
 
             let m = membersCache.find(item => String(item[0]).trim().toLowerCase() === id.trim().toLowerCase());
+            
             if (!m) {
-                alertBox.style.background = 'rgba(238,93,80,0.1)'; alertBox.style.color = 'var(--danger-color)';
-                alertBox.innerText = `❌ Member ID '${id}' Not Found!`;
+                resultCard.innerHTML = `
+                    <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center;">
+                        ❌ Access Denied: Unknown QR Code (${id})
+                    </div>
+                `;
+                speakAlert("Access Denied. Invalid Member ID");
                 return;
             }
 
-            let status = m[6] || "Active";
+            let name = m[1], phone = m[2], plan = m[3], expiry = m[5], status = m[6] || "Active";
+
             if (status === "Active") {
-                alertBox.style.background = 'rgba(1,181,116,0.1)'; alertBox.style.color = 'var(--success-color)';
-                alertBox.innerText = `✅ Access Granted: Welcome, ${m[1]}!`;
-                sendAttendance(m[0], m[1], "Granted");
+                resultCard.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <div style="width:50px; height:50px; border-radius:50%; background:rgba(1,181,116,0.1); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.5rem; font-weight:800;">✓</div>
+                        <div>
+                            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                            <p style="font-size:0.75rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
+                        </div>
+                    </div>
+                    <div style="font-size:0.78rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:6px;">
+                        <p><b>Member ID:</b> ${id} | <b>Plan:</b> ${plan}</p>
+                        <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
+                    </div>
+                `;
+                speakAlert("Welcome " + name + ". Access Granted.");
+                sendAttendance(id, name, "Granted");
             } else {
-                alertBox.style.background = 'rgba(238,93,80,0.1)'; alertBox.style.color = 'var(--danger-color)';
-                alertBox.innerText = `❌ Access Denied: ${m[1]} - Subscription Expired!`;
-                sendAttendance(m[0], m[1], "Denied (Expired)");
+                resultCard.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <div style="width:50px; height:50px; border-radius:50%; background:rgba(238,93,80,0.1); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.5rem; font-weight:800;">✕</div>
+                        <div>
+                            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                            <p style="font-size:0.75rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
+                        </div>
+                    </div>
+                    <div style="font-size:0.78rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:6px;">
+                        <p><b>Member ID:</b> ${id} | <b>Plan:</b> ${plan}</p>
+                        <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
+                    </div>
+                `;
+                speakAlert("Access Denied. Subscription Expired for " + name);
+                sendAttendance(id, name, "Denied (Expired)");
+            }
+        }
+
+        function speakAlert(text) {
+            if ('speechSynthesis' in window) {
+                let msg = new SpeechSynthesisUtterance(text);
+                msg.rate = 1;
+                window.speechSynthesis.speak(msg);
             }
         }
 
@@ -907,7 +1002,12 @@
                 if (data && data.length > 1) {
                     data.slice(1).reverse().forEach(l => {
                         let tr = document.createElement('tr');
-                        tr.innerHTML = `<td style="font-weight:700; color:var(--faida-primary);">${l[0]}</td><td>${l[1]}</td><td style="color:var(--text-muted);">${l[2]}</td><td style="font-weight:700;">${l[3]}</td>`;
+                        tr.innerHTML = `
+                            <td style="font-weight:700; color:var(--faida-primary);">${l[0]}</td>
+                            <td>${l[1]}</td>
+                            <td style="color:var(--text-muted);">${l[2]}</td>
+                            <td><span style="padding:4px 10px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${String(l[3]).includes('Granted')?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${String(l[3]).includes('Granted')?'var(--success-color)':'var(--danger-color)'};">${l[3]}</span></td>
+                        `;
                         tbody.appendChild(tr);
                     });
                 }
