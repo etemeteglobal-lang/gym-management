@@ -1550,12 +1550,15 @@ function submitRegistration() {
             }
         }
 /* =========================================================
-   FIXED QR SCANNER & SMART PARSER LOGIC
+   FIXED QR SCANNER & SMART PARSER LOGIC (MERGED & STABLE)
    ========================================================= */
+
+let isProcessing = false; // ስካነሩ እንዳይደራረብ የሚቆልፍ (Lock) ቫርያብል
+let scanHistory = {}; // የቆይታ ጊዜ ማጣሪያ (አስቀድሞ ከሌለህ ይህንን ተጠቀም)
 
 // Start Camera Stream with Dynamic Aspect Ratio & Better Focus
 async function startScanner(mode = 'environment') {
-    if (qrScanner) {
+    if (typeof qrScanner !== 'undefined' && qrScanner) {
         await stopScanner();
     }
 
@@ -1566,6 +1569,7 @@ async function startScanner(mode = 'environment') {
         return;
     }
 
+    // @ts-ignore - Assuming Html5Qrcode is loaded via script tag
     qrScanner = new Html5Qrcode("qrCameraBox");
     
     // Improved Scanning Box and Higher FPS for Mobile Responsiveness
@@ -1600,7 +1604,7 @@ async function startScanner(mode = 'environment') {
 
 // Stop Camera Safely
 async function stopScanner() {
-    if (qrScanner) {
+    if (typeof qrScanner !== 'undefined' && qrScanner) {
         try {
             await qrScanner.stop();
             qrScanner.clear();
@@ -1612,13 +1616,17 @@ async function stopScanner() {
 
 // Smart QR Code Processor (Handles JSON and Plain Text IDs)
 function processScan(scannedData) {
+    // 1. ሌላ ዳታ እየገባ ከሆነ አዲሱን ስካን ችላ በለው (LOCK SCANNER)
+    if (isProcessing) return; 
+    isProcessing = true; // ስካነሩን ቆልፍ
+
     let now = new Date().getTime();
     let resultCard = document.getElementById('scanProfileResult');
-    resultCard.style.display = 'block';
+    if(resultCard) resultCard.style.display = 'block';
 
     let extractedId = scannedData.trim();
 
-    // 1. Try Parsing if QR Code contains JSON Data
+    // 2. Try Parsing if QR Code contains JSON Data
     try {
         let parsed = JSON.parse(scannedData);
         if (parsed.id) {
@@ -1631,27 +1639,36 @@ function processScan(scannedData) {
         extractedId = scannedData.trim();
     }
 
-    // 2. Prevent Duplicate Scanning (Cooldown of 10 seconds)
+    // 3. Prevent Duplicate Scanning (Cooldown of 10 seconds)
     if (scanHistory[extractedId] && (now - scanHistory[extractedId]) < 10000) {
         let remaining = Math.ceil((10000 - (now - scanHistory[extractedId])) / 1000);
-        resultCard.innerHTML = `
-            <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:14px; border-radius:14px; font-weight:800; text-align:center;">
-                ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
-            </div>
-        `;
+        if(resultCard) {
+            resultCard.innerHTML = `
+                <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:14px; border-radius:14px; font-weight:800; text-align:center;">
+                    ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
+                </div>
+            `;
+        }
+        // ከ 3 ሰከንድ በኋላ ስካነሩን ክፍት አድርገው (ሌላ ሰው መቃኘት እንዲቻል)
+        setTimeout(() => { isProcessing = false; }, 3000);
         return;
     }
 
-    // 3. Search Member in Loaded Cache
+    // 4. Search Member in Loaded Cache
     let m = membersCache.find(item => String(item[0]).trim().toLowerCase() === extractedId.toLowerCase());
     
     if (!m) {
-        resultCard.innerHTML = `
-            <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center; padding:12px; background:rgba(238,93,80,0.1); border-radius:12px; border:1px solid var(--danger-color);">
-                ❌ Access Denied: Unknown Member ID (${extractedId})
-            </div>
-        `;
-        speakAlert("Access Denied. Unknown Member ID");
+        if(resultCard) {
+            resultCard.innerHTML = `
+                <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center; padding:12px; background:rgba(238,93,80,0.1); border-radius:12px; border:1px solid var(--danger-color);">
+                    ❌ Access Denied: Unknown Member ID (${extractedId})
+                </div>
+            `;
+        }
+        if(typeof speakAlert === 'function') speakAlert("Access Denied. Unknown Member ID");
+        
+        // አባል ካልተገኘ ከ 2 ሰከንድ በኋላ ቆልፉን ፍታው
+        setTimeout(() => { isProcessing = false; }, 2000);
         return;
     }
 
@@ -1666,47 +1683,55 @@ function processScan(scannedData) {
         status = m[6] || "Active";
 
     if (status === "Active") {
-        resultCard.innerHTML = `
-            <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                <div style="width:52px; height:52px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.6rem; font-weight:800;">✓</div>
-                <div>
-                    <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                    <p style="font-size:0.8rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
+        if(resultCard) {
+            resultCard.innerHTML = `
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                    <div style="width:52px; height:52px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.6rem; font-weight:800;">✓</div>
+                    <div>
+                        <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                        <p style="font-size:0.8rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
+                    </div>
                 </div>
-            </div>
-            <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
-                <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
-            </div>
-        `;
-        speakAlert("Welcome " + name + ". Access Granted.");
+                <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
+                    <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
+                    <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
+                </div>
+            `;
+        }
+        if(typeof speakAlert === 'function') speakAlert("Welcome " + name + ". Access Granted.");
         sendAttendance(extractedId, name, "Granted");
     } else {
-        resultCard.innerHTML = `
-            <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                <div style="width:52px; height:52px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.6rem; font-weight:800;">✕</div>
-                <div>
-                    <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                    <p style="font-size:0.8rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
+        if(resultCard) {
+            resultCard.innerHTML = `
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                    <div style="width:52px; height:52px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.6rem; font-weight:800;">✕</div>
+                    <div>
+                        <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
+                        <p style="font-size:0.8rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (EXPIRED)</p>
+                    </div>
                 </div>
-            </div>
-            <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
-                <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
-            </div>
-        `;
-        speakAlert("Access Denied. Subscription Expired.");
+                <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
+                    <p><b>Member ID:</b> ${extractedId} | <b>Plan:</b> ${plan}</p>
+                    <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
+                </div>
+            `;
+        }
+        if(typeof speakAlert === 'function') speakAlert("Access Denied. Subscription Expired.");
         sendAttendance(extractedId, name, "Denied (Expired)");
     }
+
+    // ፕሮሰስ አድርጎ እንደጨረሰ ከ 3 ሰከንድ በኋላ ቆልፉን ይፍታው
+    setTimeout(() => { isProcessing = false; }, 3000);
 }
-// 1. አቴንዳንስ ወደ Google Sheet መላኪያ (Dual Delivery)
+
+// 5. አቴንዳንስ ወደ Google Sheet መላኪያ (Fixed GET Method)
 function sendAttendance(id, name, status) {
     if (!WEB_APP_URL) return;
 
     let now = new Date();
     let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
 
-    // GET Request URL parameters (Redirect በሚሆንበት ጊዜ መረጃው እንዳይጠፋ ያደርጋል)
+    // GET Request URL parameters (Redirect በሚሆንበት ጊዜ ዳታ እንዳይጠፋ በGET እንልካለን)
     let urlWithParams = WEB_APP_URL + "?action=attendance" +
                         "&memberId=" + encodeURIComponent(id) +
                         "&fullName=" + encodeURIComponent(name) +
@@ -1714,24 +1739,51 @@ function sendAttendance(id, name, status) {
                         "&status=" + encodeURIComponent(status);
 
     fetch(urlWithParams, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-            action: "attendance",
-            memberId: id,
-            fullName: name,
-            scanTime: timeStr,
-            status: status
-        })
+        method: 'GET', // POST የነበረውን ወደ GET ቀይረናል
+        mode: 'no-cors'
     }).then(() => {
-        console.log("Attendance request completed.");
+        console.log("✅ Attendance request completed.");
+        // ከተላከ በኋላ ሰንጠረዡን ያዘምናል
         setTimeout(() => {
-            fetchAttendanceLogs();
-        }, 1200);
+            if(typeof fetchAttendanceLogs === 'function') fetchAttendanceLogs();
+        }, 1500);
     }).catch(err => console.error("Attendance Error:", err));
 }
 
+// 6. የአቴንዳንስ ታሪክን (Logs) ከGoogle Sheet አንብቦ ሰንጠረዡ ላይ ማሳያ
+function fetchAttendanceLogs() {
+    if (!WEB_APP_URL) return;
+
+    fetch(WEB_APP_URL + "?action=getAttendance")
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.getElementById('attendanceLogTable');
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        if (Array.isArray(data) && data.length > 1) {
+            // Headerን ለመዝለል ከ Index 1 እንጀምራለን
+            for (let i = 1; i < data.length; i++) {
+                const rowData = data[i];
+                if (!rowData[0] || rowData[0] === "Member ID") continue;
+
+                const row = document.createElement('tr');
+                const statusClass = rowData[3] && rowData[3].includes('Granted') ? 'status-active' : 'status-expired';
+
+                row.innerHTML = `
+                    <td><strong>${rowData[0]}</strong></td>
+                    <td>${rowData[1] || 'N/A'}</td>
+                    <td>${rowData[2] || 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${rowData[3] || 'Granted'}</span></td>
+                `;
+                tbody.appendChild(row);
+            }
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">ምንም አይነት የገባ መዝገብ አልተገኘም።</td></tr>`;
+        }
+    })
+    .catch(err => console.error("Logs Fetch Error:", err));
+}
 // 2. የአቴንዳንስ ታሪክን (Logs) ከGoogle Sheet አንብቦ ሰንጠረዡ ላይ ማሳያ
 function fetchAttendanceLogs() {
     if (!WEB_APP_URL) return;
