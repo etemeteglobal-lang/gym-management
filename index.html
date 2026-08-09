@@ -1702,27 +1702,30 @@ function processScan(scannedData) {
 
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
-    if (!endpoint) {
-        console.error("API Endpoint URL አልተገኘም!");
-        return;
-    }
+    if (!endpoint) return;
 
     let now = new Date();
     let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
 
-    // በጥያቄ አድራሻ (GET) ብቻ መረጃውን መላክ የRedirect ችግርን ሙሉ በሙሉ ይፈታል
-    let url = endpoint + "?action=attendance" +
-              "&memberId=" + encodeURIComponent(id) + 
-              "&fullName=" + encodeURIComponent(name) + 
-              "&scanTime=" + encodeURIComponent(timeStr) + 
-              "&status=" + encodeURIComponent(status);
+    let payload = {
+        action: "attendance",
+        memberId: id,
+        fullName: name,
+        scanTime: timeStr,
+        status: status
+    };
 
-    fetch(url, { mode: 'no-cors' })
+    fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    })
     .then(() => {
-        console.log("Attendance request sent via GET.");
+        console.log("Attendance sent successfully.");
         setTimeout(() => {
             if (typeof fetchLogs === 'function') fetchLogs();
-        }, 1200);
+        }, 1000);
     })
     .catch(err => console.error("Attendance Error:", err));
 }
