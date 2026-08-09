@@ -1100,22 +1100,45 @@
         /* =========================================================
            AUTHENTICATION & NAVIGATION ENGINE
            ========================================================= */
-        function executeLogin() {
-            let u = document.getElementById('authUserInput').value.trim();
-            let p = document.getElementById('authPassInput').value.trim();
-            if (u === "admin" && p === systemSettings.adminPass) {
-                document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-                syncMembers();
-            } else {
-                let err = document.getElementById('loginError');
-                err.style.display = 'block';
-                err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
-            }
-        }
+function executeLogin() {
+    let u = document.getElementById('authUserInput').value.trim().toLowerCase();
+    let p = document.getElementById('authPassInput').value.trim();
+    let err = document.getElementById('loginError');
 
-        function executeLogout() {
-            document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
+    // ከሲስተም ሴቲንግስ ወይም ከነባር ፓስወርዶች ጋር ማመሳከር
+    let systemPass = (typeof systemSettings !== 'undefined' && systemSettings.adminPass) ? systemSettings.adminPass : "admin123";
+
+    let isValid = false;
+
+    // 1. Admin ወይም G-Owner መሆኑን ማረጋገጥ (ፓስወርዳቸው 8888፣ admin123 ወይም systemPass ሊሆን ይችላል)
+    if ((u === "admin" || u === "g-owner" || u === "fetene") && (p === systemPass || p === "8888" || p === "admin123")) {
+        isValid = true;
+    }
+    // 2. Receptionist መሆኑን ማረጋገጥ (ፓስወርዱ 7777)
+    else if ((u === "g-receptionist" || u === "tigist") && p === "7777") {
+        isValid = true;
+    }
+
+    if (isValid) {
+        err.style.display = 'none';
+        document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+        
+        // ዳታዎችን የማምጫ ፋንክሽኖች ካሉ ይጠራቸዋል
+        if (typeof syncMembers === 'function') {
+            syncMembers();
         }
+        if (typeof fetchAttendanceLogs === 'function') {
+            fetchAttendanceLogs();
+        }
+    } else {
+        err.style.display = 'block';
+        err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
+    }
+}
+
+function executeLogout() {
+    document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
+}
 
         function switchView(viewId, evt) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
