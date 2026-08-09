@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.0</title>
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v4.7</title>
     
     <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --faida-primary: #0F385A;
@@ -24,8 +25,8 @@
             --danger-color: #EE5D50;
             --warning-color: #FFB547;
             --info-color: #4318FF;
-            --sidebar-width: 290px;
-            --topbar-height: 85px;
+            --sidebar-width: 280px;
+            --topbar-height: 80px;
             --radius-smooth: 20px;
             --radius-element: 12px;
             --shadow-enterprise: 0px 18px 40px rgba(112, 144, 176, 0.12);
@@ -51,97 +52,122 @@
             display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(10px);
         }
         .login-glass-card {
-            background: var(--surface-card); padding: 45px; border-radius: 30px; width: 420px; max-width: 90%;
+            background: var(--surface-card); padding: 40px; border-radius: 30px; width: 420px; max-width: 90%;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center; border: 1px solid var(--border-light);
         }
-        .login-glass-card h2 { color: var(--text-main); font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
-        .login-glass-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
-        .input-group { text-align: left; margin-bottom: 18px; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .login-glass-card h2 { color: var(--text-main); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+        .login-glass-card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+        .input-group { text-align: left; margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
         .input-group input, .input-group select {
-            width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid var(--border-light);
-            font-size: 1rem; outline: none; transition: var(--transition-smooth); background: var(--bg-canvas); color: var(--text-main);
+            width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid var(--border-light);
+            font-size: 0.95rem; outline: none; transition: var(--transition-smooth); background: var(--bg-canvas); color: var(--text-main);
         }
         .input-group input:focus { border-color: var(--faida-accent); background: var(--surface-white); }
         .btn-main {
             width: 100%; padding: 14px; background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
-            color: white; border: none; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;
+            color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
             box-shadow: 0 10px 20px rgba(15, 56, 90, 0.2); transition: var(--transition-smooth); margin-top: 10px;
         }
         .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(60, 131, 86, 0.3); }
 
         /* Sidebar Layout (Left Side) */
         .enterprise-sidebar {
-            width: var(--sidebar-width); background: var(--surface-white); border-right: 1px solid var(--border-light);
-            display: flex; flex-direction: column; justify-content: space-between; z-index: 100; transition: var(--transition-smooth);
+            width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--surface-white); border-right: 1px solid var(--border-light);
+            display: flex; flex-direction: column; justify-content: space-between; z-index: 1000; transition: var(--transition-smooth);
+            height: 100vh; position: relative;
         }
-        .sidebar-brand-wrapper { padding: 25px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-light); }
-        .sidebar-brand-logo { height: 42px; width: auto; object-fit: contain; }
-        .sidebar-brand-text h2 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
-        .sidebar-brand-text span { font-size: 0.7rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; }
+        .sidebar-brand-wrapper { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-light); }
+        .sidebar-brand-logo { height: 38px; width: auto; object-fit: contain; }
+        .sidebar-brand-text h2 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .sidebar-brand-text span { font-size: 0.65rem; font-weight: 700; color: var(--faida-accent); text-transform: uppercase; }
 
-        .sidebar-menu-scroll { flex: 1; padding: 20px 15px; overflow-y: auto; }
-        .menu-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin: 15px 12px 10px 12px; }
+        .sidebar-menu-scroll { flex: 1; padding: 15px 12px; overflow-y: auto; }
+        .menu-title { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin: 12px 10px 8px 10px; }
         
         .nav-btn {
-            width: 100%; padding: 14px 18px; background: transparent; border: none; border-radius: var(--radius-element);
-            color: var(--text-muted); text-align: left; font-size: 0.95rem; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 14px; transition: var(--transition-smooth); margin-bottom: 6px;
+            width: 100%; padding: 12px 16px; background: transparent; border: none; border-radius: var(--radius-element);
+            color: var(--text-muted); text-align: left; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 12px; transition: var(--transition-smooth); margin-bottom: 4px;
         }
         .nav-btn:hover { background: var(--bg-canvas); color: var(--faida-primary); }
-        .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 10px 20px rgba(15,56,90,0.15); }
+        .nav-btn.active { background: linear-gradient(135deg, var(--faida-primary), #164e7a); color: white; box-shadow: 0 8px 16px rgba(15,56,90,0.15); }
 
         /* Powered By Footer */
         .faida-powered-footer {
-            margin: 15px; padding: 16px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.04), rgba(60, 131, 86, 0.08));
+            margin: 12px; padding: 12px; background: linear-gradient(135deg, rgba(15, 56, 90, 0.04), rgba(60, 131, 86, 0.08));
             border-radius: var(--radius-element); border: 1px solid rgba(60, 131, 86, 0.15); text-align: center;
         }
-        .faida-powered-footer span { font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+        .faida-powered-footer span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
         .faida-footer-logo { height: 26px; width: auto; object-fit: contain; }
 
         /* Workspace (Right Side) */
-        .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); }
+        .enterprise-workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-canvas); width: calc(100% - var(--sidebar-width)); }
         .topbar {
-            height: var(--topbar-height); background: var(--surface-white); padding: 0 35px; display: flex;
+            height: var(--topbar-height); background: var(--surface-white); padding: 0 25px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); z-index: 99;
         }
-        .topbar h1 { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
-        .topbar p { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
-        .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .topbar-left { display: flex; align-items: center; gap: 15px; }
+        .topbar h1 { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
+        .topbar p { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        
+        .menu-toggle-btn {
+            display: none; background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
+            width: 40px; height: 40px; border-radius: 50%; justify-content: center; align-items: center; cursor: pointer; font-size: 1.1rem;
+        }
+
         .badge-pill {
-            background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 9px 18px; border-radius: 30px;
-            font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(15,56,90,0.1);
+            background: rgba(15, 56, 90, 0.06); color: var(--faida-primary); padding: 8px 15px; border-radius: 30px;
+            font-weight: 700; font-size: 0.8rem; border: 1px solid rgba(15,56,90,0.1);
         }
         .top-action-btn {
             background: var(--bg-canvas); border: 1px solid var(--border-light); color: var(--text-main);
-            width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: var(--transition-smooth); font-size: 1rem;
+            width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: var(--transition-smooth); font-size: 0.95rem;
         }
         .top-action-btn:hover { background: var(--faida-primary); color: white; border-color: var(--faida-primary); }
 
         /* Content Area */
-        .content-scroll { flex: 1; padding: 35px; overflow-y: auto; }
+        .content-scroll { flex: 1; padding: 25px; overflow-y: auto; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 20px; }
         .metric-box {
-            background: var(--surface-card); padding: 22px; border-radius: var(--radius-smooth);
+            background: var(--surface-card); padding: 20px; border-radius: var(--radius-smooth);
             box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light);
         }
-        .metric-box span { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-        .metric-box h3 { font-size: 1.7rem; font-weight: 800; color: var(--text-main); margin-top: 6px; }
+        .metric-box span { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .metric-box h3 { font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-top: 6px; }
 
         .glass-card {
-            background: var(--surface-card); padding: 30px; border-radius: var(--radius-smooth);
-            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 25px;
+            background: var(--surface-card); padding: 25px; border-radius: var(--radius-smooth);
+            box-shadow: var(--shadow-enterprise); border: 1px solid var(--border-light); margin-bottom: 20px;
         }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        th { padding: 14px 16px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); }
-        td { padding: 15px 16px; font-size: 0.9rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+        th { padding: 12px 14px; text-align: left; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; background: rgba(15,56,90,0.03); }
+        td { padding: 14px; font-size: 0.85rem; color: var(--text-main); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+
+        /* Mobile Media Query for Sidebar Toggle Overlay */
+        @media (max-width: 900px) {
+            .enterprise-sidebar {
+                position: fixed; left: -280px; top: 0; bottom: 0; z-index: 9999;
+            }
+            .enterprise-sidebar.mobile-open {
+                left: 0;
+                box-shadow: 15px 0 50px rgba(0,0,0,0.5);
+            }
+            .menu-toggle-btn {
+                display: flex;
+            }
+            .enterprise-workspace {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -149,7 +175,7 @@
     <!-- Login Overlay -->
     <div id="enterpriseLoginOverlay">
         <div class="login-glass-card">
-            <h2 id="loginModalTitle">FaidATech Enterprise</h2>
+            <h2>FaidATech Enterprise</h2>
             <p>Gym Management Super-App Portal</p>
             <div class="input-group">
                 <label>Username / Admin ID</label>
@@ -160,18 +186,18 @@
                 <input type="password" id="authPassInput" value="admin123">
             </div>
             <button type="button" class="btn-main" onclick="executeLogin()">Authorize Access</button>
-            <p id="loginError" style="color:var(--danger-color); font-size:0.85rem; font-weight:700; margin-top:15px; display:none;"></p>
+            <p id="loginError" style="color:var(--danger-color); font-size:0.8rem; font-weight:700; margin-top:12px; display:none;"></p>
         </div>
     </div>
 
-    <!-- Sidebar (Left) -->
-    <aside class="enterprise-sidebar">
+    <!-- Sidebar (Left Side Menu) -->
+    <aside class="enterprise-sidebar" id="sidebarNav">
         <div>
             <div class="sidebar-brand-wrapper">
                 <img id="sidebarLogoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" class="sidebar-brand-logo" alt="Logo">
                 <div class="sidebar-brand-text">
-                    <h2 id="sidebarGymName">GUDDA LIFE</h2>
-                    <span>Enterprise v4.0</span>
+                    <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
+                    <span>Enterprise v4.7</span>
                 </div>
             </div>
             <div class="sidebar-menu-scroll">
@@ -189,29 +215,32 @@
             </div>
         </div>
 
-        <!-- Powered By FaidATech Footer (Bottom of Menu) -->
+        <!-- Powered By FaidATech Footer -->
         <div class="faida-powered-footer">
             <span>POWERED BY</span>
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" id="faidaBrandLogoFooter" class="faida-footer-logo" alt="FaidATech">
         </div>
     </aside>
 
-    <!-- Workspace (Right) -->
+    <!-- Workspace (Right Side Content) -->
     <div class="enterprise-workspace">
         <header class="topbar">
-            <div>
-                <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
-                <p>Real-time membership lifecycle and financial telemetry</p>
+            <div class="topbar-left">
+                <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
+                <div>
+                    <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
+                    <p>Real-time membership lifecycle and financial telemetry</p>
+                </div>
             </div>
             <div class="topbar-right">
-                <div class="badge-pill" id="topbarDateBadge">📅 Loading Calendar...</div>
+                <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
                 <button class="top-action-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
                 <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
             </div>
         </header>
 
         <div class="content-scroll">
-            <!-- 1. DASHBOARD VIEW (Enhanced with Weekly, Monthly, Yearly Signups & Detailed Charts) -->
+            <!-- 1. DASHBOARD VIEW -->
             <div id="dashboardView" class="view-section active">
                 <div class="metrics-grid">
                     <div class="metric-box"><span>Total Members</span><h3 id="statTotal">0</h3></div>
@@ -220,38 +249,38 @@
                     <div class="metric-box"><span>Total Revenue</span><h3 id="statRevenue" style="color:var(--faida-accent);">0 ETB</h3></div>
                 </div>
 
-                <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 25px;">
+                <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
                     <div class="metric-box" style="background: linear-gradient(135deg, rgba(67, 24, 255, 0.05), rgba(67, 24, 255, 0.02));">
-                        <span>New Signups (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3>
+                        <span>New (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3>
                     </div>
                     <div class="metric-box" style="background: linear-gradient(135deg, rgba(1, 181, 116, 0.05), rgba(1, 181, 116, 0.02));">
-                        <span>New Signups (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3>
+                        <span>New (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3>
                     </div>
                     <div class="metric-box" style="background: linear-gradient(135deg, rgba(255, 181, 71, 0.05), rgba(255, 181, 71, 0.02));">
-                        <span>New Signups (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3>
+                        <span>New (This Year)</span><h3 id="statYearNew" style="color:var(--warning-color);">0</h3>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                    <div class="glass-card" style="height: 400px;">
-                        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 20px;">Revenue Telemetry (Monthly vs Yearly)</h3>
-                        <div style="position:relative; height:310px;"><canvas id="chartRevenue"></canvas></div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <div class="glass-card" style="height: 380px;">
+                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 15px;">Revenue Telemetry (Monthly vs Yearly)</h3>
+                        <div style="position:relative; height:290px;"><canvas id="chartRevenue"></canvas></div>
                     </div>
-                    <div class="glass-card" style="height: 400px;">
-                        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 20px;">Subscription Plan Breakdown</h3>
-                        <div style="position:relative; height:310px;"><canvas id="chartPlans"></canvas></div>
+                    <div class="glass-card" style="height: 380px;">
+                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 15px;">Subscription Plan Breakdown</h3>
+                        <div style="position:relative; height:290px;"><canvas id="chartPlans"></canvas></div>
                     </div>
                 </div>
             </div>
 
             <!-- 2. MEMBER REGISTRATION VIEW -->
             <div id="registerView" class="view-section">
-                <div class="glass-card" style="max-width: 850px; margin: 0 auto;">
-                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">New Member Onboarding Portal</h2>
-                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Register athlete profile, compute automated pricing, and print receipt.</p>
+                <div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">New Member Onboarding Portal</h2>
+                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Register athlete profile, compute automated pricing, and print receipt.</p>
                     
                     <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-bottom: 20px;">
                             <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.04);"></div>
                             <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="Abebe Kebede"></div>
                             <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0911000000"></div>
@@ -272,10 +301,10 @@
                             </div>
                             <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
                             <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
-                            <div class="input-group"><label>Join Date (Ethiopian Calendar)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
-                            <div class="input-group"><label>Expiry Date (Ethiopian Calendar)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.04);"></div>
+                            <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.04);"></div>
                         </div>
-                        <button type="submit" class="btn-main" id="regSubmitBtn" style="padding:16px;">Complete Registration & Generate Receipt</button>
+                        <button type="submit" class="btn-main" id="regSubmitBtn" style="padding:14px;">Complete Registration & Generate Receipt</button>
                     </form>
                 </div>
             </div>
@@ -283,14 +312,14 @@
             <!-- 3. MEMBERS DIRECTORY VIEW -->
             <div id="membersView" class="view-section">
                 <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                         <div>
-                            <h2 style="font-size: 1.3rem; font-weight: 800;">Registered Members Directory</h2>
-                            <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Search, filter, or manage athlete database.</p>
+                            <h2 style="font-size: 1.2rem; font-weight: 800;">Registered Members Directory</h2>
+                            <p style="color:var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Search, filter, or manage athlete database.</p>
                         </div>
-                        <div style="display: flex; gap: 12px; align-items: center;">
-                            <input type="text" id="searchInput" placeholder="Search name, ID, phone..." onkeyup="filterDirectory()" style="padding: 12px 18px; border-radius: 12px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); width: 280px; outline:none;">
-                            <button type="button" class="btn-main" style="width:auto; padding:12px 20px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="searchInput" placeholder="Search name, ID, phone..." onkeyup="filterDirectory()" style="padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); width: 250px; outline:none;">
+                            <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
                         </div>
                     </div>
                     <div style="overflow-x: auto;">
@@ -306,27 +335,27 @@
 
             <!-- 4. QR ACCESS SCANNER VIEW -->
             <div id="scannerView" class="view-section">
-                <div class="glass-card" style="max-width: 600px; margin: 0 auto; text-align: center;">
-                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">Enterprise QR Access Scanner</h2>
-                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Scan athlete QR code for automated entry authorization.</p>
-                    <div id="qrCameraBox" style="width:100%; min-height:280px; border-radius:20px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
-                    <div style="margin-top:25px; display:flex; justify-content:center; gap:15px;">
-                        <button type="button" class="btn-main" style="width:auto; padding:12px 25px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
-                        <button type="button" class="btn-main" style="width:auto; padding:12px 25px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop Camera</button>
+                <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
+                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">Enterprise QR Access Scanner</h2>
+                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Scan athlete QR code for automated entry authorization.</p>
+                    <div id="qrCameraBox" style="width:100%; min-height:260px; border-radius:18px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.02); display:flex; justify-content:center; align-items:center;"></div>
+                    <div style="margin-top:20px; display:flex; justify-content:center; gap:12px;">
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 20px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop Camera</button>
                     </div>
-                    <div id="scanAlert" style="margin-top:25px; padding:18px; border-radius:16px; font-weight:700; display:none;"></div>
+                    <div id="scanAlert" style="margin-top:20px; padding:15px; border-radius:14px; font-weight:700; display:none;"></div>
                 </div>
             </div>
 
             <!-- 5. ATTENDANCE LOGS VIEW -->
             <div id="logsView" class="view-section">
                 <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                         <div>
-                            <h2 style="font-size: 1.3rem; font-weight: 800;">Daily Attendance Logs History</h2>
-                            <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Live timestamp audit trail.</p>
+                            <h2 style="font-size: 1.2rem; font-weight: 800;">Daily Attendance Logs History</h2>
+                            <p style="color:var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Live timestamp audit trail.</p>
                         </div>
-                        <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh Logs</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:8px 15px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh</button>
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
@@ -337,22 +366,25 @@
                 </div>
             </div>
 
-            <!-- 6. ENTERPRISE SETTINGS VIEW (Now with Logo & Password Change Options) -->
+            <!-- 6. ENTERPRISE SETTINGS VIEW -->
             <div id="settingsView" class="view-section">
-                <div class="glass-card" style="max-width: 750px; margin: 0 auto;">
-                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">Enterprise Configuration Settings</h2>
-                    <p style="color:var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Configure gym parameters, branding logo URL, and security passwords.</p>
+                <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">Enterprise Configuration Settings</h2>
+                    <p style="color:var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Configure gym parameters, upload organizational logo from file, and update passwords.</p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
                         <div class="input-group"><label>Gym Organization Name</label><input type="text" id="setGymName"></div>
                         <div class="input-group"><label>Organization Phone</label><input type="text" id="setGymPhone"></div>
                         <div class="input-group"><label>Male Monthly Fee (ETB)</label><input type="number" id="setMalePrice"></div>
                         <div class="input-group"><label>Female Monthly Fee (ETB)</label><input type="number" id="setFemalePrice"></div>
                         <div class="input-group"><label>Duplicate Scan Timeout (Minutes)</label><input type="number" id="setScanTimeout"></div>
-                        <div class="input-group"><label>Branding Logo Image URL</label><input type="text" id="setLogoUrl" placeholder="https://... image link"></div>
+                        <div class="input-group">
+                            <label>Upload Logo Image (From File)</label>
+                            <input type="file" id="setLogoFile" accept="image/*" style="padding: 10px;">
+                        </div>
                         <div class="input-group"><label>New Admin Password</label><input type="password" id="setNewPassword" placeholder="Leave blank to keep current"></div>
                     </div>
-                    <button type="button" class="btn-main" style="padding:15px;" onclick="saveSettings()">Save System Configuration</button>
+                    <button type="button" class="btn-main" style="padding:14px;" onclick="saveSettings()">Save System Configuration</button>
                 </div>
             </div>
         </div>
@@ -360,18 +392,18 @@
 
     <!-- Receipt Modal -->
     <div id="receiptModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.6); backdrop-filter:blur(8px); display:none; justify-content:center; align-items:center; z-index:10000;">
-        <div style="background:var(--surface-card); padding:35px; border-radius:24px; width:450px; max-width:90%; box-shadow:var(--shadow-enterprise); text-align:center; border:1px solid var(--border-light);">
-            <h3 id="recGymName" style="font-size:1.3rem; font-weight:800;">Official Receipt</h3>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin:8px 0 20px 0;">---------------------------------------------------------</p>
-            <div style="text-align:left; font-size:0.95rem; display:flex; flex-direction:column; gap:10px; margin-bottom:25px;">
+        <div style="background:var(--surface-card); padding:30px; border-radius:22px; width:420px; max-width:90%; box-shadow:var(--shadow-enterprise); text-align:center; border:1px solid var(--border-light);">
+            <h3 id="recGymName" style="font-size:1.2rem; font-weight:800;">Official Receipt</h3>
+            <p style="color:var(--text-muted); font-size:0.8rem; margin:6px 0 16px 0;">---------------------------------------------------------</p>
+            <div style="text-align:left; font-size:0.9rem; display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
                 <p><b>Member ID:</b> <span id="recId"></span></p>
                 <p><b>Full Name:</b> <span id="recName"></span></p>
                 <p><b>Plan:</b> <span id="recPlan"></span></p>
                 <p><b>Amount Paid:</b> <span id="recAmount"></span> ETB</p>
                 <p><b>Expiry Date (EC):</b> <span id="recExpiry"></span></p>
             </div>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">---------------------------------------------------------</p>
-            <button type="button" class="btn-main" style="margin-bottom:12px;" onclick="window.print()">Print Official Receipt</button>
+            <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">---------------------------------------------------------</p>
+            <button type="button" class="btn-main" style="margin-bottom:10px;" onclick="window.print()">Print Official Receipt</button>
             <button type="button" class="btn-main" style="background:var(--text-muted);" onclick="document.getElementById('receiptModal').style.display='none'">Close Portal</button>
         </div>
     </div>
@@ -391,7 +423,7 @@
             malePrice: 2000,
             femalePrice: 1500,
             scanTimeout: 5,
-            logoUrl: "",
+            logoBase64: "",
             adminPass: "admin123"
         };
 
@@ -404,6 +436,10 @@
             renderCalendarHeader();
             fetchSettings();
         };
+
+        function toggleMobileMenu() {
+            document.getElementById('sidebarNav').classList.toggle('mobile-open');
+        }
 
         function executeLogin() {
             let u = document.getElementById('authUserInput').value.trim();
@@ -439,6 +475,8 @@
             document.getElementById(viewId).classList.add('active');
             if (evt) evt.currentTarget.classList.add('active');
 
+            document.getElementById('sidebarNav').classList.remove('mobile-open');
+
             const titles = {
                 'dashboardView': ['Executive Dashboard Analytics', 'Real-time telemetry and member lifecycle intelligence'],
                 'registerView': ['New Member Onboarding Portal', 'Register athletes and configure automated billing'],
@@ -462,7 +500,7 @@
                         malePrice: parseFloat(data.malePrice) || 2000,
                         femalePrice: parseFloat(data.femalePrice) || 1500,
                         scanTimeout: parseInt(data.scanTimeout) || 5,
-                        logoUrl: data.logoUrl || "",
+                        logoBase64: data.logoBase64 || "",
                         adminPass: data.adminPass || "admin123"
                     };
                     applySettings();
@@ -477,14 +515,13 @@
             document.getElementById('setMalePrice').value = systemSettings.malePrice;
             document.getElementById('setFemalePrice').value = systemSettings.femalePrice;
             document.getElementById('setScanTimeout').value = systemSettings.scanTimeout;
-            document.getElementById('setLogoUrl').value = systemSettings.logoUrl;
 
             document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
             document.getElementById('recGymName').innerText = systemSettings.gymName + " Receipt";
             
-            if (systemSettings.logoUrl) {
-                document.getElementById('sidebarLogoImg').src = systemSettings.logoUrl;
-                document.getElementById('faidaBrandLogoFooter').src = systemSettings.logoUrl;
+            if (systemSettings.logoBase64) {
+                document.getElementById('sidebarLogoImg').src = systemSettings.logoBase64;
+                document.getElementById('faidaBrandLogoFooter').src = systemSettings.logoBase64;
             }
             calcPrice();
         }
@@ -495,11 +532,24 @@
             systemSettings.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
             systemSettings.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
             systemSettings.scanTimeout = parseInt(document.getElementById('setScanTimeout').value) || 5;
-            systemSettings.logoUrl = document.getElementById('setLogoUrl').value || "";
             
             let newPass = document.getElementById('setNewPassword').value.trim();
             if (newPass) systemSettings.adminPass = newPass;
 
+            let fileInput = document.getElementById('setLogoFile');
+            if (fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    systemSettings.logoBase64 = e.target.result;
+                    postSettingsToServer();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                postSettingsToServer();
+            }
+        }
+
+        function postSettingsToServer() {
             fetch(API_ENDPOINT, {
                 method: 'POST', mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -591,7 +641,6 @@
                 if (pl === "Yearly") yRev += amt; else mRev += amt;
                 if (plans[pl] !== undefined) plans[pl]++;
 
-                // Parse join date for weekly/monthly/yearly signups calculation
                 let jDate = new Date(m[4] || now);
                 let diffDays = (now - jDate) / (1000 * 60 * 60 * 24);
                 if (diffDays <= 7) weekNew++;
@@ -619,7 +668,7 @@
                 type: 'bar',
                 data: {
                     labels: ['Monthly Revenue', 'Yearly Revenue'],
-                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#3C8356'], borderRadius: 12 }]
+                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#3C8356'], borderRadius: 10 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -651,10 +700,10 @@
                     <td>${plan}</td>
                     <td style="font-weight:700;">${paid} ETB</td>
                     <td style="color:var(--text-muted);">${expiry}</td>
-                    <td><span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
+                    <td><span style="padding:5px 12px; border-radius:30px; font-size:0.7rem; font-weight:800; background:${status==='Active'?'rgba(1,181,116,0.1)':'rgba(238,93,80,0.1)'}; color:${status==='Active'?'var(--success-color)':'var(--danger-color)'};">${status}</span></td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-main" style="width:auto; padding:6px 14px; font-size:0.75rem; margin-top:0;" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
-                        <button type="button" class="btn-main" style="width:auto; padding:6px 14px; font-size:0.75rem; margin-top:0; background:var(--danger-color);" onclick="deleteMember('${id}')">Delete</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:5px 12px; font-size:0.7rem; margin-top:0;" onclick="openReceipt('${id}','${name}','${plan}','${paid}','${expiry}')">Receipt</button>
+                        <button type="button" class="btn-main" style="width:auto; padding:5px 12px; font-size:0.7rem; margin-top:0; background:var(--danger-color);" onclick="deleteMember('${id}')">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -721,7 +770,7 @@
         function startScanner(mode) {
             if (qrScanner) stopScanner();
             qrScanner = new Html5Qrcode("qrCameraBox");
-            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 250 }, (text) => processScan(text));
+            qrScanner.start({ facingMode: mode }, { fps: 10, qrbox: 240 }, (text) => processScan(text));
         }
 
         function stopScanner() {
