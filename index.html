@@ -684,28 +684,23 @@
             margin-top: 8px;
         }
 /* =========================================================
-   PERFECT MOBILE & DESKTOP CSS ENGINE (SINGLE CLEAN BLOCK)
+   CLEAN & ISOLATED MOBILE BOTTOM NAV ENGINE
    ========================================================= */
 
+/* 1. በዴስክቶፕ ላይ Bottom Nav እንዳይታይ መደበቅ */
 .mobile-bottom-nav {
-    display: none;
+    display: none !important;
 }
 
-@media (max-width: 900px) {
-    /* 1. Sidebar በስልክ ላይ መደብቅ ነገር ግን Click ክሊክ እንዳይከለክል z-index ማስተካከል */
-    .enterprise-sidebar {
-        position: fixed !important;
-        left: -100% !important;
-        width: 0 !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
-
+/* 2. በስልክ (ከ900px በታች) ብቻ የሚሰራ ማስተካከያ */
+@media screen and (max-width: 900px) {
+    /* Sidebar በስልክ መደበቅ */
+    .enterprise-sidebar,
     .menu-toggle-btn {
         display: none !important;
     }
 
-    /* 2. Full Width Workspace */
+    /* Workspace Full Width ማድረግ */
     .enterprise-workspace {
         width: 100% !important;
         margin-left: 0 !important;
@@ -713,39 +708,20 @@
     }
 
     .content-scroll {
-        padding: 10px 8px 90px 8px !important; /* Bottom Nav-ን እንዳይሸፍነው Bottom Padding ታክሏል */
+        padding: 10px 8px 80px 8px !important;
     }
 
-    /* 3. Responsive Cards & Tables */
-    .glass-card {
-        border-radius: 10px !important;
-        padding: 12px 8px !important;
-        margin-bottom: 12px !important;
-        box-shadow: none !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-    }
-
-    .table-responsive {
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        display: block !important;
-    }
-
-    table {
-        min-width: 500px !important;
-    }
-
-    /* 4. Bottom Nav - ሁልጊዜ ከላይ እንዲሆን z-index: 999999 ተሰጥቶታል */
+    /* Bottom Navigation Bar በስልክ ብቻ ከታች መሰካት */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 62px !important;
+        width: 100% !important;
+        height: 60px !important;
         background: #ffffff !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.12) !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
         justify-content: space-around !important;
@@ -764,7 +740,6 @@
         font-weight: 600 !important;
         width: 20% !important;
         cursor: pointer !important;
-        pointer-events: auto !important;
     }
 
     .bottom-nav-item.active {
@@ -772,7 +747,7 @@
         font-weight: 800 !important;
     }
 
-    /* 5. Login View ሲከፈት Bottom Nav መደብቅ */
+    /* Login ገጽ ላይ መደብቅ */
     body:has(#loginView.active) .mobile-bottom-nav,
     body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
         display: none !important;
