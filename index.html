@@ -687,38 +687,33 @@
    CLEAN & ISOLATED MOBILE BOTTOM NAV ENGINE
    ========================================================= */
 
-/* 1. በዴስክቶፕ ላይ Bottom Nav እንዳይታይ መደበቅ */
+/* 1. በዴስክቶፕ (ከ900px በላይ) Bottom Nav እንዳይታይ መደበቅ */
 .mobile-bottom-nav {
     display: none !important;
 }
 
-/* 2. በስልክ (ከ900px በታች) ብቻ የሚሰራ ማስተካከያ */
+/* 2. በስልክ (ከ900px በታች) ብቻ ከታች መሰካት */
 @media screen and (max-width: 900px) {
-    /* Sidebar በስልክ መደበቅ */
     .enterprise-sidebar,
     .menu-toggle-btn {
         display: none !important;
     }
 
-    /* Workspace Full Width ማድረግ */
     .enterprise-workspace {
         width: 100% !important;
         margin-left: 0 !important;
-        padding: 0 !important;
     }
 
     .content-scroll {
-        padding: 10px 8px 80px 8px !important;
+        padding-bottom: 80px !important;
     }
 
-    /* Bottom Navigation Bar በስልክ ብቻ ከታች መሰካት */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        width: 100% !important;
         height: 60px !important;
         background: #ffffff !important;
         box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.12) !important;
@@ -736,7 +731,7 @@
         align-items: center !important;
         justify-content: center !important;
         color: #64748b !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 600 !important;
         width: 20% !important;
         cursor: pointer !important;
@@ -745,12 +740,6 @@
     .bottom-nav-item.active {
         color: #0f385a !important;
         font-weight: 800 !important;
-    }
-
-    /* Login ገጽ ላይ መደብቅ */
-    body:has(#loginView.active) .mobile-bottom-nav,
-    body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
-        display: none !important;
     }
 }
 </style>
