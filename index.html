@@ -804,10 +804,10 @@
             </div>
         </header>
 
-        <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
+     <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
         <div class="content-scroll">
             
-<!-- VIEW 1: EXECUTIVE DASHBOARD (UPDATED 5 CHARTS & KPIs) -->
+            <!-- VIEW 1: EXECUTIVE DASHBOARD (UPDATED 5 CHARTS & KPIs) -->
             <div id="dashboardView" class="view-section active">
                 
                 <!-- 1. PRIMARY METRICS GRID -->
@@ -856,6 +856,49 @@
 
             </div>
 
+            <!-- VIEW 2: MEMBER REGISTRATION -->
+            <div id="registerView" class="view-section">
+                <div class="glass-card" style="max-width: 850px; margin: 0 auto;">
+                    <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">Member Onboarding Portal</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Register new athlete or renew existing profile.</p>
+                    
+                    <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
+                            <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.15);"></div>
+                            <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="e.g. Abebe Kebede"></div>
+                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0912132353"></div>
+                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="121357102589341592"></div>
+                            <div class="input-group">
+                                <label>Gender</label>
+                                <select id="regGender" onchange="calcPrice()">
+                                    <option value="Male">Male (ወንድ)</option>
+                                    <option value="Female">Female (ሴት)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Membership Plan</label>
+                                <select id="regPlan" onchange="calcPrice()">
+                                    <option value="Monthly">Monthly Subscription</option>
+                                    <option value="3 Months">Quarterly Subscription (3M)</option>
+                                    <option value="Yearly">Annual Subscription (1 Year)</option>
+                                </select>
+                            </div>
+                            <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
+                            <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
+                            <div class="input-group">
+                                <label>Join Date (Ethiopian)</label>
+                                <input type="text" id="regEthJoin" placeholder="ቀን/ወር/ዓ.ም (ምሳሌ: 4/12/2018)" oninput="calcEthDates()" style="background:var(--bg-canvas); color:var(--text-main);">
+                            </div>
+                            <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.15);"></div>
+                            <div class="input-group" style="grid-column: 1 / -1;">
+                                <label>Athlete Photo Upload</label>
+                                <input type="file" id="regPhotoFile" accept="image/*">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-main" id="regSubmitBtn">Complete Registration & Generate ID</button>
+                    </form>
+                </div>
+            </div>
 <!-- VIEW 3: MEMBERS DIRECTORY -->
 <div id="membersView" class="view-section">
     <div class="glass-card">
