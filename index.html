@@ -683,108 +683,8 @@
             display: inline-block;
             margin-top: 8px;
         }
-/* =========================================================
-       WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (REPLACEMENT)
-       ========================================================= */
-
-    @media (max-width: 900px) {
-        body {
-            overflow-x: hidden !important;
-        }
-
-        .enterprise-sidebar {
-            position: fixed;
-            left: -280px;
-            top: 0;
-            bottom: 0;
-            height: 100dvh;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .enterprise-sidebar.mobile-open {
-            left: 0;
-            box-shadow: 20px 0 60px rgba(0,0,0,0.8);
-        }
-
-        .sidebar-menu-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 20px;
-        }
-
-        .faida-powered-footer {
-            flex-shrink: 0;
-            margin-bottom: 15px;
-        }
-
-        .menu-toggle-btn {
-            display: flex !important;
-        }
-
-        .enterprise-workspace {
-            width: 100% !important;
-            margin-left: 0 !important;
-            padding: 0 !important;
-        }
-
-        .topbar {
-            padding: 10px 14px;
-        }
-
-        .topbar p {
-            display: none;
-        }
-
-        .content-scroll {
-            padding: 12px 10px 90px 10px !important;
-            overflow-x: hidden !important;
-        }
-
-        /* 1. KPI Metrics Grid ማስተካከያ */
-        .metrics-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 10px !important;
-        }
-
-        /* 2. የቻርቶች Grid በስልክ ላይ ወደ 1 Column መቀየር */
-        div[style*="grid-template-columns"] {
-            grid-template-columns: 1fr !important;
-            gap: 14px !important;
-        }
-
-        /* 3. Glass Card & Canvas Responsive sizing */
-        .glass-card {
-            height: auto !important;
-            min-height: 280px !important;
-            padding: 14px !important;
-        }
-
-        canvas {
-            max-width: 100% !important;
-            width: 100% !important;
-            height: 230px !important;
-        }
-
-        /* 4. Table Overflow Handling */
-        .table-responsive, table {
-            width: 100% !important;
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
-
-        /* 5. Touch Friendly Input Controls */
-        .input-group input, 
-        .input-group select {
-            font-size: 15px !important;
-            padding: 10px 12px !important;
-        }
-    }
-
-        /* =========================================================
-   PERFECT MOBILE NATIVE APP EXPERIENCE (CSS FIXES)
+//* =========================================================
+   PERFECT MOBILE & DESKTOP CSS ENGINE (SINGLE CLEAN BLOCK)
    ========================================================= */
 
 .mobile-bottom-nav {
@@ -792,86 +692,87 @@
 }
 
 @media (max-width: 900px) {
-    /* 1. ከላይ ያለውን Hamburger Sidebar Button እና Sidebar በስልክ መደበቅ */
-    .menu-toggle-btn,
+    /* 1. Sidebar በስልክ ላይ መደብቅ ነገር ግን Click ክሊክ እንዳይከለክል z-index ማስተካከል */
     .enterprise-sidebar {
+        position: fixed !important;
+        left: -100% !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
+    .menu-toggle-btn {
         display: none !important;
     }
 
-    /* 2. Full-Width (ሙሉ ስክሪን) ማድረግ - የጎን margins መቀነስ */
+    /* 2. Full Width Workspace */
     .enterprise-workspace {
         width: 100% !important;
-        margin: 0 !important;
+        margin-left: 0 !important;
         padding: 0 !important;
     }
 
     .content-scroll {
-        padding: 6px 2px 80px 2px !important;
+        padding: 10px 8px 90px 8px !important; /* Bottom Nav-ን እንዳይሸፍነው Bottom Padding ታክሏል */
     }
 
-    /* 3. Glass Card & Tables ሰፊ እና ሙሉ ስክሪን ማድረግ */
+    /* 3. Responsive Cards & Tables */
     .glass-card {
-        border-radius: 8px !important;
-        padding: 10px 6px !important;
-        margin: 0 0 10px 0 !important;
+        border-radius: 10px !important;
+        padding: 12px 8px !important;
+        margin-bottom: 12px !important;
         box-shadow: none !important;
-        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
     }
 
     .table-responsive {
         width: 100% !important;
         overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        display: block;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
     }
 
     table {
         min-width: 500px !important;
     }
 
-    /* 4. Bottom Nav Bar Styling */
+    /* 4. Bottom Nav - ሁልጊዜ ከላይ እንዲሆን z-index: 999999 ተሰጥቶታል */
     .mobile-bottom-nav {
         display: flex !important;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        background: #ffffff;
-        box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.1);
-        border-top: 1px solid #e2e8f0;
-        z-index: 9999;
-        justify-content: space-around;
-        align-items: center;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 62px !important;
+        background: #ffffff !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid #e2e8f0 !important;
+        z-index: 999999 !important;
+        justify-content: space-around !important;
+        align-items: center !important;
     }
 
     .bottom-nav-item {
-        background: none;
-        border: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: #64748b;
-        font-size: 10px;
-        font-weight: 600;
-        width: 20%;
-        cursor: pointer;
+        background: none !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #64748b !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        width: 20% !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
     }
 
     .bottom-nav-item.active {
-        color: #0f385a;
-        font-weight: 800;
+        color: #0f385a !important;
+        font-weight: 800 !important;
     }
 
-    /* 5. Header Flex Alignment Fix */
-    .glass-card > div[style*="display: flex"] {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 10px !important;
-    }
-
-    /* 6. Login View ሲከፈት Bottom Nav-ን በጭራሽ አለማሳየት */
-    #loginView:not([style*="display: none"]) ~ .mobile-bottom-nav,
+    /* 5. Login View ሲከፈት Bottom Nav መደብቅ */
     body:has(#loginView.active) .mobile-bottom-nav,
     body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
         display: none !important;
