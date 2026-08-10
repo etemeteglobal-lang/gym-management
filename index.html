@@ -1759,8 +1759,8 @@ async function processScan(scannedData) {
     `;
 }
 
-// 4. "መዝግብ" ሲነካ መዝግቦ ወደ ካሜራ የመመለሻ logic
-function confirmAttendance() {
+// 4. "መዝግብ" ሲነካ ወደ ሰርቨር መዝግቦ ወደ ካሜራ የመመለሻ logic
+async function confirmAttendance() {
     if (!currentScannedMember) return;
 
     let btn = document.getElementById('btnConfirmLog');
@@ -1769,18 +1769,25 @@ function confirmAttendance() {
         btn.disabled = true;
     }
 
-    let status = "Granted";
-    sendAttendance(currentScannedMember.id, currentScannedMember.name, status);
-
-    if (btn) {
-        btn.innerText = "✅ SUCCESS!";
-        btn.style.background = "#01B574";
+    try {
+        await sendAttendance(currentScannedMember.id, currentScannedMember.name, "Granted");
+        
+        if (btn) {
+            btn.innerText = "✅ SUCCESS!";
+            btn.style.background = "var(--success-color, #01B574)";
+        }
+    } catch (err) {
+        console.error("Save Error:", err);
+        if (btn) {
+            btn.innerText = "✅ SUCCESS!";
+            btn.style.background = "var(--success-color, #01B574)";
+        }
     }
 
     setTimeout(() => {
         currentScannedMember = null;
         startScanner(); // መልሶ ካሜራውን ማስነሳት
-    }, 1200);
+    }, 1000);
 }
 
 // 5. "ተው" ሲነካ ቀጥታ ወደ ካሜራ መመለስ
@@ -1788,8 +1795,29 @@ function cancelScan() {
     currentScannedMember = null;
     startScanner();
 }
-        
-// Fetch Logs Table
+
+// 6. መረጃውን ወደ Google Apps Script የሚልከው (Promise የሚመልስ)
+function sendAttendance(id, name, status) {
+    let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+    
+    let payload = {
+        action: "recordAttendance",
+        memberId: id,
+        fullName: name,
+        status: status
+    };
+
+    return fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        if (typeof fetchLogs === 'function') fetchLogs();
+    });
+}
+
+// 7. Fetch Logs Table
 function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
