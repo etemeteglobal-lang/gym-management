@@ -782,97 +782,102 @@
             padding: 10px 12px !important;
         }
     }
-    /* 5. Touch Friendly Input Controls */
-        .input-group input, 
-        .input-group select {
-            font-size: 15px !important;
-            padding: 10px 12px !important;
-        }
 
         /* =========================================================
-           NATIVE MOBILE BOTTOM NAV & TABLE FIXES (እዚህ ጋር ይጨመራል)
-           ========================================================= */
+   PERFECT MOBILE NATIVE APP EXPERIENCE (CSS FIXES)
+   ========================================================= */
 
-        .mobile-bottom-nav {
-            display: none;
-        }
+.mobile-bottom-nav {
+    display: none;
+}
 
-        @media (max-width: 900px) {
-            .mobile-bottom-nav {
-                display: flex !important;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 65px;
-                background: #ffffff;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-                border-top: 1px solid rgba(0, 0, 0, 0.06);
-                z-index: 99999;
-                justify-content: space-around;
-                align-items: center;
-                padding: 0 4px;
-            }
+@media (max-width: 900px) {
+    /* 1. ከላይ ያለውን Hamburger Sidebar Button እና Sidebar በስልክ መደበቅ */
+    .menu-toggle-btn,
+    .enterprise-sidebar {
+        display: none !important;
+    }
 
-            .bottom-nav-item {
-                background: transparent;
-                border: none;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: #64748B;
-                font-size: 11px;
-                font-weight: 600;
-                width: 20%;
-                padding: 6px 0;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
+    /* 2. Full-Width (ሙሉ ስክሪን) ማድረግ - የጎን margins መቀነስ */
+    .enterprise-workspace {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-            .bottom-nav-item .nav-icon {
-                font-size: 18px;
-                margin-bottom: 2px;
-            }
+    .content-scroll {
+        padding: 6px 2px 80px 2px !important;
+    }
 
-            .bottom-nav-item.active {
-                color: #0F385A;
-                font-weight: 800;
-            }
+    /* 3. Glass Card & Tables ሰፊ እና ሙሉ ስክሪን ማድረግ */
+    .glass-card {
+        border-radius: 8px !important;
+        padding: 10px 6px !important;
+        margin: 0 0 10px 0 !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
 
-            .bottom-nav-item.active .nav-icon {
-                transform: translateY(-2px);
-            }
+    .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        display: block;
+    }
 
-            .content-scroll {
-                padding-bottom: 85px !important;
-            }
+    table {
+        min-width: 500px !important;
+    }
 
-            .glass-card {
-                padding: 12px !important;
-                overflow: hidden !important;
-            }
+    /* 4. Bottom Nav Bar Styling */
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #ffffff;
+        box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.1);
+        border-top: 1px solid #e2e8f0;
+        z-index: 9999;
+        justify-content: space-around;
+        align-items: center;
+    }
 
-            .table-responsive {
-                width: 100% !important;
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch;
-                display: block;
-            }
+    .bottom-nav-item {
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 600;
+        width: 20%;
+        cursor: pointer;
+    }
 
-            table {
-                min-width: 550px !important;
-            }
+    .bottom-nav-item.active {
+        color: #0f385a;
+        font-weight: 800;
+    }
 
-            .glass-card > div[style*="display: flex"] {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 10px !important;
-            }
-        }
-    </style>
-</head>
-    </style>
+    /* 5. Header Flex Alignment Fix */
+    .glass-card > div[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    /* 6. Login View ሲከፈት Bottom Nav-ን በጭራሽ አለማሳየት */
+    #loginView:not([style*="display: none"]) ~ .mobile-bottom-nav,
+    body:has(#loginView.active) .mobile-bottom-nav,
+    body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
+        display: none !important;
+    }
+}
+</style>
 </head>
 <body>
 
@@ -930,9 +935,7 @@
         </div>
     </aside>
 
-    <!-- 3. WORKSPACE AREA -->
-    <div class="enterprise-workspace">
-        <!-- TOPBAR HEADER -->
+   <!-- TOPBAR HEADER -->
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
@@ -944,6 +947,7 @@
             <div class="topbar-right">
                 <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" id="themeToggleBtn">🌙</button>
                 <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
+                <button class="top-action-btn" onclick="switchMobileTab('settingsView', this)" title="Settings">⚙️</button>
                 <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
             </div>
         </header>
@@ -2414,7 +2418,7 @@ function filterDirectory() {
 }
 
 // =========================================================
-// MOBILE BOTTOM NAVIGATION SWITCHER
+// MOBILE BOTTOM NAVIGATION SWITCHER (FIXED FOR LOGIN)
 // =========================================================
 function switchMobileTab(viewId, btnEl) {
     let allViews = document.querySelectorAll('.view-section, [id$="View"]');
@@ -2426,15 +2430,25 @@ function switchMobileTab(viewId, btnEl) {
     });
 
     let targetView = document.getElementById(viewId);
+    let bottomNav = document.querySelector('.mobile-bottom-nav');
+
     if (targetView) {
         targetView.classList.add('active');
         targetView.style.display = 'block';
     }
 
+    // Login View ወይም Auth Form ሲሆን Bottom Nav-ን በጭራሽ አለማሳየት
+    if ((viewId === 'loginView' || viewId === 'login') && bottomNav) {
+        bottomNav.style.display = 'none';
+    } else if (bottomNav && window.innerWidth <= 900) {
+        bottomNav.style.display = 'flex';
+    }
+
     document.querySelectorAll('.bottom-nav-item').forEach(btn => {
         btn.classList.remove('active');
     });
-    if (btnEl) {
+    
+    if (btnEl && btnEl.classList) {
         btnEl.classList.add('active');
     }
 
