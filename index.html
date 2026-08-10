@@ -1362,37 +1362,63 @@ function checkIsExpired(expiryStr, statusStr) {
             .catch(err => console.error("Sync Error:", err));
         }
 
-        function renderDashboardAnalytics(members) {
-            let total = members.length;
-            let active = 0, expired = 0, rev = 0;
-            let weekNew = 0, monthNew = 0, yearNew = 0;
-            let plans = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
-            let mRev = 0, yRev = 0;
+/* =========================================================
+   FIXED DASHBOARD ANALYTICS & EXPIRY CALCULATOR
+   ========================================================= */
+function renderDashboardAnalytics(members) {
+    if (!members || !Array.isArray(members)) return;
 
-            members.forEach(m => {
-                let st = m[6] || "Active";
-                if (st === "Active") active++; else expired++;
-                let amt = parseFloat(m[7]) || 0;
-                rev += amt;
-                let pl = m[3] || "Monthly";
-                if (pl === "Yearly") yRev += amt; else mRev += amt;
-                if (plans[pl] !== undefined) plans[pl]++;
+    let rows = (members.length > 0 && Array.isArray(members[0]) && members[0][0] === "Member ID") 
+               ? members.slice(1) 
+               : members;
 
-                weekNew++; monthNew++; yearNew++;
-            });
+    let total = rows.length;
+    let active = 0, expired = 0, rev = 0;
+    let weekNew = 0, monthNew = 0, yearNew = 0;
+    let plans = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
+    let mRev = 0, yRev = 0;
 
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statActive').innerText = active;
-            document.getElementById('statExpired').innerText = expired;
-            document.getElementById('statRevenue').innerText = rev.toLocaleString() + " ETB";
-            
-            document.getElementById('statWeekNew').innerText = weekNew;
-            document.getElementById('statMonthNew').innerText = monthNew;
-            document.getElementById('statYearNew').innerText = yearNew;
+    rows.forEach(m => {
+        let expiryDate = m[5] || '';
+        let rawStatus = m[6] || 'Active';
 
-            renderCharts(mRev, yRev, plans);
+        // ቀኑ ማለፉን በጥንቃቄ ማረጋገጥ
+        let isExpired = checkIsExpired(expiryDate, rawStatus);
+        if (isExpired) {
+            expired++;
+        } else {
+            active++;
         }
 
+        let amt = parseFloat(m[7]) || 0;
+        rev += amt;
+        let pl = m[3] || "Monthly";
+        if (pl === "Yearly") yRev += amt; else mRev += amt;
+        if (plans[pl] !== undefined) plans[pl]++;
+
+        weekNew++; monthNew++; yearNew++;
+    });
+
+    // 1. የሁለቱንም የ ID አይነቶች (dash vs stat) በአንድ ላይ ማዘመን
+    let setVal = (id1, id2, val) => {
+        let el1 = document.getElementById(id1);
+        let el2 = document.getElementById(id2);
+        if (el1) el1.innerText = val;
+        if (el2) el2.innerText = val;
+    };
+
+    setVal('dashTotalMembers', 'statTotal', total);
+    setVal('dashActiveSubs', 'statActive', active);
+    setVal('dashExpiredSubs', 'statExpired', expired);
+    setVal('dashTotalRevenue', 'statRevenue', rev.toLocaleString() + " ETB");
+
+    setVal('dashWeekNew', 'statWeekNew', weekNew);
+    setVal('dashMonthNew', 'statMonthNew', monthNew);
+    setVal('dashYearNew', 'statYearNew', yearNew);
+
+    // 2. ቻርቶችን መሳል
+    renderCharts(mRev, yRev, plans);
+}
         function renderCharts(mRev, yRev, plans) {
             if (chartRev) chartRev.destroy();
             if (chartPlan) chartPlan.destroy();
