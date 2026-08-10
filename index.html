@@ -911,23 +911,54 @@
                 </div>
             </div>
 
-            <!-- VIEW 4: QR ACCESS SCANNER -->
-            <div id="scannerView" class="view-section">
-                <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
-                    <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
-                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Scan athlete Smart ID for real-time validation.</p>
-                    
-                    <div id="qrCameraBox" style="width:100%; min-height:280px; border-radius:18px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.2); display:flex; justify-content:center; align-items:center;"></div>
-                    
-                    <div style="margin-top:18px; display:flex; justify-content:center; gap:12px;">
-                        <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0;" onclick="startScanner('environment')">Start Camera</button>
-                        <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop</button>
-                    </div>
+          <!-- VIEW 4: QR ACCESS SCANNER -->
+<div id="scannerView" class="view-section">
+    <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
+        <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Scan athlete Smart ID for real-time validation.</p>
+        
+        <!-- 1. የካሜራ ሳጥን እና አዝራሮች (ስካን ሲደረግ ሙሉ በሙሉ ይጠፋሉ) -->
+        <div id="cameraArea">
+            <div id="qrCameraBox" style="width:100%; min-height:280px; border-radius:18px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.2); display:flex; justify-content:center; align-items:center;"></div>
+            
+            <div style="margin-top:18px; display:flex; justify-content:center; gap:12px;">
+                <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0;" onclick="startScanner('environment')">📷 Start Camera</button>
+                <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop</button>
+            </div>
+        </div>
 
-                    <div id="scanProfileResult" style="margin-top:18px; padding:18px; border-radius:18px; display:none; text-align:left; border:1px solid var(--border-light); background:var(--surface-card); box-shadow:var(--shadow-enterprise);"></div>
-                </div>
+        <!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
+        <div id="scanProfileResult" style="margin-top:0px; padding:20px; border-radius:18px; display:none; text-align:center; border:1px solid var(--border-light); background:var(--surface-card); box-shadow:var(--shadow-enterprise);">
+            
+            <!-- የሁኔታ ባጅ (Granted / Expired) -->
+            <div id="scanStatusBadge" style="margin-bottom:15px;"></div>
+
+            <!-- የአባሉ ፎቶ -->
+            <div style="margin-bottom:12px;">
+                <img id="scanMemberPhoto" src="https://via.placeholder.com/110" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
             </div>
 
+            <!-- ስም እና ID -->
+            <h3 id="scanMemberName" style="font-weight:800; font-size:1.25rem; margin-bottom:2px; color:var(--text-main,#fff);">-</h3>
+            <p id="scanMemberId" style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">-</p>
+            
+            <!-- ዝርዝር መረጃዎች -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px;">
+                <div><b>ስልክ:</b> <span id="scanMemberPhone">-</span></div>
+                <div><b>ፓኬጅ:</b> <span id="scanMemberPlan">-</span></div>
+                <div><b>የሚያልቅበት:</b> <span id="scanMemberExpiry">-</span></div>
+                <div><b>ሁኔታ:</b> <span id="scanMemberStatus">-</span></div>
+            </div>
+
+            <!-- አዝራሮች (መዝግብ እና ተው) -->
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>
+                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:48%; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
+            </div>
+        </div>
+
+    </div>
+</div>
             <!-- VIEW 5: ATTENDANCE LOGS -->
             <div id="logsView" class="view-section">
                 <div class="glass-card">
@@ -1566,13 +1597,21 @@ function submitRegistration() {
         }
 
 /* =========================================================
-   FIXED QR SCANNER & SMART PARSER LOGIC
+   UPDATED QR SCANNER & SMART PARSER WITH MANUAL CONFIRMATION
    ========================================================= */
 
-// Global Variables Setup
 window.scanHistory = window.scanHistory || {};
-// Start Camera Stream with Dynamic Aspect Ratio & Better Focus
+let currentScannedMember = null;
+
+// 1. Start Camera Stream
 async function startScanner(mode = 'environment') {
+    // ካሜራውን አሳይቶ የውጤት ማሳያውን መሸፈን
+    let cameraArea = document.getElementById('cameraArea');
+    let resultCard = document.getElementById('scanProfileResult');
+    
+    if (cameraArea) cameraArea.style.display = 'block';
+    if (resultCard) resultCard.style.display = 'none';
+
     if (qrScanner) {
         await stopScanner();
     }
@@ -1614,151 +1653,140 @@ async function startScanner(mode = 'environment') {
     });
 }
 
-// Stop Camera Safely
+// 2. Stop Camera Safely
 async function stopScanner() {
     if (qrScanner) {
         try {
             await qrScanner.stop();
             qrScanner.clear();
+            qrScanner = null;
         } catch (e) {
             console.log("Scanner already stopped.");
         }
     }
 }
 
-// Smart QR Code Processor (Handles JSON, Member ID, and EDID)
-function processScan(scannedData) {
+// 3. Process Scan (Hides Camera & Displays Member Photo + Details)
+async function processScan(scannedData) {
     if (!scannedData) return;
-
-    let now = new Date().getTime();
-    let resultCard = document.getElementById('scanProfileResult');
-    if (resultCard) resultCard.style.display = 'block';
 
     let extractedId = String(scannedData).trim();
 
-    // 1. Try Parsing if QR Code contains JSON Data
+    // JSON ከሆነ ID/EDID መፍታት
     try {
         let parsed = JSON.parse(scannedData);
-        if (parsed.id) {
-            extractedId = String(parsed.id).trim();
-        } else if (parsed.memberId) {
-            extractedId = String(parsed.memberId).trim();
-        } else if (parsed.edid) {
-            extractedId = String(parsed.edid).trim();
-        }
+        if (parsed.id) extractedId = String(parsed.id).trim();
+        else if (parsed.memberId) extractedId = String(parsed.memberId).trim();
+        else if (parsed.edid) extractedId = String(parsed.edid).trim();
     } catch (e) {
         extractedId = String(scannedData).trim();
     }
 
-    // 2. Prevent Duplicate Scanning (Cooldown of 10 seconds)
-    if (scanHistory[extractedId] && (now - scanHistory[extractedId]) < 10000) {
-        let remaining = Math.ceil((10000 - (now - scanHistory[extractedId])) / 1000);
-        if (resultCard) {
-            resultCard.innerHTML = `
-                <div style="background:rgba(255,181,71,0.2); border:1px solid var(--warning-color); color:var(--warning-color); padding:14px; border-radius:14px; font-weight:800; text-align:center;">
-                    ⚠️ ተመዝግቧል! ድጋሜ ለመመዝገብ ${remaining} ሰከንድ ይጠብቁ።
-                </div>
-            `;
-        }
-        return;
-    }
+    // ስካን እንደተደረገ ካሜራውን አቁሞ መሸፈን
+    await stopScanner();
+    let cameraArea = document.getElementById('cameraArea');
+    if (cameraArea) cameraArea.style.display = 'none';
 
-    // 3. Search Member in Loaded Cache (Checks both Member ID [0] and EDID [9])
+    let resultCard = document.getElementById('scanProfileResult');
+    if (resultCard) resultCard.style.display = 'block';
+
+    // አባሉን ከ Cache መፈለግ (Member ID ወይም EDID [index 9])
     let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) ? membersCache : [];
     let m = membersList.find(item => {
         let mId = String(item[0] || '').trim().toLowerCase();
-        let edid = String(item[9] || '').trim().toLowerCase(); // Index 9 is EDID
+        let edid = String(item[9] || '').trim().toLowerCase();
         let searchId = extractedId.toLowerCase();
         return mId === searchId || (edid !== '' && edid === searchId);
     });
-    
+
     if (!m) {
-        if (resultCard) {
-            resultCard.innerHTML = `
-                <div style="color:var(--danger-color); font-weight:800; font-size:1rem; text-align:center; padding:12px; background:rgba(238,93,80,0.1); border-radius:12px; border:1px solid var(--danger-color);">
-                    ❌ Access Denied: Unknown Member ID (${extractedId})
-                </div>
-            `;
-        }
-        if (typeof speakAlert === 'function') speakAlert("Access Denied. Unknown Member ID");
+        currentScannedMember = null;
+        resultCard.innerHTML = `
+            <div style="color:var(--danger-color, #EE5D50); font-weight:800; font-size:1rem; text-align:center; padding:15px; background:rgba(238,93,80,0.1); border-radius:14px; border:1px solid var(--danger-color);">
+                ❌ Access Denied: ያልተመዘገበ ID (${extractedId})
+            </div>
+            <div style="margin-top:15px; text-align:center;">
+                <button type="button" class="btn-main" style="background:var(--danger-color); padding:10px 20px;" onclick="cancelScan()">❌ ተመለስ</button>
+            </div>
+        `;
         return;
     }
 
-    // Record Scan Timestamp
-    scanHistory[extractedId] = now;
+    // የአባሉን መረጃዎች ማዘጋጀት (Photo index 10 ላይ ይገኛል)
+    currentScannedMember = {
+        id: m[0] || extractedId,
+        name: m[1] || "Member",
+        phone: m[2] || "N/A",
+        plan: m[3] || "Monthly",
+        expiry: m[5] || "N/A",
+        status: m[6] || "Active",
+        photo: m[10] || "https://via.placeholder.com/120"
+    };
 
-    // Extract Details
-    let memberIdVal = m[0] || extractedId,
-        name = m[1] || "Member", 
-        phone = m[2] || "N/A", 
-        plan = m[3] || "Monthly", 
-        expiry = m[5] || "N/A", 
-        status = m[6] || "Active";
+    let isActive = String(currentScannedMember.status).toLowerCase() === "active";
 
-    if (String(status).toLowerCase() === "active") {
-        if (resultCard) {
-            resultCard.innerHTML = `
-                <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                    <div style="width:52px; height:52px; border-radius:50%; background:rgba(1,181,116,0.2); display:flex; justify-content:center; align-items:center; color:var(--success-color); font-size:1.6rem; font-weight:800;">✓</div>
-                    <div>
-                        <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                        <p style="font-size:0.8rem; color:var(--success-color); font-weight:800;">✅ ACCESS GRANTED (ACTIVE)</p>
-                    </div>
-                </div>
-                <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                    <p><b>Member ID:</b> ${memberIdVal} | <b>Plan:</b> ${plan}</p>
-                    <p><b>Phone:</b> ${phone} | <b>Expiry Date:</b> ${expiry}</p>
-                </div>
-            `;
-        }
-        if (typeof speakAlert === 'function') speakAlert("Welcome " + name + ". Access Granted.");
-        sendAttendance(memberIdVal, name, "Granted");
-    } else {
-        if (resultCard) {
-            resultCard.innerHTML = `
-                <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
-                    <div style="width:52px; height:52px; border-radius:50%; background:rgba(238,93,80,0.2); display:flex; justify-content:center; align-items:center; color:var(--danger-color); font-size:1.6rem; font-weight:800;">✕</div>
-                    <div>
-                        <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${name}</h3>
-                        <p style="font-size:0.8rem; color:var(--danger-color); font-weight:800;">❌ ACCESS DENIED (${status.toUpperCase()})</p>
-                    </div>
-                </div>
-                <div style="font-size:0.8rem; line-height:1.6; color:var(--text-muted); border-top:1px dashed var(--border-light); padding-top:8px;">
-                    <p><b>Member ID:</b> ${memberIdVal} | <b>Plan:</b> ${plan}</p>
-                    <p><b>Phone:</b> ${phone} | <b>Expired On:</b> ${expiry}</p>
-                </div>
-            `;
-        }
-        if (typeof speakAlert === 'function') speakAlert("Access Denied. Subscription Expired.");
-        sendAttendance(memberIdVal, name, "Denied (" + status + ")");
-    }
+    // UI ላይ በፎቶ እና በአዝራሮች አምሮ እንዲታይ ማድረግ
+    resultCard.innerHTML = `
+        <div style="text-align:center;">
+            <!-- የሁኔታ ባጅ -->
+            <div style="padding:10px; border-radius:12px; font-weight:800; margin-bottom:15px; background:${isActive ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isActive ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; border:1px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">
+                ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '❌ ACCESS DENIED (' + currentScannedMember.status.toUpperCase() + ')'}
+            </div>
+
+            <!-- የአባሉ ፎቶ -->
+            <div style="margin-bottom:12px;">
+                <img src="${currentScannedMember.photo}" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+            </div>
+
+            <!-- ስም እና ID -->
+            <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-main, #fff); margin-bottom:2px;">${currentScannedMember.name}</h3>
+            <p style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">ID: ${currentScannedMember.id}</p>
+
+            <!-- ዝርዝር መረጃዎች -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px; color:var(--text-muted);">
+                <div><b>ስልክ:</b> ${currentScannedMember.phone}</div>
+                <div><b>ፓኬጅ:</b> ${currentScannedMember.plan}</div>
+                <div><b>የሚያልቅበት:</b> ${currentScannedMember.expiry}</div>
+                <div><b>ሁኔታ:</b> ${currentScannedMember.status}</div>
+            </div>
+
+            <!-- የውሳኔ አዝራሮች -->
+            <div style="display:flex; gap:10px; justify-content:center;">
+                ${isActive ? `<button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
+                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:${isActive ? '48%' : '100%'}; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
+            </div>
+        </div>
+    `;
 }
 
-// Send Attendance Data to Google Apps Script
-function sendAttendance(id, name, status) {
-    let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
-    if (!endpoint) {
-        console.error("API Endpoint URL አልተገኘም!");
-        return;
+// 4. "መዝግብ" ሲነካ መዝግቦ ወደ ካሜራ የመመለሻ logic
+function confirmAttendance() {
+    if (!currentScannedMember) return;
+
+    let btn = document.getElementById('btnConfirmLog');
+    if (btn) {
+        btn.innerText = "በመመዝገብ ላይ...";
+        btn.disabled = true;
     }
 
-    let now = new Date();
-    let timeStr = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
+    let status = "Granted";
+    sendAttendance(currentScannedMember.id, currentScannedMember.name, status);
 
-    let url = endpoint + "?action=attendance" +
-              "&memberId=" + encodeURIComponent(id) + 
-              "&fullName=" + encodeURIComponent(name) + 
-              "&scanTime=" + encodeURIComponent(timeStr) + 
-              "&status=" + encodeURIComponent(status);
+    if (btn) {
+        btn.innerText = "✅ SUCCESS!";
+        btn.style.background = "#01B574";
+    }
 
-    fetch(url, { mode: 'no-cors' })
-    .then(() => {
-        console.log("Attendance request sent via GET.");
-        setTimeout(() => {
-            if (typeof fetchLogs === 'function') fetchLogs();
-        }, 1200);
-    })
-    .catch(err => console.error("Attendance Error:", err));
+    setTimeout(() => {
+        currentScannedMember = null;
+        startScanner(); // መልሶ ካሜራውን ማስነሳት
+    }, 1200);
+}
+
+// 5. "ተው" ሲነካ ቀጥታ ወደ ካሜራ መመለስ
+function cancelScan() {
+    currentScannedMember = null;
+    startScanner();
 }
         
 // Fetch Logs Table
