@@ -1101,18 +1101,36 @@
         };
 // 1. Universal Expiry Checker (የማለቂያ ቀን ማረጋገጫ)
 function checkIsExpired(expiryStr, statusStr) {
-    if (statusStr && (String(statusStr).toLowerCase() === 'expired' || String(statusStr).toLowerCase() === 'inactive')) {
-        return true;
-    }
+    let s = String(statusStr || '').trim().toLowerCase();
+    if (s === 'expired' || s === 'inactive' || s === 'denied') return true;
     if (!expiryStr) return false;
 
+    // 1. የኢትዮጵያ ቀን ከያዘ (ምሳሌ: "6/12/2018" ወይም "4/13/2018")
+    let match = String(expiryStr).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (match) {
+        let day = parseInt(match[1], 10);
+        let month = parseInt(match[2], 10);
+        let year = parseInt(match[3], 10);
+
+        // የዛሬው የኢትዮጵያ ቀን፦ ነሐሴ 4 ቀን 2018 E.C.
+        let todayEC = { year: 2018, month: 12, day: 4 };
+
+        if (year < todayEC.year) return true;
+        if (year > todayEC.year) return false;
+
+        if (month < todayEC.month) return true;
+        if (month > todayEC.month) return false;
+
+        return day < todayEC.day;
+    }
+
+    // 2. የፈረንጅ ቀን ከሆኖ (ምሳሌ: "2026-08-10")
     let today = new Date();
     today.setHours(0, 0, 0, 0);
-
     let cleanDateStr = String(expiryStr).split(' ')[0].trim();
     let expDate = new Date(cleanDateStr);
 
-    if (!isNaN(expDate.getTime())) {
+    if (!isNaN(expDate.getTime()) && expDate.getFullYear() > 2000) {
         return expDate < today;
     }
 
