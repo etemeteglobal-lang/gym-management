@@ -782,6 +782,96 @@
             padding: 10px 12px !important;
         }
     }
+    /* 5. Touch Friendly Input Controls */
+        .input-group input, 
+        .input-group select {
+            font-size: 15px !important;
+            padding: 10px 12px !important;
+        }
+
+        /* =========================================================
+           NATIVE MOBILE BOTTOM NAV & TABLE FIXES (እዚህ ጋር ይጨመራል)
+           ========================================================= */
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-bottom-nav {
+                display: flex !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: #ffffff;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
+                z-index: 99999;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0 4px;
+            }
+
+            .bottom-nav-item {
+                background: transparent;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #64748B;
+                font-size: 11px;
+                font-weight: 600;
+                width: 20%;
+                padding: 6px 0;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .bottom-nav-item .nav-icon {
+                font-size: 18px;
+                margin-bottom: 2px;
+            }
+
+            .bottom-nav-item.active {
+                color: #0F385A;
+                font-weight: 800;
+            }
+
+            .bottom-nav-item.active .nav-icon {
+                transform: translateY(-2px);
+            }
+
+            .content-scroll {
+                padding-bottom: 85px !important;
+            }
+
+            .glass-card {
+                padding: 12px !important;
+                overflow: hidden !important;
+            }
+
+            .table-responsive {
+                width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                display: block;
+            }
+
+            table {
+                min-width: 550px !important;
+            }
+
+            .glass-card > div[style*="display: flex"] {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+        }
+    </style>
+</head>
     </style>
 </head>
 <body>
@@ -2303,22 +2393,18 @@ function filterDirectoryByStatus() {
         let name = String(m[1] || '').toLowerCase();
         let phone = String(m[2] || '').toLowerCase();
         
-        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
         
-        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
         let expiry = m[5] || '';
         let rawStatus = m[6] || 'Active';
         let isExpired = checkIsExpired(expiry, rawStatus);
         
-        // 3. Dropdown ማጣሪያ
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
         
-        return matchesSearch; // ALL ከሆነ
+        return matchesSearch;
     });
 
-    // የተጣራውን ውጤት Table ላይ ማሳየት
     renderDirectory(filtered);
 }
 
@@ -2326,6 +2412,59 @@ function filterDirectoryByStatus() {
 function filterDirectory() {
     filterDirectoryByStatus();
 }
+
+// =========================================================
+// MOBILE BOTTOM NAVIGATION SWITCHER
+// =========================================================
+function switchMobileTab(viewId, btnEl) {
+    let allViews = document.querySelectorAll('.view-section, [id$="View"]');
+    allViews.forEach(view => {
+        if (view.id) {
+            view.classList.remove('active');
+            view.style.display = 'none';
+        }
+    });
+
+    let targetView = document.getElementById(viewId);
+    if (targetView) {
+        targetView.classList.add('active');
+        targetView.style.display = 'block';
+    }
+
+    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    if (btnEl) {
+        btnEl.classList.add('active');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
+
+<!-- MOBILE BOTTOM NAVIGATION BAR -->
+<div class="mobile-bottom-nav">
+    <button class="bottom-nav-item active" onclick="switchMobileTab('dashboardView', this)">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchMobileTab('registerView', this)">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Register</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchMobileTab('membersView', this)">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Members</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchMobileTab('qrScannerView', this)">
+        <span class="nav-icon">📷</span>
+        <span class="nav-label">QR Scan</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchMobileTab('attendanceView', this)">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Audit</span>
+    </button>
+</div>
+
 </body>
 </html>
