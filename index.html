@@ -875,7 +875,7 @@
                 </div>
             </div>
 
-           <!-- VIEW 3: MEMBERS DIRECTORY -->
+<!-- VIEW 3: MEMBERS DIRECTORY -->
 <div id="membersView" class="view-section">
     <div class="glass-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
@@ -884,10 +884,11 @@
                 <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
             </div>
             <div style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
-                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectoryByStatus()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
+                <!-- የጽሁፍ መፈለጊያ -->
+                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
                 
-                <!-- አዲሱ የ Status Filter Dropdown -->
-                <select id="statusFilterSelect" onchange="filterDirectoryByStatus()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
+                <!-- የ Status መምረጫ Dropdown -->
+                <select id="statusFilterSelect" onchange="filterDirectory()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
                     <option value="ALL">🔍 ሁሉም</option>
                     <option value="ACTIVE">🟢 Active ብቻ</option>
                     <option value="EXPIRED">🔴 Expired ብቻ</option>
@@ -2039,6 +2040,43 @@ function exportCSV() {
     a.href = URL.createObjectURL(blob);
     a.download = 'FaidATech_Gym_Members.csv';
     a.click();
+}
+/* =========================================================
+   MEMBERS DIRECTORY STATUS FILTER ENGINE (FIXED)
+   ========================================================= */
+function filterDirectoryByStatus() {
+    let q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+    let filterVal = document.getElementById('statusFilterSelect') ? document.getElementById('statusFilterSelect').value : 'ALL';
+
+    if (!membersCache || !Array.isArray(membersCache)) return;
+
+    let filtered = membersCache.filter(m => {
+        let id = String(m[0] || '').toLowerCase();
+        let name = String(m[1] || '').toLowerCase();
+        let phone = String(m[2] || '').toLowerCase();
+        
+        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
+        let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
+        
+        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
+        let expiry = m[5] || '';
+        let rawStatus = m[6] || 'Active';
+        let isExpired = checkIsExpired(expiry, rawStatus);
+        
+        // 3. Dropdown ማጣሪያ
+        if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
+        if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
+        
+        return matchesSearch; // ALL ከሆነ
+    });
+
+    // የተጣራውን ውጤት Table ላይ ማሳየት
+    renderDirectory(filtered);
+}
+
+// ጽሑፍ ሲፈለግም ይሄው እንዲሰራ ማድረግ
+function filterDirectory() {
+    filterDirectoryByStatus();
 }
 </script>
 </body>
