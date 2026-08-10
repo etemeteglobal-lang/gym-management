@@ -1571,8 +1571,6 @@ function submitRegistration() {
 
 // Global Variables Setup
 window.scanHistory = window.scanHistory || {};
-let qrScanner = null;
-
 // Start Camera Stream with Dynamic Aspect Ratio & Better Focus
 async function startScanner(mode = 'environment') {
     if (qrScanner) {
