@@ -1703,17 +1703,34 @@ function submitRegistration() {
             document.getElementById('regPlan').value = plan;
             calcPrice();
         }
-
-        function deleteMember(id) {
-            if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
-                fetch(API_ENDPOINT, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "deleteMember", memberId: id })
-                }).then(() => syncMembers());
-            }
+/* =========================================================
+   IMMEDIATE DELETE ENGINE (OPTIMISTIC UI UPDATE)
+   ========================================================= */
+function deleteMember(id) {
+    if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
+        // 1. Local Cache ላይ ወዲያውኑ አባሉን ማጥፋት
+        membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
+        
+        // 2. Table እና Dashboard ላይ ወዲያውኑ ውጤቱን ማሳየት
+        renderDirectory(membersCache);
+        if (typeof renderDashboardAnalytics === 'function') {
+            renderDashboardAnalytics(membersCache);
         }
 
+        // 3. ወደ ሰርቨር የጥፋት ጥያቄ መላክ
+        fetch(API_ENDPOINT, {
+            method: 'POST', 
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "deleteMember", memberId: id })
+        }).then(() => {
+            // ሰርቨሩ መረጃውን ከ Google Sheets አጥፍቶ እስኪጨርስ 2 ሰከንድ ጠብቆ Sync ማድረግ
+            setTimeout(() => {
+                syncMembers();
+            }, 2000);
+        }).catch(err => console.error("Delete error:", err));
+    }
+}
 /* =========================================================
    UPDATED QR SCANNER & SMART PARSER WITH MANUAL CONFIRMATION
    ========================================================= */
