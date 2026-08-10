@@ -875,42 +875,49 @@
                 </div>
             </div>
 
-            <!-- VIEW 3: MEMBERS DIRECTORY -->
-            <div id="membersView" class="view-section">
-                <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
-                        <div>
-                            <h2 style="font-size: 1.15rem; font-weight: 800;">Members Directory</h2>
-                            <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
-                        </div>
-                        <div style="display: flex; gap: 10px; width: 100%; max-width: 450px;">
-                            <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
-                            <button type="button" class="btn-main" style="width:auto; padding:12px 18px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
-                        </div>
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Member ID</th>
-                                    <th>Photo</th>
-                                    <th>Full Name</th>
-                                    <th>FAN / EDID</th>
-                                    <th>Phone</th>
-                                    <th>Plan</th>
-                                    <th>Paid</th>
-                                    <th>Expiry Date</th>
-                                    <th>Status</th>
-                                    <th style="text-align:left;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="directoryTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
+           <!-- VIEW 3: MEMBERS DIRECTORY -->
+<div id="membersView" class="view-section">
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h2 style="font-size: 1.15rem; font-weight: 800;">Members Directory</h2>
+                <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
             </div>
+            <div style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
+                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectoryByStatus()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
+                
+                <!-- አዲሱ የ Status Filter Dropdown -->
+                <select id="statusFilterSelect" onchange="filterDirectoryByStatus()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
+                    <option value="ALL">🔍 ሁሉም</option>
+                    <option value="ACTIVE">🟢 Active ብቻ</option>
+                    <option value="EXPIRED">🔴 Expired ብቻ</option>
+                </select>
 
+                <button type="button" class="btn-main" style="width:auto; padding:12px 18px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Photo</th>
+                        <th>Full Name</th>
+                        <th>FAN / EDID</th>
+                        <th>Phone</th>
+                        <th>Plan</th>
+                        <th>Paid</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th style="text-align:left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="directoryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
           <!-- VIEW 4: QR ACCESS SCANNER -->
 <div id="scannerView" class="view-section">
     <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
@@ -1934,26 +1941,25 @@ function format12HourTime(dateTimeStr) {
     return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 }
 
+// 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    // 1. መረጃውን በቀን Group ማድረግ
+    if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">ምንም አይነት የአቴንዳንስ መረጃ አልተገኘም።</td></tr>';
+        return;
+    }
+
     let grouped = {};
     rows.forEach(l => {
         let rawTime = String(l[2] || '');
         let datePart = rawTime.split(' ')[0] || 'Unknown Date';
-        if (!grouped[datePart]) {
-            grouped[datePart] = [];
-        }
+        if (!grouped[datePart]) grouped[datePart] = [];
         grouped[datePart].push(l);
     });
 
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // 2. በየቀኑ በግሩፕ ከፍሎ ማሳየት
     Object.keys(grouped).forEach(dateGroup => {
         let ethDateHeader = (typeof toEthDate === 'function' && dateGroup.includes('-')) 
                             ? toEthDate(dateGroup) 
@@ -1968,35 +1974,28 @@ function renderGroupedLogs(rows) {
         tbody.appendChild(groupHeaderTr);
 
         grouped[dateGroup].forEach(l => {
-            let memberId = l[0] || '';
+            let memberId = String(l[0] || '').trim();
             let fullName = l[1] || '';
             let rawScanTime = l[2] || '';
-            let statusText = String(l[3] || '').trim().toUpperCase();
+            let statusText = String(l[3] || '').trim();
 
-            // ሰዓቱን ወደ 12-Hour AM/PM ይቀይራል
             let formattedTime = format12HourTime(rawScanTime);
 
-            // አባሉን ከ membersCache በመፈለግ አባልነቱ ማለፉን ማረጋገጥ
+            // አባሉን ከ membersCache መፈለግ
             let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
-                    ? membersCache.find(mem => String(mem[0] || '').trim().toLowerCase() === String(memberId).trim().toLowerCase())
+                    ? membersCache.find(mem => {
+                        let cachedId = String(mem[0] || '').trim().toLowerCase();
+                        let searchId = memberId.toLowerCase();
+                        return cachedId === searchId || cachedId.replace(/[^0-9]/g, '') === searchId.replace(/[^0-9]/g, '');
+                    })
                     : null;
 
+            // ቀን ማለፉን checkIsExpired ን በመጠቀም በጥንቃቄ ማረጋገጥ
             let isExpired = false;
-
-            if (statusText.includes('DENIED') || statusText.includes('EXPIRED')) {
-                isExpired = true;
-            } else if (m) {
-                let mStatus = String(m[6] || '').trim().toLowerCase();
-                let expiryStr = m[5] || '';
-
-                if (mStatus === 'expired' || mStatus === 'inactive') {
-                    isExpired = true;
-                } else if (expiryStr) {
-                    let expDate = new Date(expiryStr);
-                    if (!isNaN(expDate.getTime()) && expDate < today) {
-                        isExpired = true;
-                    }
-                }
+            if (m) {
+                isExpired = checkIsExpired(m[5], m[6]);
+            } else {
+                isExpired = checkIsExpired('', statusText);
             }
 
             let displayStatus = isExpired ? 'Expired' : 'Active';
