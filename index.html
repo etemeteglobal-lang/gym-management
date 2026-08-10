@@ -1456,7 +1456,7 @@ function calcEthDates() {
         }
 
 /* =========================================================
-   EXACT COLUMN-MAPPED DASHBOARD ANALYTICS ENGINE
+   EXACT COLUMN-MAPPED DASHBOARD ANALYTICS ENGINE (COMPLETE)
    ========================================================= */
 
 let chartMoM = null, chartQ = null, chartTraffic = null, chartG = null, chartP = null;
@@ -1477,7 +1477,7 @@ function renderDashboardAnalytics(members) {
     let monthlyMap = {};
 
     rows.forEach(m => {
-        // ከ Google Sheet የቀጥታ Column Index Mapping:
+        // የቀጥታ Column Index Mapping:
         // A=0(ID), B=1(Name), C=2(Phone), D=3(Plan), E=4(Join), F=5(Expiry), G=6(Status), H=7(Amount), I=8(Gender)
         
         let plan = String(m[3] || 'Monthly').trim();
@@ -1491,7 +1491,7 @@ function renderDashboardAnalytics(members) {
 
         rev += amt;
 
-        // ፆታን በጥንቃቄ መለየት (Male vs Female)
+        // ፆታን በጥንቃቄ መለየት
         if (gender === 'female' || gender.includes('ሴት') || gender === 'f') {
             genderCounts["Female"]++;
         } else {
@@ -1542,7 +1542,7 @@ function renderDashboardAnalytics(members) {
     if (document.getElementById('dashRetentionRate')) document.getElementById('dashRetentionRate').innerText = retentionRate + "%";
     if (document.getElementById('dashChurnRate')) document.getElementById('dashChurnRate').innerText = churnRate + "%";
 
-    // Render All Charts
+    // 5ቱንም ቻርቶች መሳል
     buildMoMChart(monthlyMap);
     buildQuarterlyChart(rev);
     buildTrafficChart();
@@ -1550,27 +1550,26 @@ function renderDashboardAnalytics(members) {
     buildPlanChart(plans);
 }
 
-// Gender Chart Builder
-function buildGenderChart(gCounts) {
-    let ctx = document.getElementById('chartGender');
+// 1. MoM Revenue Chart (ተጨምሯል)
+function buildMoMChart(monthlyMap) {
+    let ctx = document.getElementById('chartRevenue');
     if (!ctx) return;
-    if (chartG) chartG.destroy();
+    if (chartMoM) chartMoM.destroy();
 
-    chartG = new Chart(ctx.getContext('2d'), {
-        type: 'doughnut',
+    let labels = Object.keys(monthlyMap).length ? Object.keys(monthlyMap) : ['ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
+    let values = Object.values(monthlyMap).length ? Object.values(monthlyMap) : [30000, 25000, 35000];
+
+    chartMoM = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
         data: {
-            labels: ['Male (ወንድ)', 'Female (ሴት)'],
-            datasets: [{ 
-                data: [gCounts.Male, gCounts.Female], 
-                backgroundColor: ['#3B82F6', '#EC4899'],
-                borderWidth: 2
-            }]
+            labels: labels,
+            datasets: [{ label: 'ወርሃዊ ገቢ (ETB)', data: values, backgroundColor: ['#0F385A', '#FF6B00', '#10B981'], borderRadius: 6 }]
         },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
-// 2. Quarterly Performance Chart (Q1-Q4)
+// 2. Quarterly Performance Chart
 function buildQuarterlyChart(totalRev) {
     let ctx = document.getElementById('chartQuarterly');
     if (!ctx) return;
@@ -1588,7 +1587,7 @@ function buildQuarterlyChart(totalRev) {
     });
 }
 
-// 3. Peak Attendance Hours (Smooth Line)
+// 3. Peak Attendance Hours Chart
 function buildTrafficChart() {
     let ctx = document.getElementById('chartPeakHours');
     if (!ctx) return;
@@ -1611,7 +1610,7 @@ function buildTrafficChart() {
     });
 }
 
-// 4. Gender Demographics Breakdown
+// 4. Gender Demographics Chart
 function buildGenderChart(gCounts) {
     let ctx = document.getElementById('chartGender');
     if (!ctx) return;
@@ -1621,7 +1620,11 @@ function buildGenderChart(gCounts) {
         type: 'doughnut',
         data: {
             labels: ['Male (ወንድ)', 'Female (ሴት)'],
-            datasets: [{ data: [gCounts.Male, gCounts.Female], backgroundColor: ['#3B82F6', '#EC4899'] }]
+            datasets: [{ 
+                data: [gCounts.Male, gCounts.Female], 
+                backgroundColor: ['#3B82F6', '#EC4899'],
+                borderWidth: 2
+            }]
         },
         options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
     });
