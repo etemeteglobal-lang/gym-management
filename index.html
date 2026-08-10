@@ -1851,11 +1851,31 @@ function fetchLogs() {
     });
 }
 
+// የሰዓት አቆጣጠሩን ከ 24-Hour (17:15:00) ወደ 12-Hour AM/PM (05:15:00 PM) መቀየሪያ
+function format12HourTime(dateTimeStr) {
+    if (!dateTimeStr) return '';
+    let parts = String(dateTimeStr).trim().split(' ');
+    let timePart = parts.length > 1 ? parts[1] : parts[0];
+    let t = timePart.split(':');
+    if (t.length < 2) return dateTimeStr;
+
+    let hours = parseInt(t[0], 10);
+    let minutes = t[1];
+    let seconds = t[2] ? t[2] : '00';
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    let formattedHours = hours < 10 ? '0' + hours : hours;
+
+    return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
+}
+
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
-    // 1. መረጃውን በቀን (YYYY-MM-DD) Group ማድረግ
+    // 1. መረጃውን በቀን Group ማድረግ
     let grouped = {};
     rows.forEach(l => {
         let rawTime = String(l[2] || '');
@@ -1866,14 +1886,15 @@ function renderGroupedLogs(rows) {
         grouped[datePart].push(l);
     });
 
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     // 2. በየቀኑ በግሩፕ ከፍሎ ማሳየት
     Object.keys(grouped).forEach(dateGroup => {
-        // ቀኑን ወደ ኢትዮጵያ ዘመን አቆጣጠር (E.C) መለወጥ
         let ethDateHeader = (typeof toEthDate === 'function' && dateGroup.includes('-')) 
                             ? toEthDate(dateGroup) 
                             : dateGroup;
 
-        // የቀን መለያ Header Bar
         let groupHeaderTr = document.createElement('tr');
         groupHeaderTr.innerHTML = `
             <td colspan="4" style="background: rgba(88, 166, 255, 0.12); font-weight: 800; color: #58A6FF; padding: 10px 14px; font-size: 0.88rem; border-left: 4px solid #58A6FF;">
@@ -1882,20 +1903,38 @@ function renderGroupedLogs(rows) {
         `;
         tbody.appendChild(groupHeaderTr);
 
-        // የየቀኑን አባላት ዝርዝር ማሳየት
         grouped[dateGroup].forEach(l => {
             let memberId = l[0] || '';
             let fullName = l[1] || '';
-            let scanTime = l[2] || '';
-            let statusText = String(l[3] || '').trim();
+            let rawScanTime = l[2] || '';
+            let statusText = String(l[3] || '').trim().toUpperCase();
 
-            // የአባሉ ቀኑ አልፎ እንደሆነ ለማረጋገጥ ከ membersCache መፈለግ
-            let memberInfo = membersCache.find(m => String(m[0]).trim().toLowerCase() === String(memberId).trim().toLowerCase());
-            let memberStatus = memberInfo ? (memberInfo[6] || 'Active') : 'Active';
+            // ሰዓቱን ወደ 12-Hour AM/PM ይቀይራል
+            let formattedTime = format12HourTime(rawScanTime);
 
-            // ቀኑ ካለፈ ወይም DENIED/EXPIRED ከተባለ በቀይ Expired ማድረግ
-            let isExpired = memberStatus === 'Expired' || statusText.includes('DENIED') || statusText.includes('EXPIRED');
-            
+            // አባሉን ከ membersCache በመፈለግ አባልነቱ ማለፉን ማረጋገጥ
+            let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
+                    ? membersCache.find(mem => String(mem[0] || '').trim().toLowerCase() === String(memberId).trim().toLowerCase())
+                    : null;
+
+            let isExpired = false;
+
+            if (statusText.includes('DENIED') || statusText.includes('EXPIRED')) {
+                isExpired = true;
+            } else if (m) {
+                let mStatus = String(m[6] || '').trim().toLowerCase();
+                let expiryStr = m[5] || '';
+
+                if (mStatus === 'expired' || mStatus === 'inactive') {
+                    isExpired = true;
+                } else if (expiryStr) {
+                    let expDate = new Date(expiryStr);
+                    if (!isNaN(expDate.getTime()) && expDate < today) {
+                        isExpired = true;
+                    }
+                }
+            }
+
             let displayStatus = isExpired ? 'Expired' : 'Active';
             let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
             let colorStyle = isExpired ? 'var(--danger-color, #EE5D50)' : 'var(--success-color, #01B574)';
@@ -1904,7 +1943,7 @@ function renderGroupedLogs(rows) {
             tr.innerHTML = `
                 <td style="font-weight:800; color:#58A6FF;">${memberId}</td>
                 <td style="font-weight:700;">${fullName}</td>
-                <td style="color:var(--text-muted); font-size:0.85rem;">${scanTime}</td>
+                <td style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">${formattedTime}</td>
                 <td>
                     <span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${bgStyle}; color:${colorStyle}; display:inline-block;">
                         ● ${displayStatus}
