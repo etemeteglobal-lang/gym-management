@@ -844,8 +844,8 @@
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
                             <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.15);"></div>
                             <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="e.g. Abebe Kebede"></div>
-                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0912132353"></div>
-                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="121357102589341592"></div>
+                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="+251000000000"></div>
+                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="123456789012345678"></div>
                             <div class="input-group">
                                 <label>Gender</label>
                                 <select id="regGender" onchange="calcPrice()">
@@ -875,48 +875,88 @@
                 </div>
             </div>
 
-<!-- VIEW 3: MEMBERS DIRECTORY -->
-<div id="membersView" class="view-section">
-    <div class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
-            <div>
-                <h2 style="font-size: 1.15rem; font-weight: 800;">Members Directory</h2>
-                <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
-            </div>
-            <div style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
-                <!-- የጽሁፍ መፈለጊያ -->
-                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
-                
-                <!-- የ Status መምረጫ Dropdown -->
-                <select id="statusFilterSelect" onchange="filterDirectory()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
-                    <option value="ALL">🔍 ሁሉም</option>
-                    <option value="ACTIVE">🟢 Active ብቻ</option>
-                    <option value="EXPIRED">🔴 Expired ብቻ</option>
-                </select>
+<!-- <!-- VIEW 2: MEMBER REGISTRATION -->
+<div id="registerView" class="view-section">
+    <div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">Member Onboarding Portal</h2>
+        <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Register new athlete or renew existing profile.</p>
 
-                <button type="button" class="btn-main" style="width:auto; padding:12px 18px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+        <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Member ID</label>
+                    <input type="text" id="regId" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-card); color:var(--text-muted); font-weight:700;">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Full Name</label>
+                    <input type="text" id="regName" required placeholder="e.g. Abebe Kebede" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Phone Number</label>
+                    <input type="text" id="regPhone" required placeholder="0912132353" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                </div>
             </div>
-        </div>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Member ID</th>
-                        <th>Photo</th>
-                        <th>Full Name</th>
-                        <th>FAN / EDID</th>
-                        <th>Phone</th>
-                        <th>Plan</th>
-                        <th>Paid</th>
-                        <th>Expiry Date</th>
-                        <th>Status</th>
-                        <th style="text-align:left;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="directoryTableBody"></tbody>
-            </table>
-        </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">FAIDA EDID Number</label>
+                    <input type="text" id="regEdid" placeholder="121357102589341592" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Gender</label>
+                    <select id="regGender" onchange="calcPrice()" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                        <option value="Male">Male (ወንድ)</option>
+                        <option value="Female">Female (ሴት)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Membership Plan</label>
+                    <select id="regPlan" onchange="calcPrice()" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                        <option value="Monthly">Monthly Subscription</option>
+                        <option value="3 Months">3 Months Subscription</option>
+                        <option value="Yearly">Yearly Subscription</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- አዲሱ የኢትዮጵያ ቀን መሙያ ክፍሎች -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Amount Paid (ETB)</label>
+                    <input type="number" id="regAmount" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-card); color:var(--faida-accent); font-weight:800;">
+                </div>
+
+                <!-- 1. የኢትዮጵያ የተቀላቀሉበት ቀን (ቀን / ወር / ዓ.ም) -->
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Join Date (Ethiopian: D/M/Y)</label>
+                    <div style="display:flex; gap:5px;">
+                        <input type="number" id="ethDay" placeholder="ቀን" min="1" max="30" oninput="calcEthDates()" style="width:33%; padding:10px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main); font-weight:700;">
+                        <input type="number" id="ethMonth" placeholder="ወር" min="1" max="13" oninput="calcEthDates()" style="width:33%; padding:10px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main); font-weight:700;">
+                        <input type="number" id="ethYear" placeholder="ዓ.ም" min="2010" max="2030" oninput="calcEthDates()" style="width:34%; padding:10px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main); font-weight:700;">
+                    </div>
+                </div>
+
+                <!-- 2. በራሱ የሚሞላ የፈረንጅ ቀን -->
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Join Date (Gregorian - Auto)</label>
+                    <input type="text" id="regGregDate" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-card); color:var(--text-muted); font-weight:700;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <!-- 3. በራሱ የሚሰላ የኢትዮጵያ ማለቂያ ቀን -->
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Expiry Date (Ethiopian - Auto)</label>
+                    <input type="text" id="regEthExpiry" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-card); color:var(--text-muted); font-weight:700;">
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:5px;">Athlete Photo Upload</label>
+                    <input type="file" id="regPhotoFile" accept="image/*" style="width:100%; padding:9px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-canvas); color:var(--text-main);">
+                </div>
+            </div>
+
+            <button type="submit" id="regSubmitBtn" class="btn-main" style="width:100%; padding:14px; font-size:1rem; margin-top:10px;">Complete Registration & Generate ID</button>
+        </form>
     </div>
 </div>
           <!-- VIEW 4: QR ACCESS SCANNER -->
@@ -1261,21 +1301,51 @@ function checkIsExpired(expiryStr, statusStr) {
             return `${eDay}/${eMonth}/${eYear} E.C (${amMonths[eMonth - 1]} ${eDay})`;
         }
 
-        function calcEthDates() {
-            let val = document.getElementById('regGregDate').value;
-            if (!val) return;
-            let join = new Date(val);
-            document.getElementById('regEthJoin').value = toEthDate(join);
+function calcEthDates() {
+    let ethInput = document.getElementById('regEthJoin') ? document.getElementById('regEthJoin').value.trim() : '';
+    if (!ethInput) return;
 
-            let plan = document.getElementById('regPlan').value;
-            let exp = new Date(join);
-            if (plan === "Monthly") exp.setMonth(exp.getMonth() + 1);
-            else if (plan === "3 Months") exp.setMonth(exp.getMonth() + 3);
-            else if (plan === "Yearly") exp.setFullYear(exp.getFullYear() + 1);
+    // የገባውን የኢትዮጵያ ቀን መለየት (ምሳሌ: 4/12/2018)
+    let parts = ethInput.split('/');
+    if (parts.length < 3) return;
 
-            document.getElementById('regEthExpiry').value = toEthDate(exp);
-        }
+    let d = parseInt(parts[0], 10);
+    let m = parseInt(parts[1], 10);
+    let y = parseInt(parts[2], 10);
 
+    if (!d || !m || !y) return;
+
+    // 1. የፈረንጁን ቀን (Gregorian) በራስ-ሰር መስራት
+    let anchorEth = new Date(2026, 7, 10); // Aug 10, 2026 = 4/12/2018 E.C
+    let diffDays = ((y * 365) + (m * 30) + d) - ((2018 * 365) + (12 * 30) + 4);
+    let gregJoinDate = new Date(anchorEth);
+    gregJoinDate.setDate(gregJoinDate.getDate() + diffDays);
+
+    let yyyy = gregJoinDate.getFullYear();
+    let mm = String(gregJoinDate.getMonth() + 1).padStart(2, '0');
+    let dd = String(gregJoinDate.getDate()).padStart(2, '0');
+    
+    if (document.getElementById('regGregDate')) {
+        document.getElementById('regGregDate').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    // 2. የማለቂያ ቀንን (Expiry Date) በራስ-ሰር መስራት
+    let plan = document.getElementById('regPlan') ? document.getElementById('regPlan').value : "Monthly";
+    let expD = d, expM = m, expY = y;
+
+    if (plan === "Monthly") expM += 1;
+    else if (plan === "3 Months") expM += 3;
+    else if (plan === "Yearly") expY += 1;
+
+    while (expM > 13) { expM -= 13; expY += 1; }
+
+    const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+    let ethExpiryStr = `${expD}/${expM}/${expY} E.C (${amMonths[expM-1] || ''} ${expD})`;
+    
+    if (document.getElementById('regEthExpiry')) {
+        document.getElementById('regEthExpiry').value = ethExpiryStr;
+    }
+}
         /* =========================================================
            SETTINGS & API INTEGRATION
            ========================================================= */
