@@ -1812,11 +1812,16 @@ function renderGroupedLogs(rows) {
 
     // 2. በየቀኑ በግሩፕ ከፍሎ ማሳየት
     Object.keys(grouped).forEach(dateGroup => {
+        // ቀኑን ወደ ኢትዮጵያ ዘመን አቆጣጠር (E.C) መለወጥ
+        let ethDateHeader = (typeof toEthDate === 'function' && dateGroup.includes('-')) 
+                            ? toEthDate(dateGroup) 
+                            : dateGroup;
+
         // የቀን መለያ Header Bar
         let groupHeaderTr = document.createElement('tr');
         groupHeaderTr.innerHTML = `
             <td colspan="4" style="background: rgba(88, 166, 255, 0.12); font-weight: 800; color: #58A6FF; padding: 10px 14px; font-size: 0.88rem; border-left: 4px solid #58A6FF;">
-                📅 ቀን (EC): ${dateGroup}
+                📅 ቀን (E.C): ${ethDateHeader}
             </td>
         `;
         tbody.appendChild(groupHeaderTr);
@@ -1826,14 +1831,18 @@ function renderGroupedLogs(rows) {
             let memberId = l[0] || '';
             let fullName = l[1] || '';
             let scanTime = l[2] || '';
-            let statusText = String(l[3] || 'Granted').trim();
+            let statusText = String(l[3] || '').trim();
 
-            // Granted, Active, ወይም AUTHORIZED ከሆነ በአረንጓዴ ባጅ ማሳየት
-            let isApproved = statusText.includes('Granted') || statusText.includes('Active') || statusText.includes('AUTHORIZED');
-            let displayStatus = isApproved ? 'Active' : statusText;
+            // የአባሉ ቀኑ አልፎ እንደሆነ ለማረጋገጥ ከ membersCache መፈለግ
+            let memberInfo = membersCache.find(m => String(m[0]).trim().toLowerCase() === String(memberId).trim().toLowerCase());
+            let memberStatus = memberInfo ? (memberInfo[6] || 'Active') : 'Active';
 
-            let bgStyle = isApproved ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)';
-            let colorStyle = isApproved ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)';
+            // ቀኑ ካለፈ ወይም DENIED/EXPIRED ከተባለ በቀይ Expired ማድረግ
+            let isExpired = memberStatus === 'Expired' || statusText.includes('DENIED') || statusText.includes('EXPIRED');
+            
+            let displayStatus = isExpired ? 'Expired' : 'Active';
+            let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
+            let colorStyle = isExpired ? 'var(--danger-color, #EE5D50)' : 'var(--success-color, #01B574)';
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
