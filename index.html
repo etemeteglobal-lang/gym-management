@@ -863,7 +863,10 @@
                             </div>
                             <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
                             <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
-                            <div class="input-group"><label>Join Date (Ethiopian)</label><input type="text" id="regEthJoin" readonly style="background:rgba(0,0,0,0.15);"></div>
+                            <div class="input-group">
+                            <label>Join Date (Ethiopian)</label>
+                            <input type="text" id="regEthJoin" placeholder="ቀን/ወር/ዓ.ም (ምሳሌ: 4/12/2018)" oninput="calcEthDates()" style="background:var(--bg-canvas); color:var(--text-main);">
+                            </div>
                             <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.15);"></div>
                             <div class="input-group" style="grid-column: 1 / -1;">
                                 <label>Athlete Photo Upload</label>
@@ -1261,20 +1264,63 @@ function checkIsExpired(expiryStr, statusStr) {
             return `${eDay}/${eMonth}/${eYear} E.C (${amMonths[eMonth - 1]} ${eDay})`;
         }
 
-        function calcEthDates() {
-            let val = document.getElementById('regGregDate').value;
-            if (!val) return;
-            let join = new Date(val);
-            document.getElementById('regEthJoin').value = toEthDate(join);
+        /* =========================================================
+   SAFE ETHIOPIAN DATE CONVERTER & EXPIRY CALCULATOR
+   ========================================================= */
+function calcEthDates() {
+    let ethInput = document.getElementById('regEthJoin');
+    if (!ethInput || !ethInput.value.trim()) return;
 
-            let plan = document.getElementById('regPlan').value;
-            let exp = new Date(join);
-            if (plan === "Monthly") exp.setMonth(exp.getMonth() + 1);
-            else if (plan === "3 Months") exp.setMonth(exp.getMonth() + 3);
-            else if (plan === "Yearly") exp.setFullYear(exp.getFullYear() + 1);
+    let val = ethInput.value.trim();
+    let parts = val.split('/');
+    if (parts.length < 3) return;
 
-            document.getElementById('regEthExpiry').value = toEthDate(exp);
-        }
+    let d = parseInt(parts[0], 10);
+    let m = parseInt(parts[1], 10);
+    let y = parseInt(parts[2], 10);
+
+    // የቀኑና የወሩ ትክክለኛነት ማረጋገጫ
+    if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || d > 30 || m < 1 || m > 13) return;
+
+    // 1. የማለቂያ ቀንን (Expiry Date) በ Plan መሰረት ማስላት
+    let planEl = document.getElementById('regPlan');
+    let plan = planEl ? planEl.value : "Monthly";
+    
+    let expD = d;
+    let expM = m;
+    let expY = y;
+
+    if (plan === "Monthly") expM += 1;
+    else if (plan === "3 Months") expM += 3;
+    else if (plan === "Yearly") expY += 1;
+
+    while (expM > 13) {
+        expM -= 13;
+        expY += 1;
+    }
+
+    const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+    let ethExpiryStr = `${expD}/${expM}/${expY} E.C (${amMonths[expM-1] || ''} ${expD})`;
+
+    let expEl = document.getElementById('regEthExpiry');
+    if (expEl) expEl.value = ethExpiryStr;
+
+    // 2. የፈረንጁን ቀን (Gregorian Date) በራስ-ሰር ማስላት (Anchor: 4/12/2018 E.C = Aug 10, 2026)
+    let anchorGreg = new Date(2026, 7, 10);
+    let currentEthDays = (y * 365) + Math.floor(y / 4) + ((m - 1) * 30) + d;
+    let anchorEthDays = (2018 * 365) + Math.floor(2018 / 4) + ((12 - 1) * 30) + 4;
+    let diffDays = currentEthDays - anchorEthDays;
+
+    let gregJoinDate = new Date(anchorGreg);
+    gregJoinDate.setDate(gregJoinDate.getDate() + diffDays);
+
+    let gY = gregJoinDate.getFullYear();
+    let gM = String(gregJoinDate.getMonth() + 1).padStart(2, '0');
+    let gD = String(gregJoinDate.getDate()).padStart(2, '0');
+
+    let gregEl = document.getElementById('regGregDate');
+    if (gregEl) gregEl.value = `${gY}-${gM}-${gD}`;
+}
 
         /* =========================================================
            SETTINGS & API INTEGRATION
