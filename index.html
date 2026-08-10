@@ -1099,7 +1099,25 @@
             teleQrBase64: "",
             adminPass: "admin123"
         };
+// 1. Universal Expiry Checker (የማለቂያ ቀን ማረጋገጫ)
+function checkIsExpired(expiryStr, statusStr) {
+    if (statusStr && (String(statusStr).toLowerCase() === 'expired' || String(statusStr).toLowerCase() === 'inactive')) {
+        return true;
+    }
+    if (!expiryStr) return false;
 
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let cleanDateStr = String(expiryStr).split(' ')[0].trim();
+    let expDate = new Date(cleanDateStr);
+
+    if (!isNaN(expDate.getTime())) {
+        return expDate < today;
+    }
+
+    return false;
+}
         /* =========================================================
            SYSTEM INITIALIZATION & THEME CONTROLLER
            ========================================================= */
@@ -1399,7 +1417,7 @@
         }
 
 /* =========================================================
-   UPDATED DIRECTORY RENDER FUNCTION (DATA MAPPING FIX)
+   UPDATED DIRECTORY RENDER FUNCTION (AUTO EXPIRY FIX)
    ========================================================= */
 function renderDirectory(data) {
     let tbody = document.getElementById('directoryTableBody');
@@ -1422,17 +1440,25 @@ function renderDirectory(data) {
         let phone = m[2] || '';
         let plan = m[3] || '';
         let expiry = m[5] || '';
-        let status = m[6] || 'Active';
+        let rawStatus = m[6] || 'Active';
         let paid = m[7] || 0;
         let gender = m[8] || 'Male';
         let edid = m[9] || 'N/A';
         let photo = m[10] || 'https://via.placeholder.com/100';
+
+        // ቀኑ ማለፉን በራስ-ሰር ማረጋገጥ
+        let isExpired = checkIsExpired(expiry, rawStatus);
+        let displayStatus = isExpired ? 'Expired' : 'Active';
 
         let safeName = String(name).replace(/'/g, "\\'");
         let safePhone = String(phone).replace(/'/g, "\\'");
         let safeEdid = String(edid).replace(/'/g, "\\'");
         let safeExpiry = String(expiry).replace(/'/g, "\\'");
         let safePhoto = String(photo).replace(/'/g, "\\'");
+
+        let ethExpiry = (typeof toEthDate === 'function' && String(expiry).includes('-')) 
+                        ? toEthDate(expiry) 
+                        : expiry;
 
         let tr = document.createElement('tr');
         tr.innerHTML = `
@@ -1445,10 +1471,10 @@ function renderDirectory(data) {
             <td style="color:var(--text-muted);">${phone}</td>
             <td>${plan}</td>
             <td style="font-weight:800; color:var(--faida-accent);">${paid} ETB</td>
-            <td style="color:var(--text-muted);">${expiry}</td>
+            <td style="color:var(--text-muted);">${ethExpiry}</td>
             <td>
-                <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${status === 'Active' ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${status === 'Active' ? 'var(--success-color)' : 'var(--danger-color)'};">
-                    ${status}
+                <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${!isExpired ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${!isExpired ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; display:inline-block;">
+                    ● ${displayStatus}
                 </span>
             </td>
             <td>
@@ -1462,12 +1488,6 @@ function renderDirectory(data) {
         tbody.appendChild(tr);
     });
 }
-        function filterDirectory() {
-            let q = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = membersCache.filter(m => String(m[0]).toLowerCase().includes(q) || String(m[1]).toLowerCase().includes(q) || String(m[2]).includes(q));
-            renderDirectory(filtered);
-        }
-
 /* =========================================================
    UPDATED MEMBER REGISTRATION ENGINE (IMMEDIATE UI SYNC)
    ========================================================= */
