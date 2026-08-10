@@ -1036,6 +1036,21 @@
            GLOBAL SYSTEM CONFIGURATION & STATE ENGINE
            ========================================================= */
         const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
+        async function apiCall(action, payload = {}) {
+  try {
+    const requestData = Object.assign({ action: action }, payload);
+    const response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(requestData)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("API Error:", error);
+    return { success: false, message: "ከሰርቨር ጋር መገናኘት አልተቻለም!" };
+  }
+}
 
         let membersCache = [];
         let qrScanner = null;
