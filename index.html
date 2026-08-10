@@ -1766,10 +1766,14 @@ function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
 
+    let tbody = document.getElementById('logsTableBody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-muted);">መረጃ በመጫን ላይ...</td></tr>';
+    }
+
     fetch(endpoint + "?action=getAttendance")
     .then(res => res.json())
     .then(data => {
-        let tbody = document.getElementById('logsTableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
         
@@ -1778,27 +1782,73 @@ function fetchLogs() {
                    : data;
 
         if (rows && rows.length > 0) {
-            rows.slice().reverse().forEach(l => {
-                let tr = document.createElement('tr');
-                let statusText = l[3] || 'Granted';
-                let isGranted = String(statusText).includes('Granted');
-                tr.innerHTML = `
-                    <td style="font-weight:800; color:#58A6FF;">${l[0] || ''}</td>
-                    <td style="font-weight:700;">${l[1] || ''}</td>
-                    <td style="color:var(--text-muted);">${l[2] || ''}</td>
-                    <td>
-                        <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${isGranted ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isGranted ? 'var(--success-color)' : 'var(--danger-color)'};">
-                            ${statusText}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            renderGroupedLogs(rows.slice().reverse());
         } else {
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
         }
     })
-    .catch(err => console.error("Fetch Logs Error:", err));
+    .catch(err => {
+        console.error("Fetch Logs Error:", err);
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--danger-color, #EE5D50); padding:15px;">መረጃውን ማምጣት አልተቻለም።</td></tr>';
+        }
+    });
+}
+
+function renderGroupedLogs(rows) {
+    let tbody = document.getElementById('logsTableBody');
+    tbody.innerHTML = '';
+
+    // 1. መረጃውን በቀን (YYYY-MM-DD) Group ማድረግ
+    let grouped = {};
+    rows.forEach(l => {
+        let rawTime = String(l[2] || '');
+        let datePart = rawTime.split(' ')[0] || 'Unknown Date';
+        if (!grouped[datePart]) {
+            grouped[datePart] = [];
+        }
+        grouped[datePart].push(l);
+    });
+
+    // 2. በየቀኑ በግሩፕ ከፍሎ ማሳየት
+    Object.keys(grouped).forEach(dateGroup => {
+        // የቀን መለያ Header Bar
+        let groupHeaderTr = document.createElement('tr');
+        groupHeaderTr.innerHTML = `
+            <td colspan="4" style="background: rgba(88, 166, 255, 0.12); font-weight: 800; color: #58A6FF; padding: 10px 14px; font-size: 0.88rem; border-left: 4px solid #58A6FF;">
+                📅 ቀን (EC): ${dateGroup}
+            </td>
+        `;
+        tbody.appendChild(groupHeaderTr);
+
+        // የየቀኑን አባላት ዝርዝር ማሳየት
+        grouped[dateGroup].forEach(l => {
+            let memberId = l[0] || '';
+            let fullName = l[1] || '';
+            let scanTime = l[2] || '';
+            let statusText = String(l[3] || 'Granted').trim();
+
+            // Granted, Active, ወይም AUTHORIZED ከሆነ በአረንጓዴ ባጅ ማሳየት
+            let isApproved = statusText.includes('Granted') || statusText.includes('Active') || statusText.includes('AUTHORIZED');
+            let displayStatus = isApproved ? 'Active' : statusText;
+
+            let bgStyle = isApproved ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)';
+            let colorStyle = isApproved ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)';
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:800; color:#58A6FF;">${memberId}</td>
+                <td style="font-weight:700;">${fullName}</td>
+                <td style="color:var(--text-muted); font-size:0.85rem;">${scanTime}</td>
+                <td>
+                    <span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${bgStyle}; color:${colorStyle}; display:inline-block;">
+                        ● ${displayStatus}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
 }
 /* =========================================================
    UTILITY EXPORT & VCARD FUNCTIONS
