@@ -1456,7 +1456,7 @@ function calcEthDates() {
         }
 
 /* =========================================================
-   ENTERPRISE EXECUTIVE ANALYTICS ENGINE (5 FULL CHARTS)
+   EXACT COLUMN-MAPPED DASHBOARD ANALYTICS ENGINE
    ========================================================= */
 
 let chartMoM = null, chartQ = null, chartTraffic = null, chartG = null, chartP = null;
@@ -1477,30 +1477,37 @@ function renderDashboardAnalytics(members) {
     let monthlyMap = {};
 
     rows.forEach(m => {
-        let gender = m[2] || 'Male';
-        let plan = m[3] || 'Monthly';
-        let expiryDate = m[5] || '';
-        let rawStatus = m[6] || 'Active';
-        let amt = parseFloat(m[7] || m[4]) || 0;
+        // ከ Google Sheet የቀጥታ Column Index Mapping:
+        // A=0(ID), B=1(Name), C=2(Phone), D=3(Plan), E=4(Join), F=5(Expiry), G=6(Status), H=7(Amount), I=8(Gender)
+        
+        let plan = String(m[3] || 'Monthly').trim();
+        let expiryDate = String(m[5] || '').trim();
+        let rawStatus = String(m[6] || 'Active').trim();
+        let amt = parseFloat(m[7] || 0) || 0; 
+        let gender = String(m[8] || '').trim().toLowerCase(); // I Column (Gender)
 
         let isExpired = checkIsExpired(expiryDate, rawStatus);
         if (isExpired) expired++; else active++;
 
         rev += amt;
 
-        // Gender Mapping
-        if (String(gender).toLowerCase().includes('female') || String(gender).includes('ሴት')) {
+        // ፆታን በጥንቃቄ መለየት (Male vs Female)
+        if (gender === 'female' || gender.includes('ሴት') || gender === 'f') {
             genderCounts["Female"]++;
         } else {
             genderCounts["Male"]++;
         }
 
         // Plan Mapping
-        if (plan.includes("3")) plans["Quarterly Subscription (3M)"]++;
-        else if (plan.includes("Year") || plan.includes("Annual")) plans["Annual Subscription (1 Year)"]++;
-        else plans["Monthly Subscription"]++;
+        if (plan.includes("3") || plan.includes("Quarterly")) {
+            plans["Quarterly Subscription (3M)"]++;
+        } else if (plan.includes("Year") || plan.includes("Annual")) {
+            plans["Annual Subscription (1 Year)"]++;
+        } else {
+            plans["Monthly Subscription"]++;
+        }
 
-        // Month Extractor from Expiry/Join String
+        // Month Extractor (ከ Expiry Date ላይ)
         let monthName = "ነሐሴ";
         if (expiryDate.includes("(")) {
             let match = expiryDate.match(/\(([^0-9]+)/);
@@ -1511,7 +1518,7 @@ function renderDashboardAnalytics(members) {
         weekNew++; monthNew++; yearNew++;
     });
 
-    // 1. Retention & Churn Rate Calculations
+    // Retention vs Churn Rate
     let retentionRate = total > 0 ? ((active / total) * 100).toFixed(1) : "0.0";
     let churnRate = total > 0 ? ((expired / total) * 100).toFixed(1) : "0.0";
 
@@ -1535,7 +1542,7 @@ function renderDashboardAnalytics(members) {
     if (document.getElementById('dashRetentionRate')) document.getElementById('dashRetentionRate').innerText = retentionRate + "%";
     if (document.getElementById('dashChurnRate')) document.getElementById('dashChurnRate').innerText = churnRate + "%";
 
-    // 2. Render All 5 Enterprise Charts
+    // Render All Charts
     buildMoMChart(monthlyMap);
     buildQuarterlyChart(rev);
     buildTrafficChart();
@@ -1543,34 +1550,23 @@ function renderDashboardAnalytics(members) {
     buildPlanChart(plans);
 }
 
-// 1. MoM Revenue & Growth %
-function buildMoMChart(monthlyMap) {
-    let ctx = document.getElementById('chartRevenue');
+// Gender Chart Builder
+function buildGenderChart(gCounts) {
+    let ctx = document.getElementById('chartGender');
     if (!ctx) return;
-    if (chartMoM) chartMoM.destroy();
+    if (chartG) chartG.destroy();
 
-    let labels = Object.keys(monthlyMap).length ? Object.keys(monthlyMap) : ['ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
-    let values = Object.values(monthlyMap).length ? Object.values(monthlyMap) : [30000, 25000, 35000];
-
-    let growth = values.map((v, i) => {
-        if (i === 0 || values[i-1] === 0) return "0%";
-        let p = (((v - values[i-1]) / values[i-1]) * 100).toFixed(1);
-        return (p >= 0 ? "+" : "") + p + "%";
-    });
-
-    chartMoM = new Chart(ctx.getContext('2d'), {
-        type: 'bar',
+    chartG = new Chart(ctx.getContext('2d'), {
+        type: 'doughnut',
         data: {
-            labels: labels.map((l, idx) => `${l} (${growth[idx]})`),
+            labels: ['Male (ወንድ)', 'Female (ሴት)'],
             datasets: [{ 
-                label: 'ወርሃዊ ገቢ (ETB)', 
-                data: values, 
-                backgroundColor: ['#0F385A', '#FF6B00', '#10B981', '#6366F1', '#EC4899'], 
-                borderRadius: 8,
-                barThickness: 38 
+                data: [gCounts.Male, gCounts.Female], 
+                backgroundColor: ['#3B82F6', '#EC4899'],
+                borderWidth: 2
             }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
     });
 }
 
