@@ -1435,7 +1435,7 @@ function calcEthDates() {
         }
 
 /* =========================================================
-   FIXED DASHBOARD ANALYTICS & EXPIRY CALCULATOR
+   ADVANCED DASHBOARD ANALYTICS & MOM GROWTH ENGINE
    ========================================================= */
 function renderDashboardAnalytics(members) {
     if (!members || !Array.isArray(members)) return;
@@ -1448,13 +1448,14 @@ function renderDashboardAnalytics(members) {
     let active = 0, expired = 0, rev = 0;
     let weekNew = 0, monthNew = 0, yearNew = 0;
     let plans = { "Monthly": 0, "3 Months": 0, "Yearly": 0 };
-    let mRev = 0, yRev = 0;
+    
+    // የወራት ገቢዎችን መዝገባ (የ 3 ወር/Quarterly እና ወርሃዊ ልዩነት)
+    let monthlyRevenueMap = {};
 
     rows.forEach(m => {
         let expiryDate = m[5] || '';
         let rawStatus = m[6] || 'Active';
 
-        // ቀኑ ማለፉን በጥንቃቄ ማረጋገጥ
         let isExpired = checkIsExpired(expiryDate, rawStatus);
         if (isExpired) {
             expired++;
@@ -1462,16 +1463,28 @@ function renderDashboardAnalytics(members) {
             active++;
         }
 
-        let amt = parseFloat(m[7]) || 0;
+        let amt = parseFloat(m[7] || m[4]) || 0;
         rev += amt;
+        
         let pl = m[3] || "Monthly";
-        if (pl === "Yearly") yRev += amt; else mRev += amt;
         if (plans[pl] !== undefined) plans[pl]++;
+        else plans["Monthly"]++;
+
+        // የወር ስምን መለየት (ከ Expiry Date ወይም ከቀኑ ላይ)
+        let amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+        let monthName = "ነሐሴ"; // Default
+        
+        if (expiryDate.includes("(")) {
+            let matches = expiryDate.match(/\(([^0-9]+)/);
+            if (matches && matches[1]) monthName = matches[1].trim();
+        }
+
+        monthlyRevenueMap[monthName] = (monthlyRevenueMap[monthName] || 0) + amt;
 
         weekNew++; monthNew++; yearNew++;
     });
 
-    // 1. የሁለቱንም የ ID አይነቶች (dash vs stat) በአንድ ላይ ማዘመን
+    // 1. የ KPI ካርዶችን ማዘመን
     let setVal = (id1, id2, val) => {
         let el1 = document.getElementById(id1);
         let el2 = document.getElementById(id2);
@@ -1488,32 +1501,85 @@ function renderDashboardAnalytics(members) {
     setVal('dashMonthNew', 'statMonthNew', monthNew);
     setVal('dashYearNew', 'statYearNew', yearNew);
 
-    // 2. ቻርቶችን መሳል
-    renderCharts(mRev, yRev, plans);
+    // 2. አዲሱን የተስተካከለ ቻርት መሳል
+    renderCharts(monthlyRevenueMap, plans);
 }
-        function renderCharts(mRev, yRev, plans) {
-            if (chartRev) chartRev.destroy();
-            if (chartPlan) chartPlan.destroy();
 
-            chartRev = new Chart(document.getElementById('chartRevenue').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Monthly Subscription', 'Yearly Subscription'],
-                    datasets: [{ label: 'Revenue (ETB)', data: [mRev, yRev], backgroundColor: ['#0F385A', '#FF6B00'], borderRadius: 8 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+function renderCharts(revenueMap, plans) {
+    if (typeof chartRev !== 'undefined' && chartRev) chartRev.destroy();
+    if (typeof chartPlan !== 'undefined' && chartPlan) chartPlan.destroy();
 
-            chartPlan = new Chart(document.getElementById('chartPlans').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(plans),
-                    datasets: [{ data: Object.values(plans), backgroundColor: ['#4318FF', '#FFB547', '#01B574'] }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+    let labels = Object.keys(revenueMap).length > 0 ? Object.keys(revenueMap) : ['ሐምሌ', 'ነሐሴ'];
+    let dataValues = Object.values(revenueMap).length > 0 ? Object.values(revenueMap) : [38000, 25000];
+
+    // የወራት እድገት ፐርሰንት (Growth %) ማስላት
+    let growthPercentages = [];
+    for (let i = 0; i < dataValues.length; i++) {
+        if (i === 0 || dataValues[i - 1] === 0) {
+            growthPercentages.push("0%");
+        } else {
+            let prev = dataValues[i - 1];
+            let curr = dataValues[i];
+            let diffPercent = (((curr - prev) / prev) * 100).toFixed(1);
+            growthPercentages.push((diffPercent >= 0 ? "+" : "") + diffPercent + "%");
         }
+    }
 
+    // 1. የወራት የገቢ ማነጻጸሪያ (Bar Chart)
+    let revElem = document.getElementById('chartRevenue') || document.getElementById('revenueChart');
+    if (revElem) {
+        chartRev = new Chart(revElem.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels.map((l, idx) => `${l} (${growthPercentages[idx]})`),
+                datasets: [{
+                    label: 'ወርሃዊ ገቢ (ETB)',
+                    data: dataValues,
+                    backgroundColor: ['#0F385A', '#FF6B00', '#10B981', '#6366F1', '#EC4899'],
+                    borderRadius: 8,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let val = context.raw || 0;
+                                let idx = context.dataIndex;
+                                return ` ገቢ: ${val.toLocaleString()} ETB (እድገት: ${growthPercentages[idx]})`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 2. የፕላን ስብጥር (Doughnut Chart)
+    let planElem = document.getElementById('chartPlans') || document.getElementById('planChart');
+    if (planElem) {
+        chartPlan = new Chart(planElem.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(plans),
+                datasets: [{
+                    data: Object.values(plans),
+                    backgroundColor: ['#4318FF', '#FFB547', '#01B574']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                cutout: '70%'
+            }
+        });
+    }
+}
 /* =========================================================
    UPDATED DIRECTORY RENDER FUNCTION (AUTO EXPIRY FIX)
    ========================================================= */
