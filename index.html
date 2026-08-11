@@ -688,18 +688,22 @@
             margin-top: 8px;
         }
 /* =========================================================
-   CLEAN & ISOLATED RESPONSIVE CSS ENGINE (FIXED)
+   DESKTOP CONTENT EXPANSION & MOBILE NAV ENGINE
    ========================================================= */
 
-/* 1. በዴስክቶፕ (ከ900px በላይ) Bottom Nav እንዳይታይ መደበቅ */
-.mobile-bottom-nav {
-    display: none !important;
+/* 1. በዴስክቶፕ ላይ ይዘቱ (Cards/Tables) ሙሉ ስክሪን እንዲይዝ ማድረግ */
+.content-scroll,
+.view-section,
+.glass-card,
+.table-responsive {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-/* 2. በዴስክቶፕ ላይ የመሃል Layout ባዶ ቦታ እንዳይፈጠር Grid ማስተካከያ */
-.content-scroll {
-    display: block !important;
-    width: 100% !important;
+/* 2. በዴስክቶፕ ላይ Bottom Nav እንዳይታይ መደበቅ */
+.mobile-bottom-nav {
+    display: none !important;
 }
 
 /* 3. በስልክ (ከ900px በታች) ብቻ የሚሰራ ማስተካከያ */
@@ -752,7 +756,6 @@
         font-weight: 800 !important;
     }
 
-    /* Login ገጽ ላይ Bottom Nav መደብቅ */
     body:has(#loginView.active) .mobile-bottom-nav,
     body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
         display: none !important;
