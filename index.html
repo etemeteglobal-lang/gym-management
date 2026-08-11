@@ -1782,139 +1782,19 @@ function openMemberSmartId(memberId) {
     }
 }
 
-/* =========================================================
-   WORLD-CLASS 2-SIDED SMART ID CARD ENGINE (NO EXPIRY + SHARE)
-   ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo) {
-    let frontView = document.getElementById('idCardFrontView');
-    let backView = document.getElementById('idCardBackView');
-    
-    let defaultPhoto = photo || 'https://via.placeholder.com/120';
-    let memberEdid = edid || "EDID-FAN-2589341592";
-    let memberPhone = phone || "N/A";
-    let memberName = String(name || "MEMBER NAME").toUpperCase();
-    let memberId = id || "GM-000";
+    if (document.getElementById('cardMemberId')) document.getElementById('cardMemberId').innerText = id || 'GM-000';
+    if (document.getElementById('cardMemberName')) document.getElementById('cardMemberName').innerText = String(name || 'MEMBER NAME').toUpperCase();
+    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
+    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
+    if (document.getElementById('cardExpiry')) document.getElementById('cardExpiry').innerText = expiry || 'N/A';
+    if (document.getElementById('cardMemberPhoto')) document.getElementById('cardMemberPhoto').src = photo || 'https://via.placeholder.com/100';
 
-    // 1. FRONT CARD VIEW (የፊተኛው ገጽ - Expiry Date ሙሉ በሙሉ የወጣበት)
-    if (frontView) {
-        frontView.innerHTML = `
-            <div style="width: 340px; min-height: 540px; border-radius: 24px; background: #FFFFFF; border: 2px solid #FF5E00; box-shadow: 0 20px 45px rgba(0,0,0,0.3); overflow: hidden; position: relative; font-family: 'Inter', system-ui, sans-serif; color: #111827; text-align: center; padding-bottom: 16px; margin: 0 auto;">
-                
-                <div style="position: absolute; top: 0; left: 0; width: 35px; height: 100%; background: linear-gradient(180deg, #FF5E00 0%, #111827 100%); clip-path: polygon(0 0, 100% 0, 30% 100%, 0 100%);"></div>
-                <div style="position: absolute; top: 0; right: 0; width: 35px; height: 100%; background: linear-gradient(180deg, #FF5E00 0%, #111827 100%); clip-path: polygon(70% 0, 100% 0, 100% 100%, 0 100%);"></div>
-
-                <div style="padding: 20px 20px 10px 20px; position: relative; z-index: 2;">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; background: #111827; border: 2px solid #FF5E00; margin-bottom: 4px;">
-                        <span style="color: #FF5E00; font-size: 20px;">🏋️</span>
-                    </div>
-                    <h2 style="color: #0F172A; font-size: 1.05rem; font-weight: 900; letter-spacing: 0.8px; margin: 0; text-transform: uppercase;">GUDDA LIFE FITNESS GYM</h2>
-                    <p style="color: #FF5E00; font-size: 0.62rem; font-weight: 800; letter-spacing: 1.5px; margin: 2px 0 0 0;">FIT FOR LIFE • SINCE 2007</p>
-                </div>
-
-                <div style="margin: 8px 0 10px 0; position: relative; z-index: 2;">
-                    <img id="cardMemberPhoto" src="${defaultPhoto}" style="width: 105px; height: 105px; border-radius: 50%; object-fit: cover; border: 4px solid #FF5E00; box-shadow: 0 8px 20px rgba(255, 94, 0, 0.25);" onerror="this.src='https://via.placeholder.com/120';" />
-                </div>
-
-                <div style="padding: 0 20px; position: relative; z-index: 2;">
-                    <h3 id="cardMemberName" style="color: #0F2942; font-size: 1.25rem; font-weight: 900; margin: 0;">${memberName}</h3>
-                    <p style="color: #FF5E00; font-weight: 800; font-size: 0.7rem; letter-spacing: 1.2px; margin: 3px 0 10px 0; text-transform: uppercase;">MEMBER OF OUR GYM</p>
-                </div>
-
-                <div style="background: rgba(15, 23, 42, 0.03); border-top: 1px dashed #E2E8F0; border-bottom: 1px dashed #E2E8F0; padding: 8px 15px; margin: 0 20px 12px 20px; font-size: 0.75rem; text-align: left; position: relative; z-index: 2;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span style="color: #64748B; font-weight: 700;">FAIDA EDID:</span>
-                        <span id="cardEdid" style="color: #0F172A; font-weight: 800; font-family: monospace;">${memberEdid}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #64748B; font-weight: 700;">PHONE:</span>
-                        <span id="cardPhone" style="color: #0F172A; font-weight: 800;">${memberPhone}</span>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 0 20px; text-align: left; position: relative; z-index: 2; align-items: center;">
-                    <div style="background: #FF5E00; padding: 8px; border-radius: 14px; text-align: center;">
-                        <div id="cardQrCode" style="background: #FFF; padding: 4px; border-radius: 8px; display: inline-block;"></div>
-                        <div id="cardMemberId" style="color: #FFF; font-weight: 900; font-size: 0.8rem; margin-top: 4px; font-family: monospace;">${memberId}</div>
-                    </div>
-
-                    <div style="font-size: 0.65rem; color: #334155; font-weight: 700; line-height: 1.5;">
-                        <div><span style="color:#FF5E00;">📞</span> +251912292150</div>
-                        <div><span style="color:#FF5E00;">🌐</span> faidatech.my.canva.site</div>
-                        <div><span style="color:#FF5E00;">✉️</span> gudalife@gmail.com</div>
-                        <div><span style="color:#FF5E00;">📍</span> Bolo, Adama, Ethiopia</div>
-                    </div>
-                </div>
-
-            </div>
-        `;
-    }
-
-    // 2. BACK CARD VIEW (የኋለኛው ገጽ - About Us & Payment QRs)
-    if (backView) {
-        backView.innerHTML = `
-            <div style="width: 340px; min-height: 540px; border-radius: 24px; background: #FFFFFF; border: 2px solid #FF5E00; box-shadow: 0 20px 45px rgba(0,0,0,0.3); overflow: hidden; position: relative; font-family: 'Inter', system-ui, sans-serif; color: #111827; text-align: center; padding-bottom: 16px; margin: 0 auto;">
-                
-                <div style="position: absolute; top: 0; left: 0; width: 35px; height: 100%; background: linear-gradient(180deg, #111827 0%, #FF5E00 100%); clip-path: polygon(0 0, 100% 0, 30% 100%, 0 100%);"></div>
-                <div style="position: absolute; top: 0; right: 0; width: 35px; height: 100%; background: linear-gradient(180deg, #111827 0%, #FF5E00 100%); clip-path: polygon(70% 0, 100% 0, 100% 100%, 0 100%);"></div>
-
-                <div style="padding: 18px 20px 6px 20px; position: relative; z-index: 2;">
-                    <h3 style="color: #0F172A; font-size: 1rem; font-weight: 900; margin: 0; text-transform: uppercase;">GUDDA LIFE FITNESS GYM</h3>
-                    <p style="color: #FF5E00; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; margin: 2px 0 8px 0;">ABOUT US</p>
-                </div>
-
-                <div style="position: relative; z-index: 2; margin-bottom: 8px;">
-                    <div style="background: #FF5E00; padding: 8px; border-radius: 16px; display: inline-block;">
-                        <div id="cardAboutQr" style="background: #FFF; padding: 4px; border-radius: 10px;"></div>
-                    </div>
-                </div>
-
-                <div style="padding: 0 20px; position: relative; z-index: 2; margin-bottom: 8px;">
-                    <p style="color: #0F172A; font-weight: 800; font-size: 0.75rem; margin: 0 0 6px 0;">ክፍያ ለመፈጸም ስካን ያድርጉ</p>
-                    
-                    <div style="display: flex; justify-content: center; gap: 10px;">
-                        <div style="background: rgba(15, 23, 42, 0.03); border: 1px solid #E2E8F0; padding: 6px; border-radius: 12px; width: 100px;">
-                            <span style="font-weight: 900; font-size: 0.68rem; color: #1E293B; display: block; margin-bottom: 3px;">CBE BIRR</span>
-                            <div id="cardCbeQr" style="background: #FFF; padding: 3px; border-radius: 6px; display: inline-block;"></div>
-                        </div>
-
-                        <div style="background: rgba(15, 23, 42, 0.03); border: 1px solid #E2E8F0; padding: 6px; border-radius: 12px; width: 100px;">
-                            <span style="font-weight: 900; font-size: 0.68rem; color: #0088CC; display: block; margin-bottom: 3px;">TELEBIRR</span>
-                            <div id="cardTeleQr" style="background: #FFF; padding: 3px; border-radius: 6px; display: inline-block;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="padding: 0 25px; position: relative; z-index: 2;">
-                    <p style="color: #475569; font-size: 0.6rem; font-weight: 600; line-height: 1.4; margin: 0; background: rgba(255, 94, 0, 0.05); padding: 8px; border-radius: 10px; border: 1px solid rgba(255, 94, 0, 0.15);">
-                        "Gudda Life Fitness ጤናዎንና የአካል ብቃትዎን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ግንባር ቀደም ማዕከል ነው።"
-                    </p>
-                </div>
-
-            </div>
-        `;
-    }
-
-    // 3. GENERATE ALL QR CODES
-    if (typeof QRCode !== 'undefined') {
-        let frontQr = document.getElementById('cardQrCode');
-        if (frontQr) {
-            frontQr.innerHTML = "";
-            new QRCode(frontQr, { text: memberId, width: 80, height: 80 });
-        }
-        let aboutQr = document.getElementById('cardAboutQr');
-        if (aboutQr) {
-            aboutQr.innerHTML = "";
-            new QRCode(aboutQr, { text: "https://faidatech.my.canva.site/guddaa-life-fitness-gym", width: 85, height: 85 });
-        }
-        let cbeQr = document.getElementById('cardCbeQr');
-        if (cbeQr) {
-            cbeQr.innerHTML = "";
-            new QRCode(cbeQr, { text: "CBE-BIRR-GUDDA-LIFE", width: 65, height: 65 });
-        }
-        let teleQr = document.getElementById('cardTeleQr');
-        if (teleQr) {
-            teleQr.innerHTML = "";
-            new QRCode(teleQr, { text: "TELEBIRR-GUDDA-LIFE", width: 65, height: 65 });
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrContainer, { text: id, width: 85, height: 85 });
         }
     }
 
@@ -1961,10 +1841,8 @@ function submitRegistration() {
         }).then(() => {
             if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
             
-            // 1. Show Smart ID Card Modal
             showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
             
-            // 2. Clear Form Input
             if (document.getElementById('regForm')) {
                 document.getElementById('regForm').reset();
             }
@@ -1972,7 +1850,6 @@ function submitRegistration() {
                 document.getElementById('regGregDate').valueAsDate = new Date();
             }
             
-            // 3. Local Cache Update
             let newMemberRow = [
                 payload.memberId, 
                 payload.fullName, 
@@ -2000,7 +1877,6 @@ function submitRegistration() {
                 }
             }
 
-            // 4. Server Re-Sync
             setTimeout(() => {
                 if (typeof syncMembers === 'function') syncMembers();
             }, 1500);
@@ -2035,20 +1911,6 @@ function toggleIdPage() {
     }
 }
 
-function shareSmartIdCard(id, name, phone) {
-    let shareText = `🏋️ GUDDA LIFE FITNESS GYM\nOfficial Smart ID\n\n👤 Member: ${name}\n🆔 ID: ${id}\n📞 Phone: ${phone}`;
-    if (navigator.share) {
-        navigator.share({
-            title: 'Gudda Life Fitness Smart ID',
-            text: shareText,
-            url: window.location.href
-        }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(shareText);
-        alert('የአባሉ መረጃ ኮፒ ተደርጓል!');
-    }
-}
-
 function editMember(id, name, phone, plan) {
     if (typeof switchView === 'function') switchView('registerView');
     if (document.getElementById('regId')) document.getElementById('regId').value = id;
@@ -2057,6 +1919,7 @@ function editMember(id, name, phone, plan) {
     if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
     if (typeof calcPrice === 'function') calcPrice();
 }
+
 function deleteMember(id) {
     if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
         membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
