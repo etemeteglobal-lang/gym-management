@@ -2032,18 +2032,73 @@ async function processScan(scannedData) {
         return;
     }
 
+    // === የኢትዮጵያ ቀንን (E.C) EXPIRY ቼክ ማድረጊያ LOGIC ===
+    let rawExpiry = m[5] || "";
+    let isExpired = false;
+
+    if (rawExpiry && rawExpiry !== "N/A") {
+        let cleanDate = String(rawExpiry).split('(')[0].replace(/E\.C|E\/C/gi, '').trim();
+        let parts = cleanDate.split('/');
+        
+        if (parts.length === 3) {
+            let ethDay = parseInt(parts[0], 10);
+            let ethMonth = parseInt(parts[1], 10);
+            let ethYear = parseInt(parts[2], 10);
+
+            // ዛሬን በኢትዮጵያ ቀን ማስላት (August 2026 = ነሐሴ 2018 E.C.)
+            let today = new Date();
+            let gYear = today.getFullYear();
+            let gMonth = today.getMonth() + 1;
+            let gDay = today.getDate();
+
+            let curEthYear = (gMonth < 9 || (gMonth === 9 && gDay < 11)) ? (gYear - 8) : (gYear - 7);
+            let curEthMonth = 1;
+            let curEthDay = 1;
+
+            if (gMonth === 8) { // August -> ነሐሴ (Month 12)
+                curEthMonth = 12;
+                curEthDay = gDay - 6; 
+            } else if (gMonth === 7) { // July -> ሐምሌ (Month 11)
+                curEthMonth = 11;
+                curEthDay = gDay - 7;
+            }
+
+            if (ethYear < curEthYear) {
+                isExpired = true;
+            } else if (ethYear === curEthYear) {
+                if (ethMonth < curEthMonth) {
+                    isExpired = true;
+                } else if (ethMonth === curEthMonth && ethDay < curEthDay) {
+                    isExpired = true;
+                }
+            }
+        } else {
+            let expD = new Date(rawExpiry);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!isNaN(expD.getTime()) && expD < today) {
+                isExpired = true;
+            }
+        }
+    }
+
+    if (m[6] && String(m[6]).trim().toLowerCase() === 'expired') {
+        isExpired = true;
+    }
+
+    let calculatedStatus = isExpired ? "Expired" : (m[6] || "Active");
+    let isActive = !isExpired && String(calculatedStatus).toLowerCase() === "active";
+
     // የአባሉን መረጃዎች ማዘጋጀት (Photo index 10 ላይ ይገኛል)
     currentScannedMember = {
         id: m[0] || extractedId,
         name: m[1] || "Member",
         phone: m[2] || "N/A",
         plan: m[3] || "Monthly",
-        expiry: m[5] || "N/A",
-        status: m[6] || "Active",
+        expiry: rawExpiry || "N/A",
+        status: calculatedStatus,
         photo: m[10] || "https://via.placeholder.com/120"
     };
-
-    let isActive = String(currentScannedMember.status).toLowerCase() === "active";
 
     // UI ላይ በፎቶ እና በአዝራሮች አምሮ እንዲታይ ማድረግ
     resultCard.innerHTML = `
