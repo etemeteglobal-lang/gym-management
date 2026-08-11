@@ -1916,41 +1916,201 @@ function deleteMember(id) {
     }
 }
 /* =========================================================
-   UPDATED QR SCANNER & SMART PARSER (ETHIOPIAN CALENDAR FIXED)
+   1. ETHIOPIAN CALENDAR & EXPIRY PARSER ENGINE
    ========================================================= */
 
-window.scanHistory = window.scanHistory || {};
-let currentScannedMember = null;
+// የኢትዮጵያ ቀንን (D/M/YYYY E.C) በትክክል ወደ JavaScript Date (G.C) መቀየሪያ
+function ethToGregorianDate(ethDateStr) {
+    if (!ethDateStr || ethDateStr === 'N/A') return null;
+    
+    // "5/11/2018 E.C (ሐምሌ 5)" ወይም "5/11/2018" የሚለውን መበተን
+    let cleanStr = String(ethDateStr).split('(')[0].replace(/E\.C|E\/C/gi, '').trim();
+    let parts = cleanStr.split('/');
 
-// 0. CHECK EXPIRED FUNCTION (Missing Function Fix)
+    if (parts.length < 3) {
+        let gDate = new Date(cleanStr);
+        return isNaN(gDate.getTime()) ? null : gDate;
+    }
+
+    let ethDay = parseInt(parts[0], 10);
+    let ethMonth = parseInt(parts[1], 10);
+    let ethYear = parseInt(parts[2], 10);
+
+    if (isNaN(ethDay) || isNaN(ethMonth) || isNaN(ethYear)) return null;
+
+    // የኢትዮጵያ አመተ ምህረት ወደ ፈረንጆች (2018 E.C -> 2026 G.C)
+    let gregYear = ethYear + 7; 
+    let gregMonth = ethMonth + 8;
+    if (gregMonth > 12) {
+        gregMonth -= 12;
+        gregYear += 1;
+    }
+
+    let gregDay = ethDay + 6;
+    if (gregDay > 30) {
+        gregDay -= 30;
+        gregMonth += 1;
+    }
+
+    return new Date(gregYear, gregMonth - 1, gregDay);
+}
+
+// አባሉ ኤክስፓየርድ መሆኑን በጥንቃቄ ማረጋገጫ
 function checkIsExpired(expiryStr, statusStr) {
-    if (statusStr && String(statusStr).toLowerCase() === 'expired') return true;
+    if (statusStr && String(statusStr).trim().toLowerCase() === 'expired') return true;
     if (!expiryStr || expiryStr === 'N/A') return false;
 
-    // የኢትዮጵያ ቀንን (ወይም YYYY-MM-DD) መተንተን
-    let expDate = null;
-    let parts = String(expiryStr).split(' ')[0].split('/'); // "5/11/2018" -> [5, 11, 2018]
-    
-    if (parts.length === 3) {
-        let day = parseInt(parts[0], 10);
-        let month = parseInt(parts[1], 10);
-        let year = parseInt(parts[2], 10);
-
-        // የኢትዮጵያ አመተ ምህረት ከሆነ ወደ G.C በግምታዊ አመት ማስተካከል (2018 E.C ~= 2026 G.C)
-        if (year < 2020) year += 8; 
-
-        expDate = new Date(year, month - 1, day);
-    } else {
-        expDate = new Date(expiryStr);
-    }
+    let expDate = ethToGregorianDate(expiryStr);
+    if (!expDate) return false;
 
     let today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return (!isNaN(expDate.getTime()) && expDate < today);
+    return expDate < today;
 }
 
-// 1. Start Camera Stream
+/* =========================================================
+   2. MEMBER REGISTRATION ENGINE (IMMEDIATE UI SYNC)
+   ========================================================= */
+function submitRegistration() {
+    let btn = document.getElementById('regSubmitBtn');
+    if (btn) { btn.innerText = "በማስመዝገብ ላይ..."; btn.disabled = true; }
+
+    let photoFile = document.getElementById('regPhotoFile') ? document.getElementById('regPhotoFile').files[0] : null;
+
+    let processSubmit = (photoBase64) => {
+        let payload = {
+            action: "register",
+            memberId: document.getElementById('regId').value.trim(),
+            fullName: document.getElementById('regName').value.trim(),
+            phone: document.getElementById('regPhone').value.trim(),
+            edid: document.getElementById('regEdid') ? (document.getElementById('regEdid').value.trim() || "EDID-FAN-2589341592") : "EDID-FAN-2589341592",
+            gender: document.getElementById('regGender') ? document.getElementById('regGender').value : "Male",
+            plan: document.getElementById('regPlan').value,
+            amountPaid: document.getElementById('regAmount') ? document.getElementById('regAmount').value : "0",
+            joinDate: document.getElementById('regEthJoin') ? document.getElementById('regEthJoin').value : "",
+            expiryDate: document.getElementById('regEthExpiry') ? document.getElementById('regEthExpiry').value : "",
+            photoBase64: photoBase64 || "https://via.placeholder.com/100",
+            status: "Active"
+        };
+
+        let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+
+        fetch(endpoint, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            
+            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
+            
+            if (document.getElementById('regForm')) document.getElementById('regForm').reset();
+            if (document.getElementById('regGregDate')) document.getElementById('regGregDate').valueAsDate = new Date();
+            
+            let newMemberRow = [
+                payload.memberId, payload.fullName, payload.phone, payload.plan, 
+                payload.joinDate, payload.expiryDate, payload.status, payload.amountPaid, 
+                payload.gender, payload.edid, payload.photoBase64
+            ];
+            
+            if (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) {
+                let existingIdx = membersCache.findIndex(m => String(m[0]).trim().toLowerCase() === payload.memberId.toLowerCase());
+                if (existingIdx >= 0) membersCache[existingIdx] = newMemberRow;
+                else membersCache.push(newMemberRow);
+
+                if (typeof renderDirectory === 'function') renderDirectory(membersCache);
+            }
+
+            setTimeout(() => {
+                if (typeof syncMembers === 'function') syncMembers();
+            }, 1500);
+        }).catch(err => {
+            console.error("Registration Error:", err);
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            alert("መመዝገብ አልተቻለም፤ እባክዎን የኔትወርክ ግንኙነትዎን ያረጋግጡ።");
+        });
+    };
+
+    if (photoFile && typeof fileToBase64 === 'function') {
+        fileToBase64(photoFile).then(b => processSubmit(b));
+    } else {
+        processSubmit("https://via.placeholder.com/100");
+    }
+}
+
+function showSmartIdCard(id, name, phone, edid, expiry, photo) {
+    if (document.getElementById('cardMemberId')) document.getElementById('cardMemberId').innerText = id;
+    if (document.getElementById('cardMemberName')) document.getElementById('cardMemberName').innerText = name.toUpperCase();
+    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone;
+    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || "EDID-FAN-2589341592";
+    if (document.getElementById('cardExpiry')) document.getElementById('cardExpiry').innerText = expiry;
+    if (document.getElementById('cardMemberPhoto')) document.getElementById('cardMemberPhoto').src = photo || "https://via.placeholder.com/100";
+
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer && typeof QRCode !== 'undefined') {
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, { text: id, width: 100, height: 100, colorDark : "#000000", colorLight : "#ffffff" });
+    }
+
+    if (document.getElementById('idCardFrontView')) document.getElementById('idCardFrontView').style.display = 'block';
+    if (document.getElementById('idCardBackView')) document.getElementById('idCardBackView').style.display = 'none';
+    if (document.getElementById('smartIdModal')) document.getElementById('smartIdModal').style.display = 'flex';
+}
+
+function toggleIdPage() {
+    let front = document.getElementById('idCardFrontView');
+    let back = document.getElementById('idCardBackView');
+    if (front && back) {
+        if (front.style.display === 'none') {
+            front.style.display = 'block'; back.style.display = 'none';
+        } else {
+            front.style.display = 'none'; back.style.display = 'block';
+        }
+    }
+}
+
+function editMember(id, name, phone, plan) {
+    if (typeof switchView === 'function') switchView('registerView');
+    if (document.getElementById('regId')) document.getElementById('regId').value = id;
+    if (document.getElementById('regName')) document.getElementById('regName').value = name;
+    if (document.getElementById('regPhone')) document.getElementById('regPhone').value = phone;
+    if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
+    if (typeof calcPrice === 'function') calcPrice();
+}
+
+/* =========================================================
+   3. IMMEDIATE DELETE ENGINE
+   ========================================================= */
+function deleteMember(id) {
+    if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
+        if (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) {
+            membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
+            if (typeof renderDirectory === 'function') renderDirectory(membersCache);
+            if (typeof renderDashboardAnalytics === 'function') renderDashboardAnalytics(membersCache);
+        }
+
+        let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+
+        fetch(endpoint, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "deleteMember", memberId: id })
+        }).then(() => {
+            setTimeout(() => {
+                if (typeof syncMembers === 'function') syncMembers();
+            }, 2000);
+        }).catch(err => console.error("Delete error:", err));
+    }
+}
+
+/* =========================================================
+   4. QR SCANNER & ACCESS ENGINE
+   ========================================================= */
+window.scanHistory = window.scanHistory || {};
+let currentScannedMember = null;
+qrScanner = window.qrScanner || null;
+
 async function startScanner(mode = 'environment') {
     let cameraArea = document.getElementById('cameraArea');
     let resultCard = document.getElementById('scanProfileResult');
@@ -1958,9 +2118,7 @@ async function startScanner(mode = 'environment') {
     if (cameraArea) cameraArea.style.display = 'block';
     if (resultCard) resultCard.style.display = 'none';
 
-    if (qrScanner) {
-        await stopScanner();
-    }
+    if (qrScanner) await stopScanner();
 
     try {
         await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
@@ -1969,37 +2127,23 @@ async function startScanner(mode = 'environment') {
         return;
     }
 
-    qrScanner = new Html5Qrcode("qrCameraBox");
-    
-    const config = { 
-        fps: 15, 
-        qrbox: function(viewfinderWidth, viewfinderHeight) {
-            let minEdgePercentage = 0.70;
-            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-            return {
-                width: Math.floor(minEdgeSize * minEdgePercentage),
-                height: Math.floor(minEdgeSize * minEdgePercentage)
-            };
-        },
-        aspectRatio: 1.0
-    };
+    if (typeof Html5Qrcode !== 'undefined') {
+        qrScanner = new Html5Qrcode("qrCameraBox");
+        const config = { 
+            fps: 15, 
+            qrbox: function(vw, vh) {
+                let min = Math.min(vw, vh);
+                return { width: Math.floor(min * 0.70), height: Math.floor(min * 0.70) };
+            },
+            aspectRatio: 1.0
+        };
 
-    qrScanner.start(
-        { facingMode: mode },
-        config,
-        (decodedText) => {
-            processScan(decodedText);
-        },
-        (errorMessage) => {
-            // Scanning continuously...
-        }
-    ).catch(err => {
-        console.error("Camera Init Error:", err);
-        alert("ካሜራውን ማስነሳት አልተቻለም፦ " + err);
-    });
+        qrScanner.start({ facingMode: mode }, config, (text) => processScan(text), () => {}).catch(err => {
+            console.error("Camera Init Error:", err);
+        });
+    }
 }
 
-// 2. Stop Camera Safely
 async function stopScanner() {
     if (qrScanner) {
         try {
@@ -2007,17 +2151,15 @@ async function stopScanner() {
             qrScanner.clear();
             qrScanner = null;
         } catch (e) {
-            console.log("Scanner already stopped.");
+            console.log("Scanner stopped.");
         }
     }
 }
 
-// 3. Process Scan
 async function processScan(scannedData) {
     if (!scannedData) return;
 
     let extractedId = String(scannedData).trim();
-
     try {
         let parsed = JSON.parse(scannedData);
         if (parsed.id) extractedId = String(parsed.id).trim();
@@ -2055,10 +2197,8 @@ async function processScan(scannedData) {
         return;
     }
 
-    // EXPIRY CHECK LOGIC
     let rawExpiry = m[5] || "";
     let isExpired = checkIsExpired(rawExpiry, m[6]);
-
     let calculatedStatus = isExpired ? "Expired" : (m[6] || "Active");
     let isActive = !isExpired && calculatedStatus.toLowerCase() === "active";
 
@@ -2072,34 +2212,28 @@ async function processScan(scannedData) {
         photo: m[10] || "https://via.placeholder.com/120"
     };
 
-    // UI RENDER
     resultCard.innerHTML = `
         <div style="position: relative; padding: 24px 18px; border-radius: 24px; background: linear-gradient(145deg, rgba(17, 28, 68, 0.95), rgba(11, 20, 55, 0.98)); border: 1px solid ${isActive ? 'rgba(1, 181, 116, 0.3)' : 'rgba(238, 93, 80, 0.3)'}; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); overflow: hidden; backdrop-filter: blur(16px);">
-            
             <div style="margin-bottom: 18px; text-align: center;">
                 <span style="display: inline-block; padding: 8px 20px; border-radius: 30px; font-weight: 800; font-size: 0.85rem; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; color: ${isActive ? '#01B574' : '#EE5D50'}; border: 1px solid ${isActive ? '#01B574' : '#EE5D50'};">
                     ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '⛔ ACCESS DENIED (EXPIRED)'}
                 </span>
             </div>
-
             <div style="margin-bottom: 16px; position: relative; display: inline-block; text-align: center;">
                 <img src="${currentScannedMember.photo}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #FFFFFF;" />
             </div>
-
             <h3 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin-bottom: 4px; text-align: center;">${currentScannedMember.name}</h3>
             <div style="text-align: center; margin-bottom: 18px;">
                 <span style="background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.3); padding: 4px 14px; border-radius: 20px; color: #58A6FF; font-weight: 800; font-size: 0.88rem;">
                     ID: ${currentScannedMember.id}
                 </span>
             </div>
-
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.82rem; text-align: left; background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ስልክ:</b> <span style="color: #FFF; font-weight: 700;">${currentScannedMember.phone}</span></div>
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ፓኬጅ:</b> <span style="color: #FFB547; font-weight: 800;">${currentScannedMember.plan}</span></div>
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">የሚያልቅበት:</b> <span style="color: #FFF; font-weight: 700;">${currentScannedMember.expiry}</span></div>
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ሁኔታ:</b> <span style="color: ${isActive ? '#01B574' : '#EE5D50'}; font-weight: 800;">${currentScannedMember.status}</span></div>
             </div>
-
             <div style="display: flex; gap: 12px; justify-content: center;">
                 ${isActive ? `<button type="button" id="btnConfirmLog" style="background: #01B574; color: #FFF; flex: 1; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer;" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
                 <button type="button" style="background: #EE5D50; color: #FFF; flex: ${isActive ? '1' : '2'}; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer;" onclick="cancelScan()">❌ ተው</button>
@@ -2108,29 +2242,16 @@ async function processScan(scannedData) {
     `;
 }
 
-// 4. Confirm Attendance
 async function confirmAttendance() {
     if (!currentScannedMember) return;
-
     let btn = document.getElementById('btnConfirmLog');
-    if (btn) {
-        btn.innerText = "በመመዝገብ ላይ...";
-        btn.disabled = true;
-    }
+    if (btn) { btn.innerText = "በመመዝገብ ላይ..."; btn.disabled = true; }
 
     try {
         await sendAttendance(currentScannedMember.id, currentScannedMember.name, "Granted");
-        
-        if (btn) {
-            btn.innerText = "✅ SUCCESS!";
-            btn.style.background = "#01B574";
-        }
+        if (btn) { btn.innerText = "✅ SUCCESS!"; btn.style.background = "#01B574"; }
     } catch (err) {
-        console.error("Save Error:", err);
-        if (btn) {
-            btn.innerText = "❌ ERROR!";
-            btn.style.background = "#EE5D50";
-        }
+        if (btn) { btn.innerText = "❌ ERROR!"; btn.style.background = "#EE5D50"; }
     }
 
     setTimeout(() => {
@@ -2139,26 +2260,17 @@ async function confirmAttendance() {
     }, 1000);
 }
 
-// 5. Cancel Scan
 function cancelScan() {
     currentScannedMember = null;
     startScanner();
 }
 
-// 6. Send Attendance
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
-    
-    let payload = {
-        action: "recordAttendance",
-        memberId: id,
-        fullName: name,
-        status: status
-    };
+    let payload = { action: "recordAttendance", memberId: id, fullName: name, status: status };
 
     return fetch(endpoint, {
-        method: 'POST',
-        mode: 'no-cors',
+        method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
     }).then(() => {
@@ -2166,14 +2278,16 @@ function sendAttendance(id, name, status) {
     });
 }
 
-// 7. Fetch Logs
+/* =========================================================
+   5. AUDIT LOGS ENGINE
+   ========================================================= */
 function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
 
     let tbody = document.getElementById('logsTableBody');
     if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-muted);">መረጃ በመጫን ላይ...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-muted, #888);">መረጃ በመጫን ላይ...</td></tr>';
     }
 
     fetch(endpoint + "?action=getAttendance")
@@ -2183,13 +2297,12 @@ function fetchLogs() {
         tbody.innerHTML = '';
         
         let rows = (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && data[0][0] === "Member ID") 
-                   ? data.slice(1) 
-                   : data;
+                   ? data.slice(1) : data;
 
         if (rows && rows.length > 0) {
             renderGroupedLogs(rows.slice().reverse());
         } else {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted, #888); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
         }
     })
     .catch(err => {
@@ -2200,7 +2313,6 @@ function fetchLogs() {
     });
 }
 
-// 8. Time Format Helper
 function format12HourTime(dateTimeStr) {
     if (!dateTimeStr) return '';
     let parts = String(dateTimeStr).trim().split(' ');
@@ -2219,14 +2331,13 @@ function format12HourTime(dateTimeStr) {
     return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 }
 
-// 9. Render Grouped Logs
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
 
     if (!rows || rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">ምንም አይነት የአቴንዳንስ መረጃ አልተገኘም።</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted, #888);">ምንም አይነት የአቴንዳንስ መረጃ አልተገኘም።</td></tr>';
         return;
     }
 
@@ -2240,8 +2351,7 @@ function renderGroupedLogs(rows) {
 
     Object.keys(grouped).forEach(dateGroup => {
         let ethDateHeader = (typeof toEthDate === 'function' && dateGroup.includes('-')) 
-                            ? toEthDate(dateGroup) 
-                            : dateGroup;
+                            ? toEthDate(dateGroup) : dateGroup;
 
         let groupHeaderTr = document.createElement('tr');
         groupHeaderTr.innerHTML = `
@@ -2264,16 +2374,9 @@ function renderGroupedLogs(rows) {
                         let cachedId = String(mem[0] || '').trim().toLowerCase();
                         let searchId = memberId.toLowerCase();
                         return cachedId === searchId || cachedId.replace(/[^0-9]/g, '') === searchId.replace(/[^0-9]/g, '');
-                    })
-                    : null;
+                    }) : null;
 
-            let isExpired = false;
-            if (m) {
-                isExpired = checkIsExpired(m[5], m[6]);
-            } else {
-                isExpired = checkIsExpired('', statusText);
-            }
-
+            let isExpired = m ? checkIsExpired(m[5], m[6]) : checkIsExpired('', statusText);
             let displayStatus = isExpired ? 'Expired' : 'Active';
             let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
             let colorStyle = isExpired ? '#EE5D50' : '#01B574';
@@ -2282,7 +2385,7 @@ function renderGroupedLogs(rows) {
             tr.innerHTML = `
                 <td style="font-weight:800; color:#58A6FF;">${memberId}</td>
                 <td style="font-weight:700;">${fullName}</td>
-                <td style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">${formattedTime}</td>
+                <td style="color:var(--text-muted, #888); font-size:0.85rem; font-weight:600;">${formattedTime}</td>
                 <td>
                     <span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${bgStyle}; color:${colorStyle}; display:inline-block;">
                         ● ${displayStatus}
@@ -2294,7 +2397,9 @@ function renderGroupedLogs(rows) {
     });
 }
 
-// 10. Utility Functions
+/* =========================================================
+   6. UTILITIES & DIRECTORY FILTER
+   ========================================================= */
 function downloadVCard() {
     let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
     let blob = new Blob([vcardData], { type: 'text/vcard' });
@@ -2322,7 +2427,7 @@ function filterDirectoryByStatus() {
     let q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
     let filterVal = document.getElementById('statusFilterSelect') ? document.getElementById('statusFilterSelect').value : 'ALL';
 
-    if (!membersCache || !Array.isArray(membersCache)) return;
+    if (typeof membersCache === 'undefined' || !Array.isArray(membersCache)) return;
 
     let filtered = membersCache.filter(m => {
         let id = String(m[0] || '').toLowerCase();
@@ -2330,10 +2435,7 @@ function filterDirectoryByStatus() {
         let phone = String(m[2] || '').toLowerCase();
         
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
-        
-        let expiry = m[5] || '';
-        let rawStatus = m[6] || 'Active';
-        let isExpired = checkIsExpired(expiry, rawStatus);
+        let isExpired = checkIsExpired(m[5] || '', m[6] || 'Active');
         
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
