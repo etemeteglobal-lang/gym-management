@@ -688,7 +688,7 @@
             margin-top: 8px;
         }
 /* =========================================================
-   CLEAN & ISOLATED MOBILE BOTTOM NAV ENGINE
+   CLEAN & ISOLATED RESPONSIVE CSS ENGINE (FIXED)
    ========================================================= */
 
 /* 1. በዴስክቶፕ (ከ900px በላይ) Bottom Nav እንዳይታይ መደበቅ */
@@ -696,7 +696,13 @@
     display: none !important;
 }
 
-/* 2. በስልክ (ከ900px በታች) ብቻ ከታች መሰካት */
+/* 2. በዴስክቶፕ ላይ የመሃል Layout ባዶ ቦታ እንዳይፈጠር Grid ማስተካከያ */
+.content-scroll {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* 3. በስልክ (ከ900px በታች) ብቻ የሚሰራ ማስተካከያ */
 @media screen and (max-width: 900px) {
     .enterprise-sidebar,
     .menu-toggle-btn {
@@ -744,6 +750,12 @@
     .bottom-nav-item.active {
         color: #0f385a !important;
         font-weight: 800 !important;
+    }
+
+    /* Login ገጽ ላይ Bottom Nav መደብቅ */
+    body:has(#loginView.active) .mobile-bottom-nav,
+    body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
+        display: none !important;
     }
 }
 </style>
