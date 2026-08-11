@@ -337,60 +337,64 @@
             border-color: var(--brand-orange);
         }
 
-        /* =========================================================
-           WORKSPACE HEADER & TOP CONTROLS
-           ========================================================= */
-        .enterprise-workspace {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: var(--bg-canvas);
-            width: calc(100% - var(--sidebar-width));
-        }
+       /* =========================================================
+   WORKSPACE HEADER & TOP CONTROLS (FIXED)
+   ========================================================= */
+.enterprise-workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-canvas);
+    width: calc(100% - var(--sidebar-width));
+}
 
-        .topbar {
-            min-height: 70px;
-            background: var(--surface-white);
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            z-index: 99;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+.topbar {
+    height: 70px;
+    max-height: 70px;
+    background: var(--surface-white);
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    z-index: 99;
+    flex-wrap: nowrap; /* ወደ ታች እንዳይወርድ የተከለከለ */
+    flex-shrink: 0;
+    gap: 12px;
+}
 
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex: 1;
-            min-width: 200px;
-        }
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0; /* Text overflow እንዳይፈጥር የተደረገ */
+}
 
-        .topbar h1 {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--text-main);
-            line-height: 1.2;
-        }
+.topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.2;
+    white-space: nowrap;
+}
 
-        .topbar p {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+.topbar p {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+}
 
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
 
         .menu-toggle-btn {
             display: none;
