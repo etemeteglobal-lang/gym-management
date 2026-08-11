@@ -1087,100 +1087,68 @@
         </div>
     </div>
 
-<!-- SMART ID MODAL -->
-<div id="smartIdModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: transparent; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 360px; width: 100%;">
-        
-        <!-- FRONT CARD -->
-        <div id="idCardFrontView" style="width: 340px; height: 530px; border-radius: 20px; background: #FFFFFF; border: 3px solid #FF5E00; box-shadow: 0 25px 50px -12px rgba(255, 94, 0, 0.25); overflow: hidden; position: relative; font-family: 'Inter', system-ui, sans-serif;">
-            <!-- Top Header Accent -->
-            <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); padding: 20px; text-align: center; border-bottom: 3px solid #FF5E00;">
-                <div style="width: 42px; height: 42px; background: #FF5E00; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto; color: #FFF; font-size: 20px; font-weight: bold;">🏋️</div>
-                <h2 style="color: #FFFFFF; font-size: 1.1rem; font-weight: 900; margin: 0; letter-spacing: 0.5px;">GUDDA LIFE FITNESS</h2>
-                <p style="color: #FF5E00; font-size: 0.65rem; font-weight: 800; margin: 2px 0 0 0; letter-spacing: 1.5px;">FIT FOR LIFE • SINCE 2007</p>
-            </div>
-
-            <!-- Profile Photo -->
-            <div style="text-align: center; margin-top: -35px; position: relative; z-index: 5;">
-                <img id="cardMemberPhoto" src="https://via.placeholder.com/100" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #FF5E00; object-fit: cover; background: #FFF; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);" />
-            </div>
-
-            <!-- Member Info -->
-            <div style="text-align: center; padding: 8px 20px 0 20px;">
-                <h3 id="cardMemberName" style="color: #0F172A; font-size: 1.2rem; font-weight: 900; margin: 0;">GETNET GIRMA</h3>
-                <span style="display: inline-block; background: rgba(255, 94, 0, 0.1); color: #FF5E00; font-size: 0.65rem; font-weight: 800; padding: 2px 10px; border-radius: 12px; margin-top: 4px; text-transform: uppercase;">OFFICIAL GYM MEMBER</span>
-            </div>
-
-            <!-- Details List (NO EXPIRY DATE) -->
-            <div style="margin: 15px 20px; background: #F8FAFC; border-radius: 12px; padding: 10px 14px; border: 1px solid #E2E8F0; font-size: 0.75rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                    <span style="color: #64748B; font-weight: 700;">FAIDA EDID:</span>
-                    <span id="cardEdid" style="color: #0F172A; font-weight: 800; font-family: monospace;">2589341592048065</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                    <span style="color: #64748B; font-weight: 700;">PHONE:</span>
-                    <span id="cardPhone" style="color: #0F172A; font-weight: 800;">251936047698</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #64748B; font-weight: 700;">LOCATION:</span>
-                    <span style="color: #0F172A; font-weight: 800;">Bolo, Adama, Ethiopia</span>
-                </div>
-            </div>
-
-            <!-- QR Footer Section -->
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #FF5E00 0%, #FF8534 100%); padding: 12px; display: flex; align-items: center; justify-content: space-around;">
-                <div id="cardQrCode" style="background: #FFF; padding: 5px; border-radius: 8px; display: flex; align-items: center; justify-content: center;"></div>
-                <div style="color: #FFF; text-align: left;">
-                    <div style="font-size: 0.65rem; opacity: 0.9; font-weight: 600;">MEMBER ID</div>
-                    <div id="cardMemberId" style="font-size: 1.1rem; font-weight: 900; font-family: monospace; letter-spacing: 1px;">GM-0001</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BACK CARD -->
-        <div id="idCardBackView" style="display: none; width: 340px; height: 530px; border-radius: 20px; background: #0F172A; border: 3px solid #FF5E00; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; font-family: 'Inter', system-ui, sans-serif; color: #FFF; padding: 20px; box-sizing: border-box;">
+    <!-- 4. OFFICIAL SMART ID CARD MODAL -->
+    <div id="smartIdModal" style="position:fixed; inset:0; background:rgba(11,20,55,0.85); backdrop-filter:blur(10px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto;">
+        <div style="background:transparent; text-align:center; max-width:350px; width:100%;">
             
-            <div style="text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
-                <h3 style="color: #FF5E00; font-size: 1rem; font-weight: 900; margin: 0; text-transform: uppercase;">GUDDA LIFE FITNESS</h3>
-                <p style="color: #94A3B8; font-size: 0.65rem; margin: 4px 0 0 0;">"ጤናዎንና የአካል ብቃትዎን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል"</p>
-            </div>
+            <div class="smart-id-card-wrap" id="printableSmartCard">
+                <!-- Front View -->
+                <div id="idCardFrontView">
+                    <div class="id-header">
+                        <img id="cardGymLogo" src="https://via.placeholder.com/40" alt="Gym Logo">
+                        <h4 id="cardGymName">GUDDA LIFE FITNESS</h4>
+                        <p>FIT FOR LIFE • SINCE 2007</p>
+                    </div>
+                    <div class="id-photo-frame">
+                        <img id="cardMemberPhoto" src="https://via.placeholder.com/100" alt="Athlete Photo">
+                    </div>
+                    <div class="id-body">
+                        <h2 id="cardMemberName">ABEBE KEBEDE</h2>
+                        <div class="sub-title">OFFICIAL GYM MEMBER</div>
+                        
+                        <div class="id-details">
+                            <p><span>FAIDA EDID:</span> <b id="cardEdid">EDID-FAN-2589341592</b></p>
+                            <p><span>PHONE:</span> <b id="cardPhone">0912132353</b></p>
+                            <p><span>EXPIRY (E.C):</span> <b id="cardExpiry">4/13/2018 E.C</b></p>
+                            <p><span>LOCATION:</span> <b>Bolo, Adama, Ethiopia</b></p>
+                        </div>
 
-            <p style="text-align: center; color: #E2E8F0; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">ክፍያ ለመፈጸም ስካን ያድርጉ (PAYMENT QR)</p>
-
-            <!-- QRs Container (Dynamic JavaScript Rendering) -->
-            <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px;">
-                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; text-align: center; width: 120px;">
-                    <span style="color: #FF5E00; font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 6px;">CBE BIRR</span>
-                    <div id="cardCbeQr" style="background: #FFF; padding: 4px; border-radius: 6px; display: inline-block;"></div>
+                        <div class="id-qr-box">
+                            <div id="cardQrCode"></div>
+                            <div style="color:white; font-size:0.75rem; font-weight:800; margin-top:4px;" id="cardMemberId">GYM-7503</div>
+                        </div>
+                    </div>
                 </div>
-                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; text-align: center; width: 120px;">
-                    <span style="color: #38BDF8; font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 6px;">TELEBIRR</span>
-                    <div id="cardTeleQr" style="background: #FFF; padding: 4px; border-radius: 6px; display: inline-block;"></div>
+
+                <!-- Back View -->
+                <div id="idCardBackView" style="display:none; padding:22px 16px; text-align:center; height:100%;">
+                    <h3 style="color:#0F385A; font-weight:800; font-size:1.05rem; margin-bottom:6px;">GUDDA LIFE FITNESS</h3>
+                    <p style="font-size:0.7rem; color:#555; line-height:1.4; margin-bottom:16px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
+                        <div style="background:#f8fafc; padding:8px; border-radius:10px; border:1px solid #e2e8f0;">
+                            <img id="cardCbeQr" src="https://via.placeholder.com/100?text=CBE+QR" style="width:100px; height:100px; object-fit:contain;">
+                            <span style="font-size:0.68rem; font-weight:800; color:#0F385A; display:block; margin-top:4px;">CBE BIRR</span>
+                        </div>
+                        <div style="background:#f8fafc; padding:8px; border-radius:10px; border:1px solid #e2e8f0;">
+                            <img id="cardTeleQr" src="https://via.placeholder.com/100?text=Telebirr+QR" style="width:100px; height:100px; object-fit:contain;">
+                            <span style="font-size:0.68rem; font-weight:800; color:#0F385A; display:block; margin-top:4px;">TELEBIRR</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.68rem; color:#333; font-weight:700; border-top:1px dashed #ccc; padding-top:10px;">
+                        📞 +251912292150 | 📍 Bolo, Adama
+                    </div>
                 </div>
             </div>
 
-            <!-- Contact Details -->
-            <div style="background: rgba(255, 94, 0, 0.1); border: 1px solid rgba(255, 94, 0, 0.3); padding: 12px; border-radius: 12px; font-size: 0.7rem; line-height: 1.8; text-align: center;">
-                <div>📞 +251 91 229 2150</div>
-                <div>📍 Bolo, Adama, Ethiopia</div>
-                <div>🌐 faidatech.my.canva.site</div>
-            </div>
-
-            <div style="position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; font-size: 0.6rem; color: #64748B;">
-                Powered by FaidATech Enterprise
+            <div style="margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0; background:var(--info-color);" onclick="toggleIdPage()">🔄 Flip Card</button>
+                <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0; background:var(--brand-orange);" onclick="window.print()">🖨️ Print ID</button>
+                <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0; background:var(--text-muted);" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
             </div>
         </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; gap: 8px; justify-content: center; width: 100%;">
-            <button type="button" style="padding: 10px 16px; border-radius: 10px; border: none; background: #6366F1; color: #FFF; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="toggleIdPage()">🔄 Flip Card</button>
-            <button type="button" style="padding: 10px 16px; border-radius: 10px; border: none; background: #FF5E00; color: #FFF; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="window.print()">🖨️ Print ID</button>
-            <button type="button" style="padding: 10px 16px; border-radius: 10px; border: none; background: #10B981; color: #FFF; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="shareSmartIdCard()">📲 Share ID</button>
-            <button type="button" style="padding: 10px 16px; border-radius: 10px; border: none; background: #EF4444; color: #FFF; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
-        </div>
-
     </div>
-</div>
+    <script>
         /* =========================================================
            GLOBAL SYSTEM CONFIGURATION & STATE ENGINE
            ========================================================= */
@@ -1814,46 +1782,14 @@ function openMemberSmartId(memberId) {
     }
 }
 
-/* =========================================================
-   SMART ID CARD ENGINE (WITH POWERFUL COLORS & NO EXPIRY)
-   ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo) {
-    // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
-    if (document.getElementById('cardMemberId')) {
-        let idEl = document.getElementById('cardMemberId');
-        idEl.innerText = id || 'GM-000';
-        idEl.style.color = '#FF5E00'; // Powerful Orange Color
-        idEl.style.fontWeight = '900';
-    }
-    
-    if (document.getElementById('cardMemberName')) {
-        let nameEl = document.getElementById('cardMemberName');
-        nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
-        nameEl.style.color = '#111827'; // Dark Bold Color
-    }
-    
+    if (document.getElementById('cardMemberId')) document.getElementById('cardMemberId').innerText = id || 'GM-000';
+    if (document.getElementById('cardMemberName')) document.getElementById('cardMemberName').innerText = String(name || 'MEMBER NAME').toUpperCase();
     if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
     if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
-    
-    // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
-    let expiryEl = document.getElementById('cardExpiry');
-    if (expiryEl) {
-        expiryEl.style.display = 'none'; // ጽሁፉን ማጥፋት
-        if (expiryEl.parentElement) {
-            expiryEl.parentElement.style.display = 'none'; // የያዘውን ሙሉ መስመር (Label) ማጥፋት
-        }
-    }
+    if (document.getElementById('cardExpiry')) document.getElementById('cardExpiry').innerText = expiry || 'N/A';
+    if (document.getElementById('cardMemberPhoto')) document.getElementById('cardMemberPhoto').src = photo || 'https://via.placeholder.com/100';
 
-    // 3. የፎቶ ዲዛይን (Powerful Border & Shadow)
-    if (document.getElementById('cardMemberPhoto')) {
-        let photoEl = document.getElementById('cardMemberPhoto');
-        photoEl.src = photo || 'https://via.placeholder.com/100';
-        photoEl.style.border = '4px solid #FF5E00'; // Orange Border
-        photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)'; // 3D Shadow effect
-        photoEl.style.borderRadius = '50%';
-    }
-
-    // 4. QR Code
     let qrContainer = document.getElementById('cardQrCode');
     if (qrContainer) {
         qrContainer.innerHTML = "";
@@ -1862,22 +1798,8 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         }
     }
 
-    // 5. የካርድ ገጽታ ማሳመር (Background Gradients)
-    let frontView = document.getElementById('idCardFrontView');
-    if (frontView) {
-        frontView.style.display = 'block';
-        frontView.style.background = 'linear-gradient(180deg, #ffffff 60%, #fff7f2 100%)';
-        frontView.style.border = '2px solid #FF5E00';
-        frontView.style.borderRadius = '16px';
-    }
-    
-    let backView = document.getElementById('idCardBackView');
-    if (backView) {
-        backView.style.display = 'none';
-        backView.style.background = 'linear-gradient(180deg, #111827 0%, #1f2937 100%)'; // Dark theme for back
-        backView.style.border = '2px solid #FF5E00';
-        backView.style.borderRadius = '16px';
-    }
+    if (document.getElementById('idCardFrontView')) document.getElementById('idCardFrontView').style.display = 'block';
+    if (document.getElementById('idCardBackView')) document.getElementById('idCardBackView').style.display = 'none';
 
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
@@ -1997,6 +1919,7 @@ function editMember(id, name, phone, plan) {
     if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
     if (typeof calcPrice === 'function') calcPrice();
 }
+
 function deleteMember(id) {
     if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
         membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
