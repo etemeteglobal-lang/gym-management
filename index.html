@@ -1013,36 +1013,35 @@
             </div>
         </div>
 
-        <!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
-        <div id="scanProfileResult" style="margin-top:0px; padding:20px; border-radius:18px; display:none; text-align:center; border:1px solid var(--border-light); background:var(--surface-card); box-shadow:var(--shadow-enterprise);">
-            
-            <!-- የሁኔታ ባጅ (Granted / Expired) -->
-            <div id="scanStatusBadge" style="margin-bottom:15px;"></div>
+<!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
+<div id="scanProfileResult" style="margin-top:0px; padding:28px 22px; border-radius:24px; display:none; text-align:center; border:1px solid rgba(88, 166, 255, 0.25); background: linear-gradient(145deg, rgba(17, 28, 68, 0.95), rgba(11, 20, 55, 0.98)); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); position: relative; overflow: hidden;">
+    
+    <!-- Cyber Light Rays Background Effect -->
+    <div style="position: absolute; top: -50px; left: -50px; width: 140px; height: 140px; background: rgba(88, 166, 255, 0.15); filter: blur(40px); border-radius: 50%; pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -50px; right: -50px; width: 140px; height: 140px; background: rgba(1, 181, 116, 0.12); filter: blur(40px); border-radius: 50%; pointer-events: none;"></div>
 
-            <!-- የአባሉ ፎቶ -->
-            <div style="margin-bottom:12px;">
-                <img id="scanMemberPhoto" src="https://via.placeholder.com/110" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
-            </div>
+    <!-- የሁኔታ ባጅ (Granted / Expired) -->
+    <div id="scanStatusBadge" style="margin-bottom:18px; display: inline-block; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));"></div>
 
-            <!-- ስም እና ID -->
-            <h3 id="scanMemberName" style="font-weight:800; font-size:1.25rem; margin-bottom:2px; color:var(--text-main,#fff);">-</h3>
-            <p id="scanMemberId" style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">-</p>
-            
-            <!-- ዝርዝር መረጃዎች -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px;">
-                <div><b>ስልክ:</b> <span id="scanMemberPhone">-</span></div>
-                <div><b>ፓኬጅ:</b> <span id="scanMemberPlan">-</span></div>
-                <div><b>የሚያልቅበት:</b> <span id="scanMemberExpiry">-</span></div>
-                <div><b>ሁኔታ:</b> <span id="scanMemberStatus">-</span></div>
-            </div>
+    <!-- የአባሉ ፎቶ ከ Sci-Fi Glow Halo ጋር -->
+    <div style="margin-bottom:16px; position: relative; display: inline-block;">
+        <div style="position: absolute; inset: -4px; border-radius: 50%; background: linear-gradient(135deg, #58A6FF, #01B574); filter: blur(8px); opacity: 0.6;"></div>
+        <img id="scanMemberPhoto" src="https://via.placeholder.com/110" style="position: relative; width:115px; height:115px; border-radius:50%; object-fit:cover; border:3px solid #FFFFFF; box-shadow:0 8px 24px rgba(0,0,0,0.45);" />
+    </div>
 
-            <!-- አዝራሮች (መዝግብ እና ተው) -->
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>
-                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:48%; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
-            </div>
-        </div>
-
+    <!-- ስም እና ID -->
+    <h3 id="scanMemberName" style="font-weight:900; font-size:1.35rem; margin-bottom:4px; color:#FFFFFF; letter-spacing: -0.3px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">-</h3>
+    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.3); padding: 4px 14px; border-radius: 20px; margin-bottom: 20px;">
+        <span style="font-size: 0.72rem; color: #A3AED0; font-weight: 700; text-transform: uppercase;">MEMBER ID:</span>
+        <span id="scanMemberId" style="color:#58A6FF; font-weight:800; font-size:0.92rem; letter-spacing: 0.5px;">-</span>
+    </div>
+    
+    <!-- ዝርዝር መረጃዎች (HUD Styled Glass Grid) -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; font-size:0.84rem; text-align:left; background: rgba(255, 255, 255, 0.03); padding:16px; border-radius:16px; border:1px solid rgba(255, 255, 255, 0.08); margin-bottom:8px; box-shadow: inset 0 0 12px rgba(0,0,0,0.2);">
+        <div style="padding: 6px 8px; border-bottom: 1px border-dashed rgba(255,255,255,0.06);"><b style="color: #A3AED0; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;">ስልክ:</b> <span id="scanMemberPhone" style="color: #FFF; font-weight: 700;">-</span></div>
+        <div style="padding: 6px 8px; border-bottom: 1px border-dashed rgba(255,255,255,0.06);"><b style="color: #A3AED0; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;">ፓኬጅ:</b> <span id="scanMemberPlan" style="color: #FFB547; font-weight: 800;">-</span></div>
+        <div style="padding: 6px 8px;"><b style="color: #A3AED0; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;">የሚያልቅበት:</b> <span id="scanMemberExpiry" style="color: #FFF; font-weight: 700;">-</span></div>
+        <div style="padding: 6px 8px;"><b style="color: #A3AED0; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;">ሁኔታ:</b> <span id="scanMemberStatus" style="font-weight: 800;">-</span></div>
     </div>
 </div>
             <!-- VIEW 5: ATTENDANCE LOGS -->
@@ -1917,7 +1916,7 @@ function deleteMember(id) {
     }
 }
 /* =========================================================
-   UPDATED QR SCANNER & SMART PARSER WITH MANUAL CONFIRMATION
+   UPDATED QR SCANNER & SMART PARSER WITH AUTOMATIC EXPIRY CHECK
    ========================================================= */
 
 window.scanHistory = window.scanHistory || {};
@@ -1986,7 +1985,7 @@ async function stopScanner() {
     }
 }
 
-// 3. Process Scan (Hides Camera & Displays Member Photo + Details)
+// 3. Process Scan (With Automatic Expiry Verification & Ultra Glassmorphic UI)
 async function processScan(scannedData) {
     if (!scannedData) return;
 
@@ -2022,15 +2021,34 @@ async function processScan(scannedData) {
     if (!m) {
         currentScannedMember = null;
         resultCard.innerHTML = `
-            <div style="color:var(--danger-color, #EE5D50); font-weight:800; font-size:1rem; text-align:center; padding:15px; background:rgba(238,93,80,0.1); border-radius:14px; border:1px solid var(--danger-color);">
-                ❌ Access Denied: ያልተመዘገበ ID (${extractedId})
+            <div style="color:#EE5D50; font-weight:800; font-size:1rem; text-align:center; padding:18px; background:rgba(238,93,80,0.12); border-radius:18px; border:1px solid #EE5D50; box-shadow:0 10px 30px rgba(238,93,80,0.2);">
+                ❌ ACCESS DENIED: ያልተመዘገበ ID (${extractedId})
             </div>
-            <div style="margin-top:15px; text-align:center;">
-                <button type="button" class="btn-main" style="background:var(--danger-color); padding:10px 20px;" onclick="cancelScan()">❌ ተመለስ</button>
+            <div style="margin-top:18px; text-align:center;">
+                <button type="button" class="btn-main" style="background:#EE5D50; padding:12px 28px; border-radius:12px; font-weight:800; color:#fff; border:none; cursor:pointer;" onclick="cancelScan()">❌ ተመለስ</button>
             </div>
         `;
         return;
     }
+
+    // ---------------------------------------------------------
+    // EXPIRY DATE CHECKING LOGIC
+    // ---------------------------------------------------------
+    let rawExpiry = m[5] || "";
+    let isExpired = false;
+
+    if (rawExpiry) {
+        let today = new Date();
+        today.setHours(0, 0, 0, 0); // ሰዓቱን 00:00 ማድረግ
+        let expDate = new Date(rawExpiry);
+
+        if (!isNaN(expDate.getTime()) && expDate < today) {
+            isExpired = true;
+        }
+    }
+
+    let calculatedStatus = isExpired ? "Expired" : (m[6] || "Active");
+    let isActive = calculatedStatus.toLowerCase() === "active" && !isExpired;
 
     // የአባሉን መረጃዎች ማዘጋጀት (Photo index 10 ላይ ይገኛል)
     currentScannedMember = {
@@ -2038,42 +2056,51 @@ async function processScan(scannedData) {
         name: m[1] || "Member",
         phone: m[2] || "N/A",
         plan: m[3] || "Monthly",
-        expiry: m[5] || "N/A",
-        status: m[6] || "Active",
+        expiry: rawExpiry || "N/A",
+        status: calculatedStatus,
         photo: m[10] || "https://via.placeholder.com/120"
     };
 
-    let isActive = String(currentScannedMember.status).toLowerCase() === "active";
-
-    // UI ላይ በፎቶ እና በአዝራሮች አምሮ እንዲታይ ማድረግ
+    // UI RENDER
     resultCard.innerHTML = `
-        <div style="text-align:center;">
+        <div style="position: relative; padding: 24px 18px; border-radius: 24px; background: linear-gradient(145deg, rgba(17, 28, 68, 0.95), rgba(11, 20, 55, 0.98)); border: 1px solid ${isActive ? 'rgba(1, 181, 116, 0.3)' : 'rgba(238, 93, 80, 0.3)'}; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); overflow: hidden; backdrop-filter: blur(16px);">
+            
+            <!-- Glow Effect Ambient -->
+            <div style="position: absolute; top: -40px; left: -40px; width: 120px; height: 120px; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; filter: blur(40px); border-radius: 50%; pointer-events: none;"></div>
+
             <!-- የሁኔታ ባጅ -->
-            <div style="padding:10px; border-radius:12px; font-weight:800; margin-bottom:15px; background:${isActive ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isActive ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; border:1px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">
-                ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '❌ ACCESS DENIED (' + currentScannedMember.status.toUpperCase() + ')'}
+            <div style="margin-bottom: 18px; text-align: center;">
+                <span style="display: inline-block; padding: 8px 20px; border-radius: 30px; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; color: ${isActive ? '#01B574' : '#EE5D50'}; border: 1px solid ${isActive ? '#01B574' : '#EE5D50'}; box-shadow: 0 4px 15px ${isActive ? 'rgba(1, 181, 116, 0.2)' : 'rgba(238, 93, 80, 0.2)'};">
+                    ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '⛔ ACCESS DENIED (' + currentScannedMember.status.toUpperCase() + ')'}
+                </span>
             </div>
 
-            <!-- የአባሉ ፎቶ -->
-            <div style="margin-bottom:12px;">
-                <img src="${currentScannedMember.photo}" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+            <!-- የአባሉ ፎቶ ከ Glowing Ring ጋር -->
+            <div style="margin-bottom: 16px; position: relative; display: inline-block; text-align: center;">
+                <div style="position: absolute; inset: -4px; border-radius: 50%; background: ${isActive ? 'linear-gradient(135deg, #01B574, #58A6FF)' : 'linear-gradient(135deg, #EE5D50, #FFB547)'}; filter: blur(8px); opacity: 0.7;"></div>
+                <img src="${currentScannedMember.photo}" style="position: relative; width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.45);" />
             </div>
 
             <!-- ስም እና ID -->
-            <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-main, #fff); margin-bottom:2px;">${currentScannedMember.name}</h3>
-            <p style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">ID: ${currentScannedMember.id}</p>
+            <h3 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin-bottom: 4px; text-align: center;">${currentScannedMember.name}</h3>
+            <div style="text-align: center; margin-bottom: 18px;">
+                <span style="background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.3); padding: 4px 14px; border-radius: 20px; color: #58A6FF; font-weight: 800; font-size: 0.88rem;">
+                    ID: ${currentScannedMember.id}
+                </span>
+            </div>
 
             <!-- ዝርዝር መረጃዎች -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px; color:var(--text-muted);">
-                <div><b>ስልክ:</b> ${currentScannedMember.phone}</div>
-                <div><b>ፓኬጅ:</b> ${currentScannedMember.plan}</div>
-                <div><b>የሚያልቅበት:</b> ${currentScannedMember.expiry}</div>
-                <div><b>ሁኔታ:</b> ${currentScannedMember.status}</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.82rem; text-align: left; background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
+                <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ስልክ:</b> <span style="color: #FFF; font-weight: 700;">${currentScannedMember.phone}</span></div>
+                <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ፓኬጅ:</b> <span style="color: #FFB547; font-weight: 800;">${currentScannedMember.plan}</span></div>
+                <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">የሚያልቅበት:</b> <span style="color: #FFF; font-weight: 700;">${currentScannedMember.expiry}</span></div>
+                <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ሁኔታ:</b> <span style="color: ${isActive ? '#01B574' : '#EE5D50'}; font-weight: 800;">${currentScannedMember.status}</span></div>
             </div>
 
             <!-- የውሳኔ አዝራሮች -->
-            <div style="display:flex; gap:10px; justify-content:center;">
-                ${isActive ? `<button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
-                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:${isActive ? '48%' : '100%'}; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                ${isActive ? `<button type="button" id="btnConfirmLog" style="background: #01B574; color: #FFF; flex: 1; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(1,181,116,0.3);" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
+                <button type="button" style="background: #EE5D50; color: #FFF; flex: ${isActive ? '1' : '2'}; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(238,93,80,0.3);" onclick="cancelScan()">❌ ተው</button>
             </div>
         </div>
     `;
@@ -2099,8 +2126,8 @@ async function confirmAttendance() {
     } catch (err) {
         console.error("Save Error:", err);
         if (btn) {
-            btn.innerText = "✅ SUCCESS!";
-            btn.style.background = "var(--success-color, #01B574)";
+            btn.innerText = "❌ ERROR!";
+            btn.style.background = "var(--danger-color, #EE5D50)";
         }
     }
 
@@ -2170,7 +2197,6 @@ function fetchLogs() {
         }
     });
 }
-
 // የሰዓት አቆጣጠሩን ከ 24-Hour (17:15:00) ወደ 12-Hour AM/PM (05:15:00 PM) መቀየሪያ
 function format12HourTime(dateTimeStr) {
     if (!dateTimeStr) return '';
