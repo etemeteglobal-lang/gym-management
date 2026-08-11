@@ -1735,9 +1735,6 @@ function renderDirectory(data) {
 
         let safeName = String(name).replace(/'/g, "\\'");
         let safePhone = String(phone).replace(/'/g, "\\'");
-        let safeEdid = String(edid).replace(/'/g, "\\'");
-        let safeExpiry = String(expiry).replace(/'/g, "\\'");
-        let safePhoto = String(photo).replace(/'/g, "\\'");
 
         let ethExpiry = (typeof toEthDate === 'function' && String(expiry).includes('-')) 
                         ? toEthDate(expiry) 
@@ -1763,7 +1760,7 @@ function renderDirectory(data) {
             <td>
                 <div class="action-btn-group">
                     <button type="button" class="btn-action edit" onclick="editMember('${id}','${safeName}','${safePhone}','${plan}')">Edit/Renew</button>
-                    <button type="button" class="btn-action qrcode" onclick="showSmartIdCard('${id}','${safeName}','${safePhone}','${safeEdid}','${safeExpiry}','${safePhoto}')">🪪 Smart ID</button>
+                    <button type="button" class="btn-action qrcode" onclick="openMemberSmartId('${id}')">🪪 Smart ID</button>
                     <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
                 </div>
             </td>
@@ -1771,14 +1768,50 @@ function renderDirectory(data) {
         tbody.appendChild(tr);
     });
 }
+
 /* =========================================================
-   MEMBER REGISTRATION ENGINE (100% FIXED & FULLY COMPATIBLE)
+   SAFE SMART ID MODAL LAUNCHERS & RENDERER
+   ========================================================= */
+function openMemberSmartId(memberId) {
+    if (typeof membersCache === 'undefined' || !Array.isArray(membersCache)) return;
+    let m = membersCache.find(item => String(item[0] || '').trim().toLowerCase() === String(memberId).trim().toLowerCase());
+    if (m) {
+        showSmartIdCard(m[0], m[1], m[2], m[9], m[5], m[10]);
+    } else {
+        alert("የአባሉ መረጃ አልተገኘም!");
+    }
+}
+
+function showSmartIdCard(id, name, phone, edid, expiry, photo) {
+    if (document.getElementById('cardMemberId')) document.getElementById('cardMemberId').innerText = id || 'GM-000';
+    if (document.getElementById('cardMemberName')) document.getElementById('cardMemberName').innerText = String(name || 'MEMBER NAME').toUpperCase();
+    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
+    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
+    if (document.getElementById('cardExpiry')) document.getElementById('cardExpiry').innerText = expiry || 'N/A';
+    if (document.getElementById('cardMemberPhoto')) document.getElementById('cardMemberPhoto').src = photo || 'https://via.placeholder.com/100';
+
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrContainer, { text: id, width: 85, height: 85 });
+        }
+    }
+
+    if (document.getElementById('idCardFrontView')) document.getElementById('idCardFrontView').style.display = 'block';
+    if (document.getElementById('idCardBackView')) document.getElementById('idCardBackView').style.display = 'none';
+
+    let modal = document.getElementById('smartIdModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+/* =========================================================
+   MEMBER REGISTRATION ENGINE
    ========================================================= */
 function submitRegistration() {
     let btn = document.getElementById('regSubmitBtn');
     if (btn) { btn.innerText = "በማስመዝገብ ላይ..."; btn.disabled = true; }
 
-    // photoFile ባዶ ቢሆን እንኳን Crash እንዳያደርግ በጥንቃቄ መውሰድ
     let photoFileInput = document.getElementById('regPhotoFile');
     let photoFile = (photoFileInput && photoFileInput.files && photoFileInput.files.length > 0) ? photoFileInput.files[0] : null;
 
@@ -1808,12 +1841,8 @@ function submitRegistration() {
         }).then(() => {
             if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
             
-            // 1. Show Smart ID Card Modal
-            if (typeof showSmartIdCard === 'function') {
-                showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
-            }
+            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
             
-            // 2. Clear Form Input
             if (document.getElementById('regForm')) {
                 document.getElementById('regForm').reset();
             }
@@ -1821,7 +1850,6 @@ function submitRegistration() {
                 document.getElementById('regGregDate').valueAsDate = new Date();
             }
             
-            // 3. Local Cache Update
             let newMemberRow = [
                 payload.memberId, 
                 payload.fullName, 
@@ -1849,7 +1877,6 @@ function submitRegistration() {
                 }
             }
 
-            // 4. Server Re-Sync
             setTimeout(() => {
                 if (typeof syncMembers === 'function') syncMembers();
             }, 1500);
@@ -1867,9 +1894,9 @@ function submitRegistration() {
     }
 }
 
-// ---------------------------------------------------------
-// ID Card Page Switcher (Flip Card Function)
-// ---------------------------------------------------------
+/* =========================================================
+   UTILITY & ENGINE HELPERS
+   ========================================================= */
 function toggleIdPage() {
     let front = document.getElementById('idCardFrontView');
     let back = document.getElementById('idCardBackView');
@@ -1884,9 +1911,6 @@ function toggleIdPage() {
     }
 }
 
-// ---------------------------------------------------------
-// Edit Member Helper
-// ---------------------------------------------------------
 function editMember(id, name, phone, plan) {
     if (typeof switchView === 'function') switchView('registerView');
     if (document.getElementById('regId')) document.getElementById('regId').value = id;
@@ -1895,30 +1919,26 @@ function editMember(id, name, phone, plan) {
     if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
     if (typeof calcPrice === 'function') calcPrice();
 }
-/* =========================================================
-   IMMEDIATE DELETE ENGINE (OPTIMISTIC UI UPDATE)
-   ========================================================= */
+
 function deleteMember(id) {
     if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
-        // 1. Local Cache ላይ ወዲያውኑ አባሉን ማጥፋት
         membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
         
-        // 2. Table እና Dashboard ላይ ወዲያውኑ ውጤቱን ማሳየት
         renderDirectory(membersCache);
         if (typeof renderDashboardAnalytics === 'function') {
             renderDashboardAnalytics(membersCache);
         }
 
-        // 3. ወደ ሰርቨር የጥፋት ጥያቄ መላክ
-        fetch(API_ENDPOINT, {
+        let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+
+        fetch(endpoint, {
             method: 'POST', 
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "deleteMember", memberId: id })
         }).then(() => {
-            // ሰርቨሩ መረጃውን ከ Google Sheets አጥፍቶ እስኪጨርስ 2 ሰከንድ ጠብቆ Sync ማድረግ
             setTimeout(() => {
-                syncMembers();
+                if (typeof syncMembers === 'function') syncMembers();
             }, 2000);
         }).catch(err => console.error("Delete error:", err));
     }
