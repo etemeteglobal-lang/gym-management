@@ -1803,14 +1803,14 @@ function submitRegistration() {
         }).then(() => {
             if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
             
-            // 1. Show Smart ID Card Modal
+            // 1. Show Smart ID Card Modal (ከላይ የሰራነው ባለ 2 ገጽ አዲሱ የCanva Design)
             showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
             
             // 2. Clear Form Input
             document.getElementById('regForm').reset();
             document.getElementById('regGregDate').valueAsDate = new Date();
             
-            // 3. Local Cache Update (ወዲያውኑ አፑ ላይ እንዲታይ ማድረግ)
+            // 3. Local Cache Update
             let newMemberRow = [
                 payload.memberId, 
                 payload.fullName, 
@@ -1825,7 +1825,6 @@ function submitRegistration() {
                 payload.photoBase64
             ];
             
-            // Check if member already exists in cache (Update vs Append)
             let existingIdx = membersCache.findIndex(m => String(m[0]).trim().toLowerCase() === payload.memberId.toLowerCase());
             if (existingIdx >= 0) {
                 membersCache[existingIdx] = newMemberRow;
@@ -1833,10 +1832,9 @@ function submitRegistration() {
                 membersCache.push(newMemberRow);
             }
 
-            // Render Directory immediately without waiting for server response
             renderDirectory(membersCache);
 
-            // 4. Server Re-Sync (ከሰርቨሩ ጋር በቋሚነት ለማረጋገጥ ከ1.5 ሰከንድ በኋላ መረጃውን ያመጣል)
+            // 4. Server Re-Sync
             setTimeout(() => {
                 syncMembers();
             }, 1500);
@@ -1853,41 +1851,35 @@ function submitRegistration() {
         processSubmit("https://via.placeholder.com/100");
     }
 }
-        function showSmartIdCard(id, name, phone, edid, expiry, photo) {
-            document.getElementById('cardMemberId').innerText = id;
-            document.getElementById('cardMemberName').innerText = name.toUpperCase();
-            document.getElementById('cardPhone').innerText = phone;
-            document.getElementById('cardEdid').innerText = edid || "EDID-FAN-2589341592";
-            document.getElementById('cardExpiry').innerText = expiry;
-            document.getElementById('cardMemberPhoto').src = photo || "https://via.placeholder.com/100";
 
-            let qrContainer = document.getElementById('cardQrCode');
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, { text: id, width: 100, height: 100, colorDark : "#000000", colorLight : "#ffffff" });
+// ---------------------------------------------------------
+// ID Card Page Switcher (Flip Card Function)
+// ---------------------------------------------------------
+function toggleIdPage() {
+    let front = document.getElementById('idCardFrontView');
+    let back = document.getElementById('idCardBackView');
+    if (!front || !back) return;
 
-            document.getElementById('idCardFrontView').style.display = 'block';
-            document.getElementById('idCardBackView').style.display = 'none';
-            document.getElementById('smartIdModal').style.display = 'flex';
-        }
+    if (front.style.display === 'none') {
+        front.style.display = 'block'; 
+        back.style.display = 'none';
+    } else {
+        front.style.display = 'none'; 
+        back.style.display = 'block';
+    }
+}
 
-        function toggleIdPage() {
-            let front = document.getElementById('idCardFrontView');
-            let back = document.getElementById('idCardBackView');
-            if (front.style.display === 'none') {
-                front.style.display = 'block'; back.style.display = 'none';
-            } else {
-                front.style.display = 'none'; back.style.display = 'block';
-            }
-        }
-
-        function editMember(id, name, phone, plan) {
-            switchView('registerView');
-            document.getElementById('regId').value = id;
-            document.getElementById('regName').value = name;
-            document.getElementById('regPhone').value = phone;
-            document.getElementById('regPlan').value = plan;
-            calcPrice();
-        }
+// ---------------------------------------------------------
+// Edit Member Helper
+// ---------------------------------------------------------
+function editMember(id, name, phone, plan) {
+    switchView('registerView');
+    document.getElementById('regId').value = id;
+    document.getElementById('regName').value = name;
+    document.getElementById('regPhone').value = phone;
+    document.getElementById('regPlan').value = plan;
+    calcPrice();
+}
 /* =========================================================
    IMMEDIATE DELETE ENGINE (OPTIMISTIC UI UPDATE)
    ========================================================= */
