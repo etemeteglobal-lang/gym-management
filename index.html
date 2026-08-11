@@ -1916,15 +1916,42 @@ function deleteMember(id) {
     }
 }
 /* =========================================================
-   UPDATED QR SCANNER & SMART PARSER WITH AUTOMATIC EXPIRY CHECK
+   UPDATED QR SCANNER & SMART PARSER (ETHIOPIAN CALENDAR FIXED)
    ========================================================= */
 
 window.scanHistory = window.scanHistory || {};
 let currentScannedMember = null;
 
+// 0. CHECK EXPIRED FUNCTION (Missing Function Fix)
+function checkIsExpired(expiryStr, statusStr) {
+    if (statusStr && String(statusStr).toLowerCase() === 'expired') return true;
+    if (!expiryStr || expiryStr === 'N/A') return false;
+
+    // የኢትዮጵያ ቀንን (ወይም YYYY-MM-DD) መተንተን
+    let expDate = null;
+    let parts = String(expiryStr).split(' ')[0].split('/'); // "5/11/2018" -> [5, 11, 2018]
+    
+    if (parts.length === 3) {
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        // የኢትዮጵያ አመተ ምህረት ከሆነ ወደ G.C በግምታዊ አመት ማስተካከል (2018 E.C ~= 2026 G.C)
+        if (year < 2020) year += 8; 
+
+        expDate = new Date(year, month - 1, day);
+    } else {
+        expDate = new Date(expiryStr);
+    }
+
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return (!isNaN(expDate.getTime()) && expDate < today);
+}
+
 // 1. Start Camera Stream
 async function startScanner(mode = 'environment') {
-    // ካሜራውን አሳይቶ የውጤት ማሳያውን መሸፈን
     let cameraArea = document.getElementById('cameraArea');
     let resultCard = document.getElementById('scanProfileResult');
     
@@ -1985,13 +2012,12 @@ async function stopScanner() {
     }
 }
 
-// 3. Process Scan (With Automatic Expiry Verification & Ultra Glassmorphic UI)
+// 3. Process Scan
 async function processScan(scannedData) {
     if (!scannedData) return;
 
     let extractedId = String(scannedData).trim();
 
-    // JSON ከሆነ ID/EDID መፍታት
     try {
         let parsed = JSON.parse(scannedData);
         if (parsed.id) extractedId = String(parsed.id).trim();
@@ -2001,7 +2027,6 @@ async function processScan(scannedData) {
         extractedId = String(scannedData).trim();
     }
 
-    // ስካን እንደተደረገ ካሜራውን አቁሞ መሸፈን
     await stopScanner();
     let cameraArea = document.getElementById('cameraArea');
     if (cameraArea) cameraArea.style.display = 'none';
@@ -2009,7 +2034,6 @@ async function processScan(scannedData) {
     let resultCard = document.getElementById('scanProfileResult');
     if (resultCard) resultCard.style.display = 'block';
 
-    // አባሉን ከ Cache መፈለግ (Member ID ወይም EDID [index 9])
     let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) ? membersCache : [];
     let m = membersList.find(item => {
         let mId = String(item[0] || '').trim().toLowerCase();
@@ -2021,36 +2045,23 @@ async function processScan(scannedData) {
     if (!m) {
         currentScannedMember = null;
         resultCard.innerHTML = `
-            <div style="color:#EE5D50; font-weight:800; font-size:1rem; text-align:center; padding:18px; background:rgba(238,93,80,0.12); border-radius:18px; border:1px solid #EE5D50; box-shadow:0 10px 30px rgba(238,93,80,0.2);">
+            <div style="color:#EE5D50; font-weight:800; font-size:1rem; text-align:center; padding:18px; background:rgba(238,93,80,0.12); border-radius:18px; border:1px solid #EE5D50;">
                 ❌ ACCESS DENIED: ያልተመዘገበ ID (${extractedId})
             </div>
             <div style="margin-top:18px; text-align:center;">
-                <button type="button" class="btn-main" style="background:#EE5D50; padding:12px 28px; border-radius:12px; font-weight:800; color:#fff; border:none; cursor:pointer;" onclick="cancelScan()">❌ ተመለስ</button>
+                <button type="button" style="background:#EE5D50; padding:12px 28px; border-radius:12px; font-weight:800; color:#fff; border:none; cursor:pointer;" onclick="cancelScan()">❌ ተመለስ</button>
             </div>
         `;
         return;
     }
 
-    // ---------------------------------------------------------
-    // EXPIRY DATE CHECKING LOGIC
-    // ---------------------------------------------------------
+    // EXPIRY CHECK LOGIC
     let rawExpiry = m[5] || "";
-    let isExpired = false;
-
-    if (rawExpiry) {
-        let today = new Date();
-        today.setHours(0, 0, 0, 0); // ሰዓቱን 00:00 ማድረግ
-        let expDate = new Date(rawExpiry);
-
-        if (!isNaN(expDate.getTime()) && expDate < today) {
-            isExpired = true;
-        }
-    }
+    let isExpired = checkIsExpired(rawExpiry, m[6]);
 
     let calculatedStatus = isExpired ? "Expired" : (m[6] || "Active");
-    let isActive = calculatedStatus.toLowerCase() === "active" && !isExpired;
+    let isActive = !isExpired && calculatedStatus.toLowerCase() === "active";
 
-    // የአባሉን መረጃዎች ማዘጋጀት (Photo index 10 ላይ ይገኛል)
     currentScannedMember = {
         id: m[0] || extractedId,
         name: m[1] || "Member",
@@ -2065,23 +2076,16 @@ async function processScan(scannedData) {
     resultCard.innerHTML = `
         <div style="position: relative; padding: 24px 18px; border-radius: 24px; background: linear-gradient(145deg, rgba(17, 28, 68, 0.95), rgba(11, 20, 55, 0.98)); border: 1px solid ${isActive ? 'rgba(1, 181, 116, 0.3)' : 'rgba(238, 93, 80, 0.3)'}; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); overflow: hidden; backdrop-filter: blur(16px);">
             
-            <!-- Glow Effect Ambient -->
-            <div style="position: absolute; top: -40px; left: -40px; width: 120px; height: 120px; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; filter: blur(40px); border-radius: 50%; pointer-events: none;"></div>
-
-            <!-- የሁኔታ ባጅ -->
             <div style="margin-bottom: 18px; text-align: center;">
-                <span style="display: inline-block; padding: 8px 20px; border-radius: 30px; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; color: ${isActive ? '#01B574' : '#EE5D50'}; border: 1px solid ${isActive ? '#01B574' : '#EE5D50'}; box-shadow: 0 4px 15px ${isActive ? 'rgba(1, 181, 116, 0.2)' : 'rgba(238, 93, 80, 0.2)'};">
-                    ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '⛔ ACCESS DENIED (' + currentScannedMember.status.toUpperCase() + ')'}
+                <span style="display: inline-block; padding: 8px 20px; border-radius: 30px; font-weight: 800; font-size: 0.85rem; background: ${isActive ? 'rgba(1, 181, 116, 0.15)' : 'rgba(238, 93, 80, 0.15)'}; color: ${isActive ? '#01B574' : '#EE5D50'}; border: 1px solid ${isActive ? '#01B574' : '#EE5D50'};">
+                    ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '⛔ ACCESS DENIED (EXPIRED)'}
                 </span>
             </div>
 
-            <!-- የአባሉ ፎቶ ከ Glowing Ring ጋር -->
             <div style="margin-bottom: 16px; position: relative; display: inline-block; text-align: center;">
-                <div style="position: absolute; inset: -4px; border-radius: 50%; background: ${isActive ? 'linear-gradient(135deg, #01B574, #58A6FF)' : 'linear-gradient(135deg, #EE5D50, #FFB547)'}; filter: blur(8px); opacity: 0.7;"></div>
-                <img src="${currentScannedMember.photo}" style="position: relative; width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.45);" />
+                <img src="${currentScannedMember.photo}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #FFFFFF;" />
             </div>
 
-            <!-- ስም እና ID -->
             <h3 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin-bottom: 4px; text-align: center;">${currentScannedMember.name}</h3>
             <div style="text-align: center; margin-bottom: 18px;">
                 <span style="background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.3); padding: 4px 14px; border-radius: 20px; color: #58A6FF; font-weight: 800; font-size: 0.88rem;">
@@ -2089,7 +2093,6 @@ async function processScan(scannedData) {
                 </span>
             </div>
 
-            <!-- ዝርዝር መረጃዎች -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.82rem; text-align: left; background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ስልክ:</b> <span style="color: #FFF; font-weight: 700;">${currentScannedMember.phone}</span></div>
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ፓኬጅ:</b> <span style="color: #FFB547; font-weight: 800;">${currentScannedMember.plan}</span></div>
@@ -2097,16 +2100,15 @@ async function processScan(scannedData) {
                 <div style="padding: 4px;"><b style="color: #A3AED0; font-size: 0.75rem; display: block;">ሁኔታ:</b> <span style="color: ${isActive ? '#01B574' : '#EE5D50'}; font-weight: 800;">${currentScannedMember.status}</span></div>
             </div>
 
-            <!-- የውሳኔ አዝራሮች -->
             <div style="display: flex; gap: 12px; justify-content: center;">
-                ${isActive ? `<button type="button" id="btnConfirmLog" style="background: #01B574; color: #FFF; flex: 1; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(1,181,116,0.3);" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
-                <button type="button" style="background: #EE5D50; color: #FFF; flex: ${isActive ? '1' : '2'}; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(238,93,80,0.3);" onclick="cancelScan()">❌ ተው</button>
+                ${isActive ? `<button type="button" id="btnConfirmLog" style="background: #01B574; color: #FFF; flex: 1; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer;" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
+                <button type="button" style="background: #EE5D50; color: #FFF; flex: ${isActive ? '1' : '2'}; padding: 13px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer;" onclick="cancelScan()">❌ ተው</button>
             </div>
         </div>
     `;
 }
 
-// 4. "መዝግብ" ሲነካ ወደ ሰርቨር መዝግቦ ወደ ካሜራ የመመለሻ logic
+// 4. Confirm Attendance
 async function confirmAttendance() {
     if (!currentScannedMember) return;
 
@@ -2121,29 +2123,29 @@ async function confirmAttendance() {
         
         if (btn) {
             btn.innerText = "✅ SUCCESS!";
-            btn.style.background = "var(--success-color, #01B574)";
+            btn.style.background = "#01B574";
         }
     } catch (err) {
         console.error("Save Error:", err);
         if (btn) {
             btn.innerText = "❌ ERROR!";
-            btn.style.background = "var(--danger-color, #EE5D50)";
+            btn.style.background = "#EE5D50";
         }
     }
 
     setTimeout(() => {
         currentScannedMember = null;
-        startScanner(); // መልሶ ካሜራውን ማስነሳት
+        startScanner();
     }, 1000);
 }
 
-// 5. "ተው" ሲነካ ቀጥታ ወደ ካሜራ መመለስ
+// 5. Cancel Scan
 function cancelScan() {
     currentScannedMember = null;
     startScanner();
 }
 
-// 6. መረጃውን ወደ Google Apps Script የሚልከው (Promise የሚመልስ)
+// 6. Send Attendance
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     
@@ -2164,7 +2166,7 @@ function sendAttendance(id, name, status) {
     });
 }
 
-// 7. Fetch Logs Table
+// 7. Fetch Logs
 function fetchLogs() {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     if (!endpoint) return;
@@ -2193,11 +2195,12 @@ function fetchLogs() {
     .catch(err => {
         console.error("Fetch Logs Error:", err);
         if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--danger-color, #EE5D50); padding:15px;">መረጃውን ማምጣት አልተቻለም።</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#EE5D50; padding:15px;">መረጃውን ማምጣት አልተቻለም።</td></tr>';
         }
     });
 }
-// የሰዓት አቆጣጠሩን ከ 24-Hour (17:15:00) ወደ 12-Hour AM/PM (05:15:00 PM) መቀየሪያ
+
+// 8. Time Format Helper
 function format12HourTime(dateTimeStr) {
     if (!dateTimeStr) return '';
     let parts = String(dateTimeStr).trim().split(' ');
@@ -2216,7 +2219,7 @@ function format12HourTime(dateTimeStr) {
     return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 }
 
-// 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
+// 9. Render Grouped Logs
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
@@ -2256,7 +2259,6 @@ function renderGroupedLogs(rows) {
 
             let formattedTime = format12HourTime(rawScanTime);
 
-            // አባሉን ከ membersCache መፈለግ
             let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
                     ? membersCache.find(mem => {
                         let cachedId = String(mem[0] || '').trim().toLowerCase();
@@ -2265,7 +2267,6 @@ function renderGroupedLogs(rows) {
                     })
                     : null;
 
-            // ቀን ማለፉን checkIsExpired ን በመጠቀም በጥንቃቄ ማረጋገጥ
             let isExpired = false;
             if (m) {
                 isExpired = checkIsExpired(m[5], m[6]);
@@ -2275,7 +2276,7 @@ function renderGroupedLogs(rows) {
 
             let displayStatus = isExpired ? 'Expired' : 'Active';
             let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
-            let colorStyle = isExpired ? 'var(--danger-color, #EE5D50)' : 'var(--success-color, #01B574)';
+            let colorStyle = isExpired ? '#EE5D50' : '#01B574';
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
@@ -2292,9 +2293,8 @@ function renderGroupedLogs(rows) {
         });
     });
 }
-/* =========================================================
-   UTILITY EXPORT & VCARD FUNCTIONS
-   ========================================================= */
+
+// 10. Utility Functions
 function downloadVCard() {
     let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
     let blob = new Blob([vcardData], { type: 'text/vcard' });
@@ -2306,18 +2306,18 @@ function downloadVCard() {
 
 function exportCSV() {
     let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
-    membersCache.forEach(m => {
-        csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
-    });
+    if (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) {
+        membersCache.forEach(m => {
+            csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+        });
+    }
     let blob = new Blob([csv], { type: 'text/csv' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'FaidATech_Gym_Members.csv';
     a.click();
 }
-/* =========================================================
-   MEMBERS DIRECTORY STATUS FILTER ENGINE (FIXED)
-   ========================================================= */
+
 function filterDirectoryByStatus() {
     let q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
     let filterVal = document.getElementById('statusFilterSelect') ? document.getElementById('statusFilterSelect').value : 'ALL';
@@ -2329,26 +2329,23 @@ function filterDirectoryByStatus() {
         let name = String(m[1] || '').toLowerCase();
         let phone = String(m[2] || '').toLowerCase();
         
-        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
         
-        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
         let expiry = m[5] || '';
         let rawStatus = m[6] || 'Active';
         let isExpired = checkIsExpired(expiry, rawStatus);
         
-        // 3. Dropdown ማጣሪያ
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
         
-        return matchesSearch; // ALL ከሆነ
+        return matchesSearch;
     });
 
-    // የተጣራውን ውጤት Table ላይ ማሳየት
-    renderDirectory(filtered);
+    if (typeof renderDirectory === 'function') {
+        renderDirectory(filtered);
+    }
 }
 
-// ጽሑፍ ሲፈለግም ይሄው እንዲሰራ ማድረግ
 function filterDirectory() {
     filterDirectoryByStatus();
 }
