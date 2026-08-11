@@ -337,64 +337,60 @@
             border-color: var(--brand-orange);
         }
 
-       /* =========================================================
-   WORKSPACE HEADER & TOP CONTROLS (FIXED)
-   ========================================================= */
-.enterprise-workspace {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg-canvas);
-    width: calc(100% - var(--sidebar-width));
-}
+        /* =========================================================
+           WORKSPACE HEADER & TOP CONTROLS
+           ========================================================= */
+        .enterprise-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-canvas);
+            width: calc(100% - var(--sidebar-width));
+        }
 
-.topbar {
-    height: 70px;
-    max-height: 70px;
-    background: var(--surface-white);
-    padding: 0 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    z-index: 99;
-    flex-wrap: nowrap; /* ወደ ታች እንዳይወርድ የተከለከለ */
-    flex-shrink: 0;
-    gap: 12px;
-}
+        .topbar {
+            min-height: 70px;
+            background: var(--surface-white);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 99;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
 
-.topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex: 1;
-    min-width: 0; /* Text overflow እንዳይፈጥር የተደረገ */
-}
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
 
-.topbar h1 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-main);
-    line-height: 1.2;
-    white-space: nowrap;
-}
+        .topbar h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
 
-.topbar p {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 2px;
-    white-space: nowrap;
-}
+        .topbar p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
 
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
 
         .menu-toggle-btn {
             display: none;
@@ -688,80 +684,105 @@
             margin-top: 8px;
         }
 /* =========================================================
-   DESKTOP CONTENT EXPANSION & MOBILE NAV ENGINE
-   ========================================================= */
+       WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (REPLACEMENT)
+       ========================================================= */
 
-/* 1. በዴስክቶፕ ላይ ይዘቱ (Cards/Tables) ሙሉ ስክሪን እንዲይዝ ማድረግ */
-.content-scroll,
-.view-section,
-.glass-card,
-.table-responsive {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
+    @media (max-width: 900px) {
+        body {
+            overflow-x: hidden !important;
+        }
 
-/* 2. በዴስክቶፕ ላይ Bottom Nav እንዳይታይ መደበቅ */
-.mobile-bottom-nav {
-    display: none !important;
-}
+        .enterprise-sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            bottom: 0;
+            height: 100dvh;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-/* 3. በስልክ (ከ900px በታች) ብቻ የሚሰራ ማስተካከያ */
-@media screen and (max-width: 900px) {
-    .enterprise-sidebar,
-    .menu-toggle-btn {
-        display: none !important;
+        .enterprise-sidebar.mobile-open {
+            left: 0;
+            box-shadow: 20px 0 60px rgba(0,0,0,0.8);
+        }
+
+        .sidebar-menu-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .faida-powered-footer {
+            flex-shrink: 0;
+            margin-bottom: 15px;
+        }
+
+        .menu-toggle-btn {
+            display: flex !important;
+        }
+
+        .enterprise-workspace {
+            width: 100% !important;
+            margin-left: 0 !important;
+            padding: 0 !important;
+        }
+
+        .topbar {
+            padding: 10px 14px;
+        }
+
+        .topbar p {
+            display: none;
+        }
+
+        .content-scroll {
+            padding: 12px 10px 90px 10px !important;
+            overflow-x: hidden !important;
+        }
+
+        /* 1. KPI Metrics Grid ማስተካከያ */
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+        }
+
+        /* 2. የቻርቶች Grid በስልክ ላይ ወደ 1 Column መቀየር */
+        div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+        }
+
+        /* 3. Glass Card & Canvas Responsive sizing */
+        .glass-card {
+            height: auto !important;
+            min-height: 280px !important;
+            padding: 14px !important;
+        }
+
+        canvas {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: 230px !important;
+        }
+
+        /* 4. Table Overflow Handling */
+        .table-responsive, table {
+            width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* 5. Touch Friendly Input Controls */
+        .input-group input, 
+        .input-group select {
+            font-size: 15px !important;
+            padding: 10px 12px !important;
+        }
     }
-
-    .enterprise-workspace {
-        width: 100% !important;
-        margin-left: 0 !important;
-    }
-
-    .content-scroll {
-        padding-bottom: 80px !important;
-    }
-
-    .mobile-bottom-nav {
-        display: flex !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        height: 60px !important;
-        background: #ffffff !important;
-        box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.12) !important;
-        border-top: 1px solid #e2e8f0 !important;
-        z-index: 999999 !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-    }
-
-    .bottom-nav-item {
-        background: none !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #64748b !important;
-        font-size: 10px !important;
-        font-weight: 600 !important;
-        width: 20% !important;
-        cursor: pointer !important;
-    }
-
-    .bottom-nav-item.active {
-        color: #0f385a !important;
-        font-weight: 800 !important;
-    }
-
-    body:has(#loginView.active) .mobile-bottom-nav,
-    body:has(#loginView[style*="display: block"]) .mobile-bottom-nav {
-        display: none !important;
-    }
-}
-</style>
+    </style>
 </head>
 <body>
 
@@ -819,7 +840,9 @@
         </div>
     </aside>
 
-   <!-- TOPBAR HEADER -->
+    <!-- 3. WORKSPACE AREA -->
+    <div class="enterprise-workspace">
+        <!-- TOPBAR HEADER -->
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
@@ -831,7 +854,6 @@
             <div class="topbar-right">
                 <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" id="themeToggleBtn">🌙</button>
                 <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
-                <button class="top-action-btn" onclick="switchMobileTab('settingsView', this)" title="Settings">⚙️</button>
                 <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
             </div>
         </header>
@@ -991,7 +1013,7 @@
             </div>
         </div>
 
-        <!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
+<!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
 <div id="scanProfileResult" style="margin-top:0px; padding:28px 22px; border-radius:24px; display:none; text-align:center; border:1px solid rgba(88, 166, 255, 0.25); background: linear-gradient(145deg, rgba(17, 28, 68, 0.95), rgba(11, 20, 55, 0.98)); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); position: relative; overflow: hidden;">
     
     <!-- Cyber Light Rays Background Effect -->
@@ -1022,7 +1044,6 @@
         <div style="padding: 6px 8px;"><b style="color: #A3AED0; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;">ሁኔታ:</b> <span id="scanMemberStatus" style="font-weight: 800;">-</span></div>
     </div>
 </div>
-
             <!-- አዝራሮች (መዝግብ እና ተው) -->
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>
@@ -2091,6 +2112,7 @@ async function processScan(scannedData) {
         </div>
     `;
 }
+
 // 4. "መዝግብ" ሲነካ ወደ ሰርቨር መዝግቦ ወደ ካሜራ የመመለሻ logic
 async function confirmAttendance() {
     if (!currentScannedMember) return;
@@ -2315,18 +2337,22 @@ function filterDirectoryByStatus() {
         let name = String(m[1] || '').toLowerCase();
         let phone = String(m[2] || '').toLowerCase();
         
+        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
         
+        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
         let expiry = m[5] || '';
         let rawStatus = m[6] || 'Active';
         let isExpired = checkIsExpired(expiry, rawStatus);
         
+        // 3. Dropdown ማጣሪያ
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
         
-        return matchesSearch;
+        return matchesSearch; // ALL ከሆነ
     });
 
+    // የተጣራውን ውጤት Table ላይ ማሳየት
     renderDirectory(filtered);
 }
 
@@ -2334,69 +2360,6 @@ function filterDirectoryByStatus() {
 function filterDirectory() {
     filterDirectoryByStatus();
 }
-
-// =========================================================
-// MOBILE BOTTOM NAVIGATION SWITCHER (FIXED FOR LOGIN)
-// =========================================================
-function switchMobileTab(viewId, btnEl) {
-    let allViews = document.querySelectorAll('.view-section, [id$="View"]');
-    allViews.forEach(view => {
-        if (view.id) {
-            view.classList.remove('active');
-            view.style.display = 'none';
-        }
-    });
-
-    let targetView = document.getElementById(viewId);
-    let bottomNav = document.querySelector('.mobile-bottom-nav');
-
-    if (targetView) {
-        targetView.classList.add('active');
-        targetView.style.display = 'block';
-    }
-
-    // Login View ወይም Auth Form ሲሆን Bottom Nav-ን በጭራሽ አለማሳየት
-    if ((viewId === 'loginView' || viewId === 'login') && bottomNav) {
-        bottomNav.style.display = 'none';
-    } else if (bottomNav && window.innerWidth <= 900) {
-        bottomNav.style.display = 'flex';
-    }
-
-    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    if (btnEl && btnEl.classList) {
-        btnEl.classList.add('active');
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 </script>
-
-<!-- MOBILE BOTTOM NAVIGATION BAR -->
-<div class="mobile-bottom-nav">
-    <button class="bottom-nav-item active" onclick="switchMobileTab('dashboardView', this)">
-        <span class="nav-icon">📊</span>
-        <span class="nav-label">Dashboard</span>
-    </button>
-    <button class="bottom-nav-item" onclick="switchMobileTab('registerView', this)">
-        <span class="nav-icon">➕</span>
-        <span class="nav-label">Register</span>
-    </button>
-    <button class="bottom-nav-item" onclick="switchMobileTab('membersView', this)">
-        <span class="nav-icon">👥</span>
-        <span class="nav-label">Members</span>
-    </button>
-    <button class="bottom-nav-item" onclick="switchMobileTab('qrScannerView', this)">
-        <span class="nav-icon">📷</span>
-        <span class="nav-label">QR Scan</span>
-    </button>
-    <button class="bottom-nav-item" onclick="switchMobileTab('attendanceView', this)">
-        <span class="nav-icon">📋</span>
-        <span class="nav-label">Audit</span>
-    </button>
-</div>
-
 </body>
 </html>
