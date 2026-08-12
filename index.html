@@ -1783,21 +1783,22 @@ function openMemberSmartId(memberId) {
 }
 
 /* =========================================================
-   SMART ID CARD ENGINE (WITH POWERFUL COLORS & NO EXPIRY)
+   SMART ID CARD ENGINE (100% SAFE - NO HTML CHANGES)
    ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
     if (document.getElementById('cardMemberId')) {
         let idEl = document.getElementById('cardMemberId');
-        idEl.innerText = id || 'GM-000';
-        idEl.style.color = '#FF5E00'; // Powerful Orange Color
+        idEl.innerText = id || 'GM-0001';
+        idEl.style.color = '#FF5E00';
         idEl.style.fontWeight = '900';
     }
     
     if (document.getElementById('cardMemberName')) {
         let nameEl = document.getElementById('cardMemberName');
         nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
-        nameEl.style.color = '#111827'; // Dark Bold Color
+        nameEl.style.color = '#111827';
+        nameEl.style.fontWeight = '900';
     }
     
     if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
@@ -1806,9 +1807,9 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
     let expiryEl = document.getElementById('cardExpiry');
     if (expiryEl) {
-        expiryEl.style.display = 'none'; // ጽሁፉን ማጥፋት
+        expiryEl.style.display = 'none';
         if (expiryEl.parentElement) {
-            expiryEl.parentElement.style.display = 'none'; // የያዘውን ሙሉ መስመር (Label) ማጥፋት
+            expiryEl.parentElement.style.display = 'none';
         }
     }
 
@@ -1816,21 +1817,21 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     if (document.getElementById('cardMemberPhoto')) {
         let photoEl = document.getElementById('cardMemberPhoto');
         photoEl.src = photo || 'https://via.placeholder.com/100';
-        photoEl.style.border = '4px solid #FF5E00'; // Orange Border
-        photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)'; // 3D Shadow effect
+        photoEl.style.border = '4px solid #FF5E00';
+        photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
         photoEl.style.borderRadius = '50%';
     }
 
-    // 4. QR Code
+    // 4. QR Code ማመንጨት
     let qrContainer = document.getElementById('cardQrCode');
     if (qrContainer) {
         qrContainer.innerHTML = "";
         if (typeof QRCode !== 'undefined') {
-            new QRCode(qrContainer, { text: id, width: 85, height: 85 });
+            new QRCode(qrContainer, { text: id || 'GM-0001', width: 85, height: 85 });
         }
     }
 
-    // 5. የካርድ ገጽታ ማሳመር (Background Gradients)
+    // 5. የካርድ ገጽታ ማሳመር (Background Gradients & Borders)
     let frontView = document.getElementById('idCardFrontView');
     if (frontView) {
         frontView.style.display = 'block';
@@ -1842,7 +1843,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     let backView = document.getElementById('idCardBackView');
     if (backView) {
         backView.style.display = 'none';
-        backView.style.background = 'linear-gradient(180deg, #111827 0%, #1f2937 100%)'; // Dark theme for back
+        backView.style.background = 'linear-gradient(180deg, #111827 0%, #1f2937 100%)';
         backView.style.border = '2px solid #FF5E00';
         backView.style.borderRadius = '16px';
     }
@@ -1850,7 +1851,6 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
 }
-
 /* =========================================================
    MEMBER REGISTRATION ENGINE
    ========================================================= */
