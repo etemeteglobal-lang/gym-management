@@ -1783,21 +1783,21 @@ function openMemberSmartId(memberId) {
 }
 
 /* =========================================================
-   SMART ID CARD ENGINE (ORIGINAL CODE + POWERED BY FOOTER)
+   SMART ID CARD ENGINE (STRICTLY STYLING & COLORS ONLY)
    ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
     if (document.getElementById('cardMemberId')) {
         let idEl = document.getElementById('cardMemberId');
         idEl.innerText = id || 'GM-0001';
-        idEl.style.color = '#FF5E00';
+        idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ በግልጽ እንዲታይ
         idEl.style.fontWeight = '900';
     }
     
     if (document.getElementById('cardMemberName')) {
         let nameEl = document.getElementById('cardMemberName');
         nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
-        nameEl.style.color = '#111827';
+        nameEl.style.color = '#0F172A'; // ደማቅ ጥቁር ከለር
         nameEl.style.fontWeight = '900';
     }
     
@@ -1820,6 +1820,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         photoEl.style.border = '4px solid #FF5E00';
         photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
         photoEl.style.borderRadius = '50%';
+        photoEl.style.objectFit = 'cover';
     }
 
     // 4. QR Code ማመንጨት
@@ -1831,26 +1832,35 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         }
     }
 
-    // 5. የካርድ ገጽታ ማሳመር
+    // 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ)
     let frontView = document.getElementById('idCardFrontView');
     if (frontView) {
         frontView.style.display = 'block';
-        frontView.style.background = 'linear-gradient(180deg, #ffffff 60%, #fff7f2 100%)';
-        frontView.style.border = '2px solid #FF5E00';
+        frontView.style.background = '#FFFFFF';
+        frontView.style.border = '3px solid #FF5E00';
         frontView.style.borderRadius = '16px';
+        frontView.style.overflow = 'hidden'; // ነጭ ወሰን እንዳይበላሽ
+        frontView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
     }
     
     let backView = document.getElementById('idCardBackView');
     if (backView) {
         backView.style.display = 'none';
-        backView.style.background = 'linear-gradient(180deg, #111827 0%, #1f2937 100%)';
-        backView.style.border = '2px solid #FF5E00';
+        backView.style.background = '#0F172A'; // ሙሉውን ጥቁር ዳራ ማድረግ
+        backView.style.border = '3px solid #FF5E00';
         backView.style.borderRadius = '16px';
+        backView.style.color = '#FFFFFF';
+        backView.style.overflow = 'hidden'; // ከስር ነጭ ተቆርጦ የሚታየውን ያስተካክላል
+        backView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
     }
 
     // 6. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
     if (document.getElementById('cardFooterText')) {
-        document.getElementById('cardFooterText').innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
+        let footerEl = document.getElementById('cardFooterText');
+        footerEl.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
+        footerEl.style.color = '#94A3B8';
+        footerEl.style.fontSize = '0.65rem';
+        footerEl.style.fontWeight = '700';
     }
 
     let modal = document.getElementById('smartIdModal');
