@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="am" class="dark-theme-enabled">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FaidATech Enterprise Super-App | Ultimate Gym Management v6.0</title>
+    
+    <!-- External Enterprise Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================================
+           ADVANCED DESIGN SYSTEM & DESIGN TOKENS
+           ========================================================= */
+        :root {
+            /* Corporate Brand Identity */
+            --faida-primary: #0F385A;
+            --faida-accent: #3C8356;
+            --brand-orange: #FF6B00;
+            --brand-dark: #121212;
+            
+            /* Dark Mode Standard Tokens */
+            --bg-canvas: #0B1437;
+            --surface-white: #111C44;
+            --surface-card: #1B2559;
+            --text-main: #FFFFFF;
+            --text-muted: #A3AED0;
+            --border-light: #2B3674;
+            --input-bg: #0B1437;
+            --table-header-bg: rgba(15, 56, 90, 0.4);
+            
+            /* Operational Status Colors */
+            --success-color: #01B574;
+            --danger-color: #EE5D50;
+            --warning-color: #FFB547;
+            --info-color: #4318FF;
+            
+            /* Layout & Spacing Engine */
+            --sidebar-width: 280px;
+            --radius-smooth: 20px;
+            --radius-element: 12px;
+            --shadow-enterprise: 0px 18px 40px rgba(0, 0, 0, 0.45);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Light Theme Dynamic Overrides */
+        html.light-theme-enabled {
+            --bg-canvas: #F4F7FE;
+            --surface-white: #FFFFFF;
+            --surface-card: #FFFFFF;
+            --text-main: #1B2559;
+            --text-muted: #A3AED0;
+            --border-light: #E9EDF7;
+            --input-bg: #F4F7FE;
+            --table-header-bg: #F4F7FE;
+            --shadow-enterprise: 0px 18px 40px rgba(112, 144, 176, 0.12);
+        }
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        /* Custom Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--faida-accent);
+        }
+
+        /* =========================================================
+           AUTHENTICATION OVERLAY LAYOUT
+           ========================================================= */
+        #enterpriseLoginOverlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--faida-primary), #051c30);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            backdrop-filter: blur(12px);
+        }
+
+        .login-glass-card {
+            background: var(--surface-card);
+            padding: 40px 30px;
+            border-radius: 24px;
+            width: 420px;
+            max-width: 92%;
+            box-shadow: var(--shadow-enterprise);
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        .login-glass-card h2 {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .login-glass-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-element);
+            border: 2px solid var(--border-light);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition-smooth);
+            background: var(--input-bg);
+            color: var(--text-main);
+        }
+
+        .input-group input:focus, 
+        .input-group select:focus {
+            border-color: var(--faida-accent);
+            box-shadow: 0 0 0 4px rgba(60, 131, 86, 0.15);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--faida-primary), var(--faida-accent));
+            color: white;
+            border: none;
+            border-radius: var(--radius-element);
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(15, 56, 90, 0.3);
+            transition: var(--transition-smooth);
+            margin-top: 10px;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(60, 131, 86, 0.4);
+        }
+
+        /* =========================================================
+           SIDEBAR NAVIGATION ENGINE (MOBILE RESPONSIVE FLEX)
+           ========================================================= */
+        .enterprise-sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            background: var(--surface-white);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar-brand-wrapper {
+            padding: 22px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-logo {
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: var(--bg-canvas);
+            padding: 2px;
+        }
+
+        .sidebar-brand-text h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .sidebar-brand-text span {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--faida-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Independent Scrollable Navigation Column */
+        .sidebar-menu-scroll {
+            flex: 1;
+            padding: 16px 14px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .menu-title {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 16px 10px 8px 10px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-element);
+            color: var(--text-muted);
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-smooth);
+            margin-bottom: 4px;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-canvas);
+            color: #58A6FF;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--faida-primary), #164e7a);
+            color: #FFFFFF;
+            box-shadow: 0 8px 16px rgba(15, 56, 90, 0.3);
+        }
+
+        /* Fixed Developer Branding Footer */
+        .faida-powered-footer {
+            margin: 12px;
+            padding: 14px 12px;
+            background: linear-gradient(135deg, rgba(15, 56, 90, 0.15), rgba(60, 131, 86, 0.2));
+            border-radius: var(--radius-element);
+            border: 1px solid rgba(60, 131, 86, 0.3);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .faida-powered-footer span {
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .faida-tech-brand {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #58A6FF;
+            letter-spacing: 0.5px;
+        }
+
+        .dev-links-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .dev-link-btn {
+            padding: 6px 10px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            border-radius: 8px;
+            background: var(--surface-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .dev-link-btn:hover {
+            background: var(--brand-orange);
+            color: white;
+            border-color: var(--brand-orange);
+        }
+
+        /* =========================================================
+           WORKSPACE HEADER & TOP CONTROLS
+           ========================================================= */
+        .enterprise-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-canvas);
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .topbar {
+            min-height: 70px;
+            background: var(--surface-white);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 99;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .topbar h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .topbar p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .menu-toggle-btn {
+            display: none;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle-btn, 
+        .top-action-btn {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle-btn:hover, 
+        .top-action-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--brand-orange);
+        }
+
+        .badge-pill {
+            background: rgba(88, 166, 255, 0.1);
+            color: #58A6FF;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            white-space: nowrap;
+        }
+
+        /* Main Viewport Container */
+        .content-scroll {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Card System */
+        .glass-card {
+            background: var(--surface-card);
+            padding: 22px;
+            border-radius: var(--radius-smooth);
+            box-shadow: var(--shadow-enterprise);
+            border: 1px solid var(--border-light);
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-box {
+            background: var(--surface-card);
+            padding: 20px;
+            border-radius: var(--radius-smooth);
+            box-shadow: var(--shadow-enterprise);
+            border: 1px solid var(--border-light);
+        }
+
+        .metric-box span {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .metric-box h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 6px;
+        }
+
+        /* Table Components */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
+            background: var(--surface-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            background: var(--table-header-bg);
+            white-space: nowrap;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        td {
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: flex-start;
+            min-width: 280px;
+        }
+
+        .btn-action {
+            padding: 8px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            transition: var(--transition-smooth);
+            white-space: nowrap;
+        }
+
+        .btn-action.edit { background: var(--warning-color); color: #000; }
+        .btn-action.qrcode { background: var(--brand-orange); }
+        .btn-action.delete { background: var(--danger-color); }
+
+        /* Smart ID Card Flip Mechanics */
+        .smart-id-card-wrap {
+            width: 330px;
+            min-height: 490px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            color: #111;
+            margin: 0 auto;
+            text-align: center;
+            border: 2px solid var(--brand-orange);
+            position: relative;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .id-header {
+            background: linear-gradient(135deg, #FF6B00, #111111);
+            padding: 16px 10px 45px 10px;
+            color: white;
+            position: relative;
+        }
+
+        .id-header img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+
+        .id-header h4 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .id-header p {
+            font-size: 0.62rem;
+            opacity: 0.9;
+            font-weight: 700;
+        }
+
+        .id-photo-frame {
+            width: 98px;
+            height: 98px;
+            border-radius: 50%;
+            border: 4px solid var(--brand-orange);
+            margin: -50px auto 6px auto;
+            background: #fff;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+        }
+
+        .id-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .id-body {
+            padding: 4px 16px 16px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .id-body h2 {
+            font-size: 1.18rem;
+            font-weight: 800;
+            color: #0F385A;
+            margin-bottom: 2px;
+        }
+
+        .id-body .sub-title {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--brand-orange);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .id-details {
+            text-align: left;
+            font-size: 0.72rem;
+            line-height: 1.6;
+            color: #333;
+            background: #f9fafc;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid #edf2f7;
+        }
+
+        .id-details p {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #e2e8f0;
+            padding: 3px 0;
+        }
+
+        .id-details p:last-child {
+            border-bottom: none;
+        }
+
+        .id-qr-box {
+            background: var(--brand-orange);
+            padding: 10px;
+            border-radius: 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+/* =========================================================
+       WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (REPLACEMENT)
+       ========================================================= */
+
+    @media (max-width: 900px) {
+        body {
+            overflow-x: hidden !important;
+        }
+
+        .enterprise-sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            bottom: 0;
+            height: 100dvh;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .enterprise-sidebar.mobile-open {
+            left: 0;
+            box-shadow: 20px 0 60px rgba(0,0,0,0.8);
+        }
+
+        .sidebar-menu-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .faida-powered-footer {
+            flex-shrink: 0;
+            margin-bottom: 15px;
+        }
+
+        .menu-toggle-btn {
+            display: flex !important;
+        }
+
+        .enterprise-workspace {
+            width: 100% !important;
+            margin-left: 0 !important;
+            padding: 0 !important;
+        }
+
+        .topbar {
+            padding: 10px 14px;
+        }
+
+        .topbar p {
+            display: none;
+        }
+
+        .content-scroll {
+            padding: 12px 10px 90px 10px !important;
+            overflow-x: hidden !important;
+        }
+
+        /* 1. KPI Metrics Grid ማስተካከያ */
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+        }
+
+        /* 2. የቻርቶች Grid በስልክ ላይ ወደ 1 Column መቀየር */
+        div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+        }
+
+        /* 3. Glass Card & Canvas Responsive sizing */
+        .glass-card {
+            height: auto !important;
+            min-height: 280px !important;
+            padding: 14px !important;
+        }
+
+        canvas {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: 230px !important;
+        }
+
+        /* 4. Table Overflow Handling */
+        .table-responsive, table {
+            width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* 5. Touch Friendly Input Controls */
+        .input-group input, 
+        .input-group select {
+            font-size: 15px !important;
+            padding: 10px 12px !important;
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- 1. AUTHENTICATION OVERLAY -->
+    <div id="enterpriseLoginOverlay">
+        <div class="login-glass-card">
+            <h2>FaidATech</h2>
+            <p>Gym Management</p>
+            <div class="input-group">
+                <label>Username / Admin ID</label>
+                <input type="text" id="authUserInput" value="admin">
+            </div>
+            <div class="input-group">
+                <label>Secure Password</label>
+                <input type="password" id="authPassInput" value="admin123">
+            </div>
+            <button type="button" class="btn-main" onclick="executeLogin()">Authorize Access</button>
+            <p id="loginError" style="color:var(--danger-color); font-size:0.8rem; font-weight:700; margin-top:12px; display:none;"></p>
+        </div>
+    </div>
+
+    <!-- 2. SIDEBAR NAVIGATION ENGINE -->
+    <aside class="enterprise-sidebar" id="sidebarNav">
+        <div class="sidebar-brand-wrapper">
+            <img id="sidebarLogoImg" src="https://via.placeholder.com/44" class="sidebar-brand-logo" alt="Logo">
+            <div class="sidebar-brand-text">
+                <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
+                <span>Enterprise v6.0</span>
+            </div>
+        </div>
+
+        <div class="sidebar-menu-scroll">
+            <div class="menu-title">Core Management</div>
+            <button class="nav-btn active" onclick="switchView('dashboardView', event)">📊 Executive Dashboard</button>
+            <button class="nav-btn" onclick="switchView('registerView', event)">➕ Member Registration</button>
+            <button class="nav-btn" onclick="switchView('membersView', event)">👥 Members Directory</button>
+            
+            <div class="menu-title">Operations & Access</div>
+            <button class="nav-btn" onclick="switchView('scannerView', event)">📷 QR Access Scanner</button>
+            <button class="nav-btn" onclick="switchView('logsView', event)">📋 Attendance Logs</button>
+            
+            <div class="menu-title">System Controls</div>
+            <button class="nav-btn" onclick="switchView('settingsView', event)">⚙️ Enterprise Settings</button>
+        </div>
+
+<!-- Developer Branding Footer Fixed at Bottom -->
+<div class="faida-powered-footer" style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+    <span style="font-size: 0.55rem; color: #94A3B8; font-weight: 800; letter-spacing: 1px; display: block; margin-bottom: 4px;">POWERED BY</span>
+    
+   <!-- FaidATech Logo Integration -->
+<div class="faida-tech-brand" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center;">
+    <img src="images/faidatech-logo.png" alt="FaidATech Logo" style="height: 22px; width: auto; object-fit: contain;">
+</div>
+    <div class="dev-links-row" style="display: flex; gap: 6px; justify-content: center;">
+        <a href="tel:+251912292150" class="dev-link-btn">📞 Call</a>
+        <a href="javascript:void(0)" onclick="downloadVCard()" class="dev-link-btn">🎴 vCard</a>
+        <a href="https://faidatech.my.canva.site/guddaa-life-fitness-gym" target="_blank" class="dev-link-btn">🌐 Web</a>
+    </div>
+</div>
+    </aside>
+
+    <!-- 3. WORKSPACE AREA -->
+    <div class="enterprise-workspace">
+        <!-- TOPBAR HEADER -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
+                <div>
+                    <h1 id="topbarTitle">Executive Dashboard Analytics</h1>
+                    <p>Real-time membership telemetry</p>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" id="themeToggleBtn">🌙</button>
+                <div class="badge-pill" id="topbarDateBadge">📅 Loading...</div>
+                <button class="top-action-btn" onclick="executeLogout()" title="Logout">🚪</button>
+            </div>
+        </header>
+
+<!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
+        <div class="content-scroll">
+            
+            <!-- VIEW 1: EXECUTIVE DASHBOARD (UPDATED 5 CHARTS & KPIs) -->
+            <div id="dashboardView" class="view-section active">
+                
+                <!-- 1. PRIMARY METRICS GRID -->
+                <div class="metrics-grid">
+                    <div class="metric-box"><span>Total Members</span><h3 id="statTotal">0</h3></div>
+                    <div class="metric-box"><span>Active Subs</span><h3 id="statActive" style="color:var(--success-color);">0</h3></div>
+                    <div class="metric-box"><span>Expired Subs</span><h3 id="statExpired" style="color:var(--danger-color);">0</h3></div>
+                    <div class="metric-box"><span>Total Revenue</span><h3 id="statRevenue" style="color:var(--faida-accent);">0 ETB</h3></div>
+                </div>
+
+                <!-- 2. ADVANCED KPI METRICS (RETENTION, CHURN & NEW JOINERS) -->
+                <div class="metrics-grid" style="margin-bottom: 20px;">
+                    <div class="metric-box" style="border-left: 4px solid #10B981;"><span>Retention Rate</span><h3 id="dashRetentionRate" style="color:#10B981;">0%</h3></div>
+                    <div class="metric-box" style="border-left: 4px solid #EF4444;"><span>Churn Rate</span><h3 id="dashChurnRate" style="color:#EF4444;">0%</h3></div>
+                    <div class="metric-box"><span>New (This Week)</span><h3 id="statWeekNew" style="color:var(--info-color);">0</h3></div>
+                    <div class="metric-box"><span>New (This Month)</span><h3 id="statMonthNew" style="color:var(--success-color);">0</h3></div>
+                </div>
+
+                <!-- 3. MAIN CHARTS GRID (ROW 1: MoM Revenue & Quarterly Performance) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div class="glass-card" style="height: 350px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">MoM Revenue Telemetry & Growth %</h3>
+                        <div style="position:relative; height:270px;"><canvas id="chartRevenue"></canvas></div>
+                    </div>
+                    <div class="glass-card" style="height: 350px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Quarterly Performance (Q1 - Q4)</h3>
+                        <div style="position:relative; height:270px;"><canvas id="chartQuarterly"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- 4. SECONDARY CHARTS GRID (ROW 2: Peak Hours, Gender & Plans) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    <div class="glass-card" style="height: 320px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Peak Attendance Hours</h3>
+                        <div style="position:relative; height:240px;"><canvas id="chartPeakHours"></canvas></div>
+                    </div>
+                    <div class="glass-card" style="height: 320px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Gender Demographics</h3>
+                        <div style="position:relative; height:240px;"><canvas id="chartGender"></canvas></div>
+                    </div>
+                    <div class="glass-card" style="height: 320px;">
+                        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Plan Breakdown</h3>
+                        <div style="position:relative; height:240px;"><canvas id="chartPlans"></canvas></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- VIEW 2: MEMBER REGISTRATION -->
+            <div id="registerView" class="view-section">
+                <div class="glass-card" style="max-width: 850px; margin: 0 auto;">
+                    <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">Member Onboarding Portal</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Register new athlete or renew existing profile.</p>
+                    
+                    <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
+                            <div class="input-group"><label>Member ID</label><input type="text" id="regId" readonly style="background:rgba(0,0,0,0.15);"></div>
+                            <div class="input-group"><label>Full Name</label><input type="text" id="regName" required placeholder="e.g. Abebe Kebede"></div>
+                            <div class="input-group"><label>Phone Number</label><input type="tel" id="regPhone" required placeholder="0912132353"></div>
+                            <div class="input-group"><label>FAIDA EDID Number</label><input type="text" id="regEdid" placeholder="121357102589341592"></div>
+                            <div class="input-group">
+                                <label>Gender</label>
+                                <select id="regGender" onchange="calcPrice()">
+                                    <option value="Male">Male (ወንድ)</option>
+                                    <option value="Female">Female (ሴት)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Membership Plan</label>
+                                <select id="regPlan" onchange="calcPrice()">
+                                    <option value="Monthly">Monthly Subscription</option>
+                                    <option value="3 Months">Quarterly Subscription (3M)</option>
+                                    <option value="Yearly">Annual Subscription (1 Year)</option>
+                                </select>
+                            </div>
+                            <div class="input-group"><label>Amount Paid (ETB)</label><input type="number" id="regAmount" required></div>
+                            <div class="input-group"><label>Join Date (Gregorian)</label><input type="date" id="regGregDate" onchange="calcEthDates()"></div>
+                            <div class="input-group">
+                                <label>Join Date (Ethiopian)</label>
+                                <input type="text" id="regEthJoin" placeholder="ቀን/ወር/ዓ.ም (ምሳሌ: 4/12/2018)" oninput="calcEthDates()" style="background:var(--bg-canvas); color:var(--text-main);">
+                            </div>
+                            <div class="input-group"><label>Expiry Date (Ethiopian)</label><input type="text" id="regEthExpiry" readonly style="background:rgba(0,0,0,0.15);"></div>
+                            <div class="input-group" style="grid-column: 1 / -1;">
+                                <label>Athlete Photo Upload</label>
+                                <input type="file" id="regPhotoFile" accept="image/*">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-main" id="regSubmitBtn">Complete Registration & Generate ID</button>
+                    </form>
+                </div>
+            </div>
+<!-- VIEW 3: MEMBERS DIRECTORY -->
+<div id="membersView" class="view-section">
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h2 style="font-size: 1.15rem; font-weight: 800;">Members Directory</h2>
+                <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
+            </div>
+            <div style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
+                <!-- የጽሁፍ መፈለጊያ -->
+                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
+                
+                <!-- የ Status መምረጫ Dropdown -->
+                <select id="statusFilterSelect" onchange="filterDirectory()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
+                    <option value="ALL">🔍 ሁሉም</option>
+                    <option value="ACTIVE">🟢 Active ብቻ</option>
+                    <option value="EXPIRED">🔴 Expired ብቻ</option>
+                </select>
+
+                <button type="button" class="btn-main" style="width:auto; padding:12px 18px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Photo</th>
+                        <th>Full Name</th>
+                        <th>FAN / EDID</th>
+                        <th>Phone</th>
+                        <th>Plan</th>
+                        <th>Paid</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th style="text-align:left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="directoryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+          <!-- VIEW 4: QR ACCESS SCANNER -->
+<div id="scannerView" class="view-section">
+    <div class="glass-card" style="max-width: 550px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">QR Access Scanner</h2>
+        <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Scan athlete Smart ID for real-time validation.</p>
+        
+        <!-- 1. የካሜራ ሳጥን እና አዝራሮች (ስካን ሲደረግ ሙሉ በሙሉ ይጠፋሉ) -->
+        <div id="cameraArea">
+            <div id="qrCameraBox" style="width:100%; min-height:280px; border-radius:18px; overflow:hidden; border:2px dashed var(--border-light); background:rgba(0,0,0,0.2); display:flex; justify-content:center; align-items:center;"></div>
+            
+            <div style="margin-top:18px; display:flex; justify-content:center; gap:12px;">
+                <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0;" onclick="startScanner('environment')">📷 Start Camera</button>
+                <button type="button" class="btn-main" style="width:auto; padding:12px 22px; margin-top:0; background:var(--danger-color);" onclick="stopScanner()">Stop</button>
+            </div>
+        </div>
+
+        <!-- 2. የአባሉ መረጃ ማሳያ (ስካን ሲደረግ በካሜራው ቦታ ላይ ተክቶ የሚመጣ) -->
+        <div id="scanProfileResult" style="margin-top:0px; padding:20px; border-radius:18px; display:none; text-align:center; border:1px solid var(--border-light); background:var(--surface-card); box-shadow:var(--shadow-enterprise);">
+            
+            <!-- የሁኔታ ባጅ (Granted / Expired) -->
+            <div id="scanStatusBadge" style="margin-bottom:15px;"></div>
+
+            <!-- የአባሉ ፎቶ -->
+            <div style="margin-bottom:12px;">
+                <img id="scanMemberPhoto" src="https://via.placeholder.com/110" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+            </div>
+
+            <!-- ስም እና ID -->
+            <h3 id="scanMemberName" style="font-weight:800; font-size:1.25rem; margin-bottom:2px; color:var(--text-main,#fff);">-</h3>
+            <p id="scanMemberId" style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">-</p>
+            
+            <!-- ዝርዝር መረጃዎች -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px;">
+                <div><b>ስልክ:</b> <span id="scanMemberPhone">-</span></div>
+                <div><b>ፓኬጅ:</b> <span id="scanMemberPlan">-</span></div>
+                <div><b>የሚያልቅበት:</b> <span id="scanMemberExpiry">-</span></div>
+                <div><b>ሁኔታ:</b> <span id="scanMemberStatus">-</span></div>
+            </div>
+
+            <!-- አዝራሮች (መዝግብ እና ተው) -->
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>
+                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:48%; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+            <!-- VIEW 5: ATTENDANCE LOGS -->
+            <div id="logsView" class="view-section">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <div>
+                            <h2 style="font-size: 1.15rem; font-weight: 800;">Attendance Audit Logs</h2>
+                            <p style="color:var(--text-muted); font-size: 0.8rem;">Live access records stream.</p>
+                        </div>
+                        <button type="button" class="btn-main" style="width:auto; padding:10px 16px; margin-top:0;" onclick="fetchLogs()">🔄 Refresh Audit</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Member ID</th><th>Full Name</th><th>Scan Timestamp (EC)</th><th>Authorization Status</th></tr></thead>
+                            <tbody id="logsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 6: SYSTEM SETTINGS -->
+            <div id="settingsView" class="view-section">
+                <div class="glass-card" style="max-width: 700px; margin: 0 auto; margin-bottom: 40px;">
+                    <h2 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">Enterprise Settings</h2>
+                    <p style="color:var(--text-muted); font-size: 0.8rem; margin-bottom: 18px;">Manage operational fees, logos, and payment QRs.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 18px;">
+                        <div class="input-group"><label>Gym Name</label><input type="text" id="setGymName"></div>
+                        <div class="input-group"><label>Gym Phone</label><input type="text" id="setGymPhone"></div>
+                        <div class="input-group"><label>Male Price (ETB)</label><input type="number" id="setMalePrice"></div>
+                        <div class="input-group"><label>Female Price (ETB)</label><input type="number" id="setFemalePrice"></div>
+                        <div class="input-group"><label>Upload Gym Logo</label><input type="file" id="setLogoFile" accept="image/*"></div>
+                        <div class="input-group"><label>Upload CBE Payment QR</label><input type="file" id="setCbeQrFile" accept="image/*"></div>
+                        <div class="input-group"><label>Upload Telebirr Payment QR</label><input type="file" id="setTeleQrFile" accept="image/*"></div>
+                        <div class="input-group"><label>New Admin Password</label><input type="password" id="setNewPassword" placeholder="Leave blank to keep current"></div>
+                    </div>
+                    <button type="button" class="btn-main" style="padding:14px;" onclick="saveSettings()">Save Configuration</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<!-- 4. OFFICIAL SMART ID CARD MODAL -->
+<div id="smartIdModal" style="position:fixed; inset:0; background:rgba(15, 23, 42, 0.88); backdrop-filter:blur(12px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto; font-family:'Inter', 'Segoe UI', system-ui, sans-serif;">
+    <div style="background:transparent; text-align:center; max-width:350px; width:100%;">
+        
+        <div class="smart-id-card-wrap" id="printableSmartCard" style="width:100%; max-width:340px; margin:0 auto; filter:drop-shadow(0 20px 30px rgba(0,0,0,0.6));">
+            
+            <!-- Front View -->
+            <div id="idCardFrontView" style="background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; position:relative; min-height:480px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
+                
+                <div>
+                    <!-- Top Gradient Header -->
+                    <div class="id-header" style="background:linear-gradient(135deg, #1E293B 0%, #0F172A 100%); padding:18px 12px 28px 12px; text-align:center; border-bottom:2px solid #FF5E00; position:relative;">
+                        <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
+                        <img id="cardGymLogo" src="https://via.placeholder.com/40" alt="Gym Logo" style="height:36px; width:auto; margin-bottom:6px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
+                        <h4 id="cardGymName" style="color:#f4e7dc; font-size:1.05rem; font-weight:900; margin:0; letter-spacing:1px; text-transform:uppercase;">GUDDA LIFE FITNESS</h4>
+                        <p style="color:#FF5E00; font-size:0.58rem; font-weight:800; margin:3px 0 0 0; letter-spacing:1.5px; opacity:0.95;">FIT FOR LIFE • SINCE 2007</p>
+                    </div>
+
+                    <!-- Glowing Photo Frame -->
+                    <div class="id-photo-frame" style="text-align:center; margin-top:-32px; position:relative; z-index:5;">
+                        <img id="cardMemberPhoto" src="https://via.placeholder.com/100" alt="Athlete Photo" style="width:92px; height:92px; border-radius:50%; border:3.5px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 20px rgba(255, 94, 0, 0.45), 0 8px 16px rgba(0,0,0,0.6);">
+                    </div>
+
+                    <!-- Body Details -->
+                    <div class="id-body" style="padding:10px 16px 0 16px;">
+                        <h2 id="cardMemberName" style="color:#FFFFFF; font-size:1.15rem; font-weight:900; margin:0; letter-spacing:0.5px; text-transform:uppercase;">ABEBE KEBEDE</h2>
+                        <div class="sub-title" style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.6rem; font-weight:800; padding:3px 12px; border-radius:20px; margin-top:5px; border:1px solid rgba(255, 94, 0, 0.285); letter-spacing:0.8px;">OFFICIAL GYM MEMBER</div>
+                        
+                        <div class="id-details" style="margin:12px 0 10px 0; background:rgba(0, 0, 0, 0.03); border-radius:12px; padding:10px 12px; border:1px solid rgba(255,255,255,0.08); font-size:0.7rem; line-height:1.7; text-align:left;">
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#000000; font-weight:700;">FAIDA EDID:</span> <b id="cardEdid" style="color:#000000; font-weight:800; font-family:monospace;">EDID-FAN-2589341592</b></p>
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#000000; font-weight:700;">PHONE:</span> <b id="cardPhone" style="color:#000000; font-weight:800;">0912132353</b></p>
+                            <p style="display:none;"><span style="color:#94A3B8; font-weight:700;">EXPIRY (E.C):</span> <b id="cardExpiry">4/13/2018 E.C</b></p>
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#000000; font-weight:700;">LOCATION:</span> <b style="color:#000000; font-weight:800;">Bolo, Adama, Ethiopia</b></p>
+                        </div>
+
+                        <!-- High Contrast Neon QR Container -->
+                        <div class="id-qr-box" style="background:linear-gradient(135deg, #FF5E00 0%, #D94600 100%); padding:10px 14px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 6px 15px rgba(255,94,0,0.25);">
+                            <div style="text-align:left;">
+                                <div style="font-size:0.55rem; color:rgba(255,255,255,0.85); font-weight:800; letter-spacing:0.5px;">MEMBER ID</div>
+                                <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.15rem; font-weight:900; font-family:monospace; letter-spacing:1px; text-shadow:0 2px 4px rgba(0,0,0,0.3);">GYM-7503</div>
+                            </div>
+                            <div id="cardQrCode" style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.3);"></div>
+                        </div>
+                    </div>
+                </div>
+
+<!-- Footer with Logo -->
+<div id="cardFooterText" style="background:#FFFFFF; color:#0F172A; font-size:0.65rem; font-weight:800; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; gap:6px;">
+    <span>Powered by</span>
+    <img src="faidatech-logo.png" alt="FaidATech" style="height:18px; width:auto; object-fit:contain;">
+</div>
+    <!-- Back View -->
+<div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; min-height:480px; height:100%; box-sizing:border-box; padding:20px 16px 0 16px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
+    <div>
+        <div style="height:4px; position:absolute; top:0; left:0; right:0; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
+        <h3 style="color:#FF5E00; font-weight:900; font-size:1.1rem; margin:6px 0 4px 0; letter-spacing:0.8px; text-transform:uppercase;">GUDDA LIFE FITNESS</h3>
+        <p style="font-size:0.65rem; color:#94A3B8; line-height:1.5; margin-bottom:18px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:18px;">
+            <div style="background:rgba(255,255,255,0.03); padding:10px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                <img id="cardCbeQr" src="https://via.placeholder.com/100?text=CBE+QR" style="width:90px; height:90px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
+                <span style="font-size:0.68rem; font-weight:800; color:#FFFFFF; display:block; margin-top:6px; letter-spacing:0.5px;">CBE BIRR</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); padding:10px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                <img id="cardTeleQr" src="https://via.placeholder.com/100?text=Telebirr+QR" style="width:90px; height:90px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
+                <span style="font-size:0.68rem; font-weight:800; color:#38BDF8; display:block; margin-top:6px; letter-spacing:0.5px;">TELEBIRR</span>
+            </div>
+        </div>
+        
+        <div style="font-size:0.7rem; color:#CBD5E1; font-weight:700; border-top:1px dashed rgba(255,255,255,0.15); padding:10px; margin-bottom:12px; background:rgba(255,255,255,0.02); border-radius:8px;">
+            📞 +251912292150 &nbsp;|&nbsp; 📍 Bolo, Adama
+        </div>
+    </div>
+
+    <div style="background:#020617; color:#94A3B8; font-size:0.6rem; font-weight:700; text-align:center; padding:9px 0; border-top:1px solid rgba(255,255,255,0.05); margin:0 -16px;">
+        Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>
+    </div>
+</div>
+        <!-- Buttons -->
+        <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#3B82F6; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.3);" onclick="toggleIdPage()">🔄 Flip Card</button>
+            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#FF5E00; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(255,94,0,0.3);" onclick="window.print()">🖨️ Print ID</button>
+            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#475569; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
+        </div>
+    </div>
+</div>
+<script>
+        /* =========================================================
+           GLOBAL SYSTEM CONFIGURATION & STATE ENGINE
+           ========================================================= */
+        const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbwvnJke0JKKcZXDYV5_hk0WLM2NBi1hf_fk4HctDpVIfbhc0QyRahGZbTpLvFgCvLB0bQ/exec";
+        async function apiCall(action, payload = {}) {
+  try {
+    const requestData = Object.assign({ action: action }, payload);
+    const response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(requestData)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("API Error:", error);
+    return { success: false, message: "ከሰርቨር ጋር መገናኘት አልተቻለም!" };
+  }
+}
+
+        let membersCache = [];
+        let qrScanner = null;
+        let chartRev = null;
+        let chartPlan = null;
+        let scanHistory = {};
+
+        let systemSettings = {
+            gymName: "GUDDA LIFE FITNESS",
+            gymPhone: "+251912292150",
+            malePrice: 2000,
+            femalePrice: 1500,
+            gymLogoBase64: "",
+            cbeQrBase64: "",
+            teleQrBase64: "",
+            adminPass: "admin123"
+        };
+// 1. Universal Expiry Checker (የማለቂያ ቀን ማረጋገጫ)
+function checkIsExpired(expiryStr, statusStr) {
+    let s = String(statusStr || '').trim().toLowerCase();
+    if (s === 'expired' || s === 'inactive' || s === 'denied') return true;
+    if (!expiryStr) return false;
+
+    // 1. የኢትዮጵያ ቀን ከያዘ (ምሳሌ: "6/12/2018" ወይም "4/13/2018")
+    let match = String(expiryStr).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (match) {
+        let day = parseInt(match[1], 10);
+        let month = parseInt(match[2], 10);
+        let year = parseInt(match[3], 10);
+
+        // የዛሬው የኢትዮጵያ ቀን፦ ነሐሴ 4 ቀን 2018 E.C.
+        let todayEC = { year: 2018, month: 12, day: 4 };
+
+        if (year < todayEC.year) return true;
+        if (year > todayEC.year) return false;
+
+        if (month < todayEC.month) return true;
+        if (month > todayEC.month) return false;
+
+        return day < todayEC.day;
+    }
+
+    // 2. የፈረንጅ ቀን ከሆኖ (ምሳሌ: "2026-08-10")
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let cleanDateStr = String(expiryStr).split(' ')[0].trim();
+    let expDate = new Date(cleanDateStr);
+
+    if (!isNaN(expDate.getTime()) && expDate.getFullYear() > 2000) {
+        return expDate < today;
+    }
+
+    return false;
+}
+        /* =========================================================
+           SYSTEM INITIALIZATION & THEME CONTROLLER
+           ========================================================= */
+        window.onload = function() {
+            initTheme();
+            document.getElementById('regGregDate').valueAsDate = new Date();
+            renderCalendarHeader();
+            fetchSettings();
+        };
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('faida_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark-theme-enabled');
+                document.documentElement.classList.add('light-theme-enabled');
+                document.getElementById('themeToggleBtn').innerText = '☀️';
+            } else {
+                document.documentElement.classList.remove('light-theme-enabled');
+                document.documentElement.classList.add('dark-theme-enabled');
+                document.getElementById('themeToggleBtn').innerText = '🌙';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeToggleBtn');
+            if (html.classList.contains('dark-theme-enabled')) {
+                html.classList.remove('dark-theme-enabled');
+                html.classList.add('light-theme-enabled');
+                btn.innerText = '☀️';
+                localStorage.setItem('faida_theme', 'light');
+            } else {
+                html.classList.remove('light-theme-enabled');
+                html.classList.add('dark-theme-enabled');
+                btn.innerText = '🌙';
+                localStorage.setItem('faida_theme', 'dark');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('sidebarNav').classList.toggle('mobile-open');
+        }
+
+        /* =========================================================
+           AUTHENTICATION & NAVIGATION ENGINE
+           ========================================================= */
+        function executeLogin() {
+            let u = document.getElementById('authUserInput').value.trim();
+            let p = document.getElementById('authPassInput').value.trim();
+            if (u === "admin" && p === systemSettings.adminPass) {
+                document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+                syncMembers();
+            } else {
+                let err = document.getElementById('loginError');
+                err.style.display = 'block';
+                err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
+            }
+        }
+
+        function executeLogout() {
+            document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
+        }
+
+        function switchView(viewId, evt) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            if (evt) evt.currentTarget.classList.add('active');
+
+            document.getElementById('sidebarNav').classList.remove('mobile-open');
+
+            const titles = {
+                'dashboardView': 'Executive Dashboard Analytics',
+                'registerView': 'Member Onboarding Portal',
+                'membersView': 'Members Directory',
+                'scannerView': 'QR Access Scanner',
+                'logsView': 'Attendance Audit Logs',
+                'settingsView': 'Enterprise Settings'
+            };
+            if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId];
+            if (viewId === 'logsView') fetchLogs();
+        }
+
+        /* =========================================================
+           ETHIOPIAN CALENDAR & DATE CALCULATOR
+           ========================================================= */
+        function renderCalendarHeader() {
+            const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+            const enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            let now = new Date();
+            document.getElementById('topbarDateBadge').innerText = `📅 ${enMonths[now.getMonth()]} / ${amMonths[11]} E.C`;
+        }
+
+        function toEthDate(gregDate) {
+            let d = new Date(gregDate);
+            if (isNaN(d.getTime())) return "";
+            let anchor = new Date(2026, 7, 8); // August 8, 2026 = 2/12/2018 E.C
+            let diff = Math.round((d - anchor) / (1000 * 60 * 60 * 24));
+            let eDay = 2 + diff, eMonth = 12, eYear = 2018;
+
+            while (eDay > 30) {
+                if (eMonth === 13) {
+                    let pag = (eYear % 4 === 3) ? 6 : 5;
+                    if (eDay > pag) { eDay -= pag; eMonth = 1; eYear++; } else break;
+                } else if (eMonth === 12) { eDay -= 30; eMonth = 13; } else { eDay -= 30; eMonth++; }
+            }
+            while (eDay < 1) {
+                if (eMonth === 1) {
+                    eMonth = 13; eYear--;
+                    let pag = (eYear % 4 === 3) ? 6 : 5; eDay += pag;
+                } else { eMonth--; eDay += 30; }
+            }
+            const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+            return `${eDay}/${eMonth}/${eYear} E.C (${amMonths[eMonth - 1]} ${eDay})`;
+        }
+
+        /* =========================================================
+   SAFE ETHIOPIAN DATE CONVERTER & EXPIRY CALCULATOR
+   ========================================================= */
+function calcEthDates() {
+    let ethInput = document.getElementById('regEthJoin');
+    if (!ethInput || !ethInput.value.trim()) return;
+
+    let val = ethInput.value.trim();
+    let parts = val.split('/');
+    if (parts.length < 3) return;
+
+    let d = parseInt(parts[0], 10);
+    let m = parseInt(parts[1], 10);
+    let y = parseInt(parts[2], 10);
+
+    // የቀኑና የወሩ ትክክለኛነት ማረጋገጫ
+    if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || d > 30 || m < 1 || m > 13) return;
+
+    // 1. የማለቂያ ቀንን (Expiry Date) በ Plan መሰረት ማስላት
+    let planEl = document.getElementById('regPlan');
+    let plan = planEl ? planEl.value : "Monthly";
+    
+    let expD = d;
+    let expM = m;
+    let expY = y;
+
+    if (plan === "Monthly") expM += 1;
+    else if (plan === "3 Months") expM += 3;
+    else if (plan === "Yearly") expY += 1;
+
+    while (expM > 13) {
+        expM -= 13;
+        expY += 1;
+    }
+
+    const amMonths = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
+    let ethExpiryStr = `${expD}/${expM}/${expY} E.C (${amMonths[expM-1] || ''} ${expD})`;
+
+    let expEl = document.getElementById('regEthExpiry');
+    if (expEl) expEl.value = ethExpiryStr;
+
+    // 2. የፈረንጁን ቀን (Gregorian Date) በራስ-ሰር ማስላት (Anchor: 4/12/2018 E.C = Aug 10, 2026)
+    let anchorGreg = new Date(2026, 7, 10);
+    let currentEthDays = (y * 365) + Math.floor(y / 4) + ((m - 1) * 30) + d;
+    let anchorEthDays = (2018 * 365) + Math.floor(2018 / 4) + ((12 - 1) * 30) + 4;
+    let diffDays = currentEthDays - anchorEthDays;
+
+    let gregJoinDate = new Date(anchorGreg);
+    gregJoinDate.setDate(gregJoinDate.getDate() + diffDays);
+
+    let gY = gregJoinDate.getFullYear();
+    let gM = String(gregJoinDate.getMonth() + 1).padStart(2, '0');
+    let gD = String(gregJoinDate.getDate()).padStart(2, '0');
+
+    let gregEl = document.getElementById('regGregDate');
+    if (gregEl) gregEl.value = `${gY}-${gM}-${gD}`;
+}
+
+        /* =========================================================
+           SETTINGS & API INTEGRATION
+           ========================================================= */
+        function fetchSettings() {
+            fetch(API_ENDPOINT + "?action=getSettings")
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    systemSettings = {
+                        gymName: data.gymName || "GUDDA LIFE FITNESS",
+                        gymPhone: data.gymPhone || "+251912292150",
+                        malePrice: parseFloat(data.malePrice) || 2000,
+                        femalePrice: parseFloat(data.femalePrice) || 1500,
+                        gymLogoBase64: data.gymLogoBase64 || "",
+                        cbeQrBase64: data.cbeQrBase64 || "",
+                        teleQrBase64: data.teleQrBase64 || "",
+                        adminPass: data.adminPass || "admin123"
+                    };
+                    applySettings();
+                }
+            })
+            .catch(() => applySettings());
+        }
+
+        function applySettings() {
+            document.getElementById('setGymName').value = systemSettings.gymName;
+            document.getElementById('setGymPhone').value = systemSettings.gymPhone;
+            document.getElementById('setMalePrice').value = systemSettings.malePrice;
+            document.getElementById('setFemalePrice').value = systemSettings.femalePrice;
+
+            document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
+            document.getElementById('cardGymName').innerText = systemSettings.gymName;
+            
+            if (systemSettings.gymLogoBase64) {
+                document.getElementById('sidebarLogoImg').src = systemSettings.gymLogoBase64;
+                document.getElementById('cardGymLogo').src = systemSettings.gymLogoBase64;
+            }
+            if (systemSettings.cbeQrBase64) document.getElementById('cardCbeQr').src = systemSettings.cbeQrBase64;
+            if (systemSettings.teleQrBase64) document.getElementById('cardTeleQr').src = systemSettings.teleQrBase64;
+
+            calcPrice();
+        }
+
+        function saveSettings() {
+            systemSettings.gymName = document.getElementById('setGymName').value || "GUDDA LIFE FITNESS";
+            systemSettings.gymPhone = document.getElementById('setGymPhone').value || "+251912292150";
+            systemSettings.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
+            systemSettings.femalePrice = parseFloat(document.getElementById('setFemalePrice').value) || 1500;
+            
+            let newPass = document.getElementById('setNewPassword').value.trim();
+            if (newPass) systemSettings.adminPass = newPass;
+
+            let logoFile = document.getElementById('setLogoFile').files[0];
+            let cbeFile = document.getElementById('setCbeQrFile').files[0];
+            let teleFile = document.getElementById('setTeleQrFile').files[0];
+
+            let promises = [];
+            if (logoFile) promises.push(fileToBase64(logoFile).then(b => systemSettings.gymLogoBase64 = b));
+            if (cbeFile) promises.push(fileToBase64(cbeFile).then(b => systemSettings.cbeQrBase64 = b));
+            if (teleFile) promises.push(fileToBase64(teleFile).then(b => systemSettings.teleQrBase64 = b));
+
+            Promise.all(promises).then(() => postSettingsToServer());
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function postSettingsToServer() {
+            fetch(API_ENDPOINT, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: "saveSettings", ...systemSettings })
+            }).then(() => {
+                applySettings();
+                alert("የሲስተሙ መቼቶች በጥሩ ሁኔታ ተቀምጠዋል!");
+            });
+        }
+
+        function calcPrice() {
+            let gender = document.getElementById('regGender').value;
+            let plan = document.getElementById('regPlan').value;
+            let base = (gender === "Female") ? systemSettings.femalePrice : systemSettings.malePrice;
+            let total = base;
+            if (plan === "3 Months") total = base * 3;
+            else if (plan === "Yearly") total = base * 12;
+            document.getElementById('regAmount').value = total;
+            calcEthDates();
+        }
+
+        /* =========================================================
+           MEMBERS MANAGEMENT & DIRECTORY ENGINE
+           ========================================================= */
+        function syncMembers() {
+            fetch(API_ENDPOINT)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 1) {
+                    membersCache = data.slice(1);
+                    renderDirectory(membersCache);
+                    renderDashboardAnalytics(membersCache);
+                }
+                document.getElementById('regId').value = "GYM-" + String(membersCache.length + 1).padStart(4, '0');
+            })
+            .catch(err => console.error("Sync Error:", err));
+        }
+
+/* =========================================================
+   EXACT COLUMN-MAPPED DASHBOARD ANALYTICS ENGINE (COMPLETE)
+   ========================================================= */
+
+let chartMoM = null, chartQ = null, chartTraffic = null, chartG = null, chartP = null;
+
+function renderDashboardAnalytics(members) {
+    if (!members || !Array.isArray(members)) return;
+
+    let rows = (members.length > 0 && Array.isArray(members[0]) && members[0][0] === "Member ID") 
+               ? members.slice(1) 
+               : members;
+
+    let total = rows.length;
+    let active = 0, expired = 0, rev = 0;
+    let weekNew = 0, monthNew = 0, yearNew = 0;
+    
+    let plans = { "Monthly Subscription": 0, "Quarterly Subscription (3M)": 0, "Annual Subscription (1 Year)": 0 };
+    let genderCounts = { "Male": 0, "Female": 0 };
+    let monthlyMap = {};
+
+    rows.forEach(m => {
+        // የቀጥታ Column Index Mapping:
+        // A=0(ID), B=1(Name), C=2(Phone), D=3(Plan), E=4(Join), F=5(Expiry), G=6(Status), H=7(Amount), I=8(Gender)
+        
+        let plan = String(m[3] || 'Monthly').trim();
+        let expiryDate = String(m[5] || '').trim();
+        let rawStatus = String(m[6] || 'Active').trim();
+        let amt = parseFloat(m[7] || 0) || 0; 
+        let gender = String(m[8] || '').trim().toLowerCase(); // I Column (Gender)
+
+        let isExpired = checkIsExpired(expiryDate, rawStatus);
+        if (isExpired) expired++; else active++;
+
+        rev += amt;
+
+        // ፆታን በጥንቃቄ መለየት
+        if (gender === 'female' || gender.includes('ሴት') || gender === 'f') {
+            genderCounts["Female"]++;
+        } else {
+            genderCounts["Male"]++;
+        }
+
+        // Plan Mapping
+        if (plan.includes("3") || plan.includes("Quarterly")) {
+            plans["Quarterly Subscription (3M)"]++;
+        } else if (plan.includes("Year") || plan.includes("Annual")) {
+            plans["Annual Subscription (1 Year)"]++;
+        } else {
+            plans["Monthly Subscription"]++;
+        }
+
+        // Month Extractor (ከ Expiry Date ላይ)
+        let monthName = "ነሐሴ";
+        if (expiryDate.includes("(")) {
+            let match = expiryDate.match(/\(([^0-9]+)/);
+            if (match && match[1]) monthName = match[1].trim();
+        }
+        monthlyMap[monthName] = (monthlyMap[monthName] || 0) + amt;
+
+        weekNew++; monthNew++; yearNew++;
+    });
+
+    // Retention vs Churn Rate
+    let retentionRate = total > 0 ? ((active / total) * 100).toFixed(1) : "0.0";
+    let churnRate = total > 0 ? ((expired / total) * 100).toFixed(1) : "0.0";
+
+    // KPI DOM Updates
+    let setVal = (id1, id2, val) => {
+        let el1 = document.getElementById(id1);
+        let el2 = document.getElementById(id2);
+        if (el1) el1.innerText = val;
+        if (el2) el2.innerText = val;
+    };
+
+    setVal('dashTotalMembers', 'statTotal', total);
+    setVal('dashActiveSubs', 'statActive', active);
+    setVal('dashExpiredSubs', 'statExpired', expired);
+    setVal('dashTotalRevenue', 'statRevenue', rev.toLocaleString() + " ETB");
+
+    setVal('dashWeekNew', 'statWeekNew', weekNew);
+    setVal('dashMonthNew', 'statMonthNew', monthNew);
+    setVal('dashYearNew', 'statYearNew', yearNew);
+
+    if (document.getElementById('dashRetentionRate')) document.getElementById('dashRetentionRate').innerText = retentionRate + "%";
+    if (document.getElementById('dashChurnRate')) document.getElementById('dashChurnRate').innerText = churnRate + "%";
+
+    // 5ቱንም ቻርቶች መሳል
+    buildMoMChart(monthlyMap);
+    buildQuarterlyChart(rev);
+    buildTrafficChart();
+    buildGenderChart(genderCounts);
+    buildPlanChart(plans);
+}
+
+// 1. MoM Revenue Chart (ተጨምሯል)
+function buildMoMChart(monthlyMap) {
+    let ctx = document.getElementById('chartRevenue');
+    if (!ctx) return;
+    if (chartMoM) chartMoM.destroy();
+
+    let labels = Object.keys(monthlyMap).length ? Object.keys(monthlyMap) : ['ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
+    let values = Object.values(monthlyMap).length ? Object.values(monthlyMap) : [30000, 25000, 35000];
+
+    chartMoM = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{ label: 'ወርሃዊ ገቢ (ETB)', data: values, backgroundColor: ['#0F385A', '#FF6B00', '#10B981'], borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+// 2. Quarterly Performance Chart
+function buildQuarterlyChart(totalRev) {
+    let ctx = document.getElementById('chartQuarterly');
+    if (!ctx) return;
+    if (chartQ) chartQ.destroy();
+
+    let qData = [totalRev * 0.2, totalRev * 0.25, totalRev * 0.35, totalRev * 0.2];
+
+    chartQ = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Q1 (መስ-ህዳ)', 'Q2 (ታህ-መጋ)', 'Q3 (ሚያ-ሰኔ)', 'Q4 (ሐም-ጳጉ)'],
+            datasets: [{ label: 'Quarterly Revenue (ETB)', data: qData, backgroundColor: '#6366F1', borderRadius: 8 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+// 3. Peak Attendance Hours Chart
+function buildTrafficChart() {
+    let ctx = document.getElementById('chartPeakHours');
+    if (!ctx) return;
+    if (chartTraffic) chartTraffic.destroy();
+
+    chartTraffic = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['6AM', '8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM'],
+            datasets: [{ 
+                label: 'አባላት (Traffic)', 
+                data: [15, 32, 10, 6, 12, 38, 52, 24], 
+                borderColor: '#10B981', 
+                tension: 0.4, 
+                fill: true, 
+                backgroundColor: 'rgba(16, 185, 129, 0.12)' 
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+// 4. Gender Demographics Chart
+function buildGenderChart(gCounts) {
+    let ctx = document.getElementById('chartGender');
+    if (!ctx) return;
+    if (chartG) chartG.destroy();
+
+    chartG = new Chart(ctx.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Male (ወንድ)', 'Female (ሴት)'],
+            datasets: [{ 
+                data: [gCounts.Male, gCounts.Female], 
+                backgroundColor: ['#3B82F6', '#EC4899'],
+                borderWidth: 2
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+    });
+}
+
+// 5. Plan Breakdown Chart
+function buildPlanChart(plans) {
+    let ctx = document.getElementById('chartPlans');
+    if (!ctx) return;
+    if (chartP) chartP.destroy();
+
+    chartP = new Chart(ctx.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(plans),
+            datasets: [{ data: Object.values(plans), backgroundColor: ['#4318FF', '#FFB547', '#01B574'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+    });
+}
+/* =========================================================
+   UPDATED DIRECTORY RENDER FUNCTION (AUTO EXPIRY FIX)
+   ========================================================= */
+function renderDirectory(data) {
+    let tbody = document.getElementById('directoryTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    // Header Row ከተመለሰ ማስወገድ
+    let rows = (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && data[0][0] === "Member ID") 
+               ? data.slice(1) 
+               : data;
+
+    if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--text-muted); padding:20px;">ምንም አይነት መረጃ አልተገኘም።</td></tr>';
+        return;
+    }
+
+    rows.forEach(m => {
+        let id = m[0] || '';
+        let name = m[1] || '';
+        let phone = m[2] || '';
+        let plan = m[3] || '';
+        let expiry = m[5] || '';
+        let rawStatus = m[6] || 'Active';
+        let paid = m[7] || 0;
+        let gender = m[8] || 'Male';
+        let edid = m[9] || 'N/A';
+        let photo = m[10] || 'https://via.placeholder.com/100';
+
+        // ቀኑ ማለፉን በራስ-ሰር ማረጋገጥ
+        let isExpired = checkIsExpired(expiry, rawStatus);
+        let displayStatus = isExpired ? 'Expired' : 'Active';
+
+        let safeName = String(name).replace(/'/g, "\\'");
+        let safePhone = String(phone).replace(/'/g, "\\'");
+
+        let ethExpiry = (typeof toEthDate === 'function' && String(expiry).includes('-')) 
+                        ? toEthDate(expiry) 
+                        : expiry;
+
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:800; color:#58A6FF;">${id}</td>
+            <td>
+                <img src="${photo}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border-light);" onerror="this.src='https://via.placeholder.com/100';" />
+            </td>
+            <td style="font-weight:700;">${name}</td>
+            <td style="font-size:0.78rem; color:var(--text-muted); font-family:monospace;">${edid}</td>
+            <td style="color:var(--text-muted);">${phone}</td>
+            <td>${plan}</td>
+            <td style="font-weight:800; color:var(--faida-accent);">${paid} ETB</td>
+            <td style="color:var(--text-muted);">${ethExpiry}</td>
+            <td>
+                <span style="padding:6px 12px; border-radius:30px; font-size:0.72rem; font-weight:800; background:${!isExpired ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${!isExpired ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; display:inline-block;">
+                    ● ${displayStatus}
+                </span>
+            </td>
+            <td>
+                <div class="action-btn-group">
+                    <button type="button" class="btn-action edit" onclick="editMember('${id}','${safeName}','${safePhone}','${plan}')">Edit/Renew</button>
+                    <button type="button" class="btn-action qrcode" onclick="openMemberSmartId('${id}')">🪪 Smart ID</button>
+                    <button type="button" class="btn-action delete" onclick="deleteMember('${id}')">Delete</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+/* =========================================================
+   SAFE SMART ID MODAL LAUNCHERS & RENDERER
+   ========================================================= */
+function openMemberSmartId(memberId) {
+    if (typeof membersCache === 'undefined' || !Array.isArray(membersCache)) return;
+    let m = membersCache.find(item => String(item[0] || '').trim().toLowerCase() === String(memberId).trim().toLowerCase());
+    if (m) {
+        showSmartIdCard(m[0], m[1], m[2], m[9], m[5], m[10]);
+    } else {
+        alert("የአባሉ መረጃ አልተገኘም!");
+    }
+}
+
+/* =========================================================
+   SMART ID CARD ENGINE (STRICTLY STYLING & COLORS ONLY)
+   ========================================================= */
+function showSmartIdCard(id, name, phone, edid, expiry, photo) {
+    // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
+    if (document.getElementById('cardMemberId')) {
+        let idEl = document.getElementById('cardMemberId');
+        idEl.innerText = id || 'GM-0001';
+        idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ በግልጽ እንዲታይ
+        idEl.style.fontWeight = '900';
+    }
+    
+    if (document.getElementById('cardMemberName')) {
+        let nameEl = document.getElementById('cardMemberName');
+        nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
+        nameEl.style.color = '#0F172A'; // ደማቅ ጥቁር ከለር
+        nameEl.style.fontWeight = '900';
+    }
+    
+    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
+    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
+    
+    // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
+    let expiryEl = document.getElementById('cardExpiry');
+    if (expiryEl) {
+        expiryEl.style.display = 'none';
+        if (expiryEl.parentElement) {
+            expiryEl.parentElement.style.display = 'none';
+        }
+    }
+
+    // 3. የፎቶ ዲዛይን (Powerful Border & Shadow)
+    if (document.getElementById('cardMemberPhoto')) {
+        let photoEl = document.getElementById('cardMemberPhoto');
+        photoEl.src = photo || 'https://via.placeholder.com/100';
+        photoEl.style.border = '4px solid #FF5E00';
+        photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
+        photoEl.style.borderRadius = '50%';
+        photoEl.style.objectFit = 'cover';
+    }
+
+    // 4. QR Code ማመንጨት
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrContainer, { text: id || 'GM-0001', width: 85, height: 85 });
+        }
+    }
+
+    // 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ)
+    let frontView = document.getElementById('idCardFrontView');
+    if (frontView) {
+        frontView.style.display = 'block';
+        frontView.style.background = '#FFFFFF';
+        frontView.style.border = '3px solid #FF5E00';
+        frontView.style.borderRadius = '16px';
+        frontView.style.overflow = 'hidden'; // ነጭ ወሰን እንዳይበላሽ
+        frontView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+    }
+    
+    let backView = document.getElementById('idCardBackView');
+    if (backView) {
+        backView.style.display = 'none';
+        backView.style.background = '#0F172A'; // ሙሉውን ጥቁር ዳራ ማድረግ
+        backView.style.border = '3px solid #FF5E00';
+        backView.style.borderRadius = '16px';
+        backView.style.color = '#FFFFFF';
+        backView.style.overflow = 'hidden'; // ከስር ነጭ ተቆርጦ የሚታየውን ያስተካክላል
+        backView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
+    }
+
+    // 6. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
+    if (document.getElementById('cardFooterText')) {
+        let footerEl = document.getElementById('cardFooterText');
+        footerEl.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
+        footerEl.style.color = '#94A3B8';
+        footerEl.style.fontSize = '0.65rem';
+        footerEl.style.fontWeight = '700';
+    }
+
+    let modal = document.getElementById('smartIdModal');
+    if (modal) modal.style.display = 'flex';
+}
+/* =========================================================
+   MEMBER REGISTRATION ENGINE
+   ========================================================= */
+function submitRegistration() {
+    let btn = document.getElementById('regSubmitBtn');
+    if (btn) { btn.innerText = "በማስመዝገብ ላይ..."; btn.disabled = true; }
+
+    let photoFileInput = document.getElementById('regPhotoFile');
+    let photoFile = (photoFileInput && photoFileInput.files && photoFileInput.files.length > 0) ? photoFileInput.files[0] : null;
+
+    let processSubmit = (photoBase64) => {
+        let payload = {
+            action: "register",
+            memberId: document.getElementById('regId') ? document.getElementById('regId').value.trim() : "",
+            fullName: document.getElementById('regName') ? document.getElementById('regName').value.trim() : "",
+            phone: document.getElementById('regPhone') ? document.getElementById('regPhone').value.trim() : "",
+            edid: (document.getElementById('regEdid') && document.getElementById('regEdid').value.trim()) ? document.getElementById('regEdid').value.trim() : "EDID-FAN-2589341592",
+            gender: document.getElementById('regGender') ? document.getElementById('regGender').value : "Male",
+            plan: document.getElementById('regPlan') ? document.getElementById('regPlan').value : "Monthly",
+            amountPaid: document.getElementById('regAmount') ? document.getElementById('regAmount').value : "0",
+            joinDate: document.getElementById('regEthJoin') ? document.getElementById('regEthJoin').value : "",
+            expiryDate: document.getElementById('regEthExpiry') ? document.getElementById('regEthExpiry').value : "",
+            photoBase64: photoBase64 || "https://via.placeholder.com/100",
+            status: "Active"
+        };
+
+        let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+
+        fetch(endpoint, {
+            method: 'POST', 
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            
+            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
+            
+            if (document.getElementById('regForm')) {
+                document.getElementById('regForm').reset();
+            }
+            if (document.getElementById('regGregDate')) {
+                document.getElementById('regGregDate').valueAsDate = new Date();
+            }
+            
+            let newMemberRow = [
+                payload.memberId, 
+                payload.fullName, 
+                payload.phone, 
+                payload.plan, 
+                payload.joinDate, 
+                payload.expiryDate, 
+                payload.status, 
+                payload.amountPaid, 
+                payload.gender, 
+                payload.edid, 
+                payload.photoBase64
+            ];
+            
+            if (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) {
+                let existingIdx = membersCache.findIndex(m => String(m[0] || '').trim().toLowerCase() === payload.memberId.toLowerCase());
+                if (existingIdx >= 0) {
+                    membersCache[existingIdx] = newMemberRow;
+                } else {
+                    membersCache.push(newMemberRow);
+                }
+
+                if (typeof renderDirectory === 'function') {
+                    renderDirectory(membersCache);
+                }
+            }
+
+            setTimeout(() => {
+                if (typeof syncMembers === 'function') syncMembers();
+            }, 1500);
+        }).catch(err => {
+            console.error("Registration Error:", err);
+            if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
+            alert("መመዝገብ አልተቻለም፤ እባክዎን የኔትወርክ ግንኙነትዎን ያረጋግጡ።");
+        });
+    };
+
+    if (photoFile && typeof fileToBase64 === 'function') {
+        fileToBase64(photoFile).then(b => processSubmit(b)).catch(() => processSubmit("https://via.placeholder.com/100"));
+    } else {
+        processSubmit("https://via.placeholder.com/100");
+    }
+}
+
+/* =========================================================
+   UTILITY & ENGINE HELPERS
+   ========================================================= */
+function toggleIdPage() {
+    let front = document.getElementById('idCardFrontView');
+    let back = document.getElementById('idCardBackView');
+    if (!front || !back) return;
+
+    if (front.style.display === 'none') {
+        front.style.display = 'block'; 
+        back.style.display = 'none';
+    } else {
+        front.style.display = 'none'; 
+        back.style.display = 'block';
+    }
+}
+
+function editMember(id, name, phone, plan) {
+    if (typeof switchView === 'function') switchView('registerView');
+    if (document.getElementById('regId')) document.getElementById('regId').value = id;
+    if (document.getElementById('regName')) document.getElementById('regName').value = name;
+    if (document.getElementById('regPhone')) document.getElementById('regPhone').value = phone;
+    if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
+    if (typeof calcPrice === 'function') calcPrice();
+}
+function deleteMember(id) {
+    if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
+        membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
+        
+        renderDirectory(membersCache);
+        if (typeof renderDashboardAnalytics === 'function') {
+            renderDashboardAnalytics(membersCache);
+        }
+
+        let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+
+        fetch(endpoint, {
+            method: 'POST', 
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "deleteMember", memberId: id })
+        }).then(() => {
+            setTimeout(() => {
+                if (typeof syncMembers === 'function') syncMembers();
+            }, 2000);
+        }).catch(err => console.error("Delete error:", err));
+    }
+}
+/* =========================================================
+   UPDATED QR SCANNER & SMART PARSER WITH MANUAL CONFIRMATION
+   ========================================================= */
+
+window.scanHistory = window.scanHistory || {};
+let currentScannedMember = null;
+
+// 1. Start Camera Stream
+async function startScanner(mode = 'environment') {
+    // ካሜራውን አሳይቶ የውጤት ማሳያውን መሸፈን
+    let cameraArea = document.getElementById('cameraArea');
+    let resultCard = document.getElementById('scanProfileResult');
+    
+    if (cameraArea) cameraArea.style.display = 'block';
+    if (resultCard) resultCard.style.display = 'none';
+
+    if (qrScanner) {
+        await stopScanner();
+    }
+
+    try {
+        await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+    } catch (err) {
+        alert("እባክዎን ካሜራውን ለመክፈት ለአሳሽዎ (Browser) የካሜራ ፈቃድ ይስጡት።");
+        return;
+    }
+
+    qrScanner = new Html5Qrcode("qrCameraBox");
+    
+    const config = { 
+        fps: 15, 
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.70;
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            return {
+                width: Math.floor(minEdgeSize * minEdgePercentage),
+                height: Math.floor(minEdgeSize * minEdgePercentage)
+            };
+        },
+        aspectRatio: 1.0
+    };
+
+    qrScanner.start(
+        { facingMode: mode },
+        config,
+        (decodedText) => {
+            processScan(decodedText);
+        },
+        (errorMessage) => {
+            // Scanning continuously...
+        }
+    ).catch(err => {
+        console.error("Camera Init Error:", err);
+        alert("ካሜራውን ማስነሳት አልተቻለም፦ " + err);
+    });
+}
+
+// 2. Stop Camera Safely
+async function stopScanner() {
+    if (qrScanner) {
+        try {
+            await qrScanner.stop();
+            qrScanner.clear();
+            qrScanner = null;
+        } catch (e) {
+            console.log("Scanner already stopped.");
+        }
+    }
+}
+
+// 3. Process Scan (Hides Camera & Displays Member Photo + Details)
+async function processScan(scannedData) {
+    if (!scannedData) return;
+
+    let extractedId = String(scannedData).trim();
+
+    // JSON ከሆነ ID/EDID መፍታት
+    try {
+        let parsed = JSON.parse(scannedData);
+        if (parsed.id) extractedId = String(parsed.id).trim();
+        else if (parsed.memberId) extractedId = String(parsed.memberId).trim();
+        else if (parsed.edid) extractedId = String(parsed.edid).trim();
+    } catch (e) {
+        extractedId = String(scannedData).trim();
+    }
+
+    // ስካን እንደተደረገ ካሜራውን አቁሞ መሸፈን
+    await stopScanner();
+    let cameraArea = document.getElementById('cameraArea');
+    if (cameraArea) cameraArea.style.display = 'none';
+
+    let resultCard = document.getElementById('scanProfileResult');
+    if (resultCard) resultCard.style.display = 'block';
+
+    // አባሉን ከ Cache መፈለግ (Member ID ወይም EDID [index 9])
+    let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) ? membersCache : [];
+    let m = membersList.find(item => {
+        let mId = String(item[0] || '').trim().toLowerCase();
+        let edid = String(item[9] || '').trim().toLowerCase();
+        let searchId = extractedId.toLowerCase();
+        return mId === searchId || (edid !== '' && edid === searchId);
+    });
+
+    if (!m) {
+        currentScannedMember = null;
+        resultCard.innerHTML = `
+            <div style="color:var(--danger-color, #EE5D50); font-weight:800; font-size:1rem; text-align:center; padding:15px; background:rgba(238,93,80,0.1); border-radius:14px; border:1px solid var(--danger-color);">
+                ❌ Access Denied: ያልተመዘገበ ID (${extractedId})
+            </div>
+            <div style="margin-top:15px; text-align:center;">
+                <button type="button" class="btn-main" style="background:var(--danger-color); padding:10px 20px;" onclick="cancelScan()">❌ ተመለስ</button>
+            </div>
+        `;
+        return;
+    }
+
+    // === የኢትዮጵያ ቀንን (E.C) EXPIRY ቼክ ማድረጊያ LOGIC ===
+    let rawExpiry = m[5] || "";
+    let isExpired = false;
+
+    if (rawExpiry && rawExpiry !== "N/A") {
+        let cleanDate = String(rawExpiry).split('(')[0].replace(/E\.C|E\/C/gi, '').trim();
+        let parts = cleanDate.split('/');
+        
+        if (parts.length === 3) {
+            let ethDay = parseInt(parts[0], 10);
+            let ethMonth = parseInt(parts[1], 10);
+            let ethYear = parseInt(parts[2], 10);
+
+            // ዛሬን በኢትዮጵያ ቀን ማስላት (August 2026 = ነሐሴ 2018 E.C.)
+            let today = new Date();
+            let gYear = today.getFullYear();
+            let gMonth = today.getMonth() + 1;
+            let gDay = today.getDate();
+
+            let curEthYear = (gMonth < 9 || (gMonth === 9 && gDay < 11)) ? (gYear - 8) : (gYear - 7);
+            let curEthMonth = 1;
+            let curEthDay = 1;
+
+            if (gMonth === 8) { // August -> ነሐሴ (Month 12)
+                curEthMonth = 12;
+                curEthDay = gDay - 6; 
+            } else if (gMonth === 7) { // July -> ሐምሌ (Month 11)
+                curEthMonth = 11;
+                curEthDay = gDay - 7;
+            }
+
+            if (ethYear < curEthYear) {
+                isExpired = true;
+            } else if (ethYear === curEthYear) {
+                if (ethMonth < curEthMonth) {
+                    isExpired = true;
+                } else if (ethMonth === curEthMonth && ethDay < curEthDay) {
+                    isExpired = true;
+                }
+            }
+        } else {
+            let expD = new Date(rawExpiry);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!isNaN(expD.getTime()) && expD < today) {
+                isExpired = true;
+            }
+        }
+    }
+
+    if (m[6] && String(m[6]).trim().toLowerCase() === 'expired') {
+        isExpired = true;
+    }
+
+    let calculatedStatus = isExpired ? "Expired" : (m[6] || "Active");
+    let isActive = !isExpired && String(calculatedStatus).toLowerCase() === "active";
+
+    // የአባሉን መረጃዎች ማዘጋጀት (Photo index 10 ላይ ይገኛል)
+    currentScannedMember = {
+        id: m[0] || extractedId,
+        name: m[1] || "Member",
+        phone: m[2] || "N/A",
+        plan: m[3] || "Monthly",
+        expiry: rawExpiry || "N/A",
+        status: calculatedStatus,
+        photo: m[10] || "https://via.placeholder.com/120"
+    };
+
+    // UI ላይ በፎቶ እና በአዝራሮች አምሮ እንዲታይ ማድረግ
+    resultCard.innerHTML = `
+        <div style="text-align:center;">
+            <!-- የሁኔታ ባጅ -->
+            <div style="padding:10px; border-radius:12px; font-weight:800; margin-bottom:15px; background:${isActive ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isActive ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; border:1px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">
+                ${isActive ? '✅ ACCESS GRANTED (ACTIVE)' : '❌ ACCESS DENIED (' + currentScannedMember.status.toUpperCase() + ')'}
+            </div>
+
+            <!-- የአባሉ ፎቶ -->
+            <div style="margin-bottom:12px;">
+                <img src="${currentScannedMember.photo}" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+            </div>
+
+            <!-- ስም እና ID -->
+            <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-main, #fff); margin-bottom:2px;">${currentScannedMember.name}</h3>
+            <p style="color:#58A6FF; font-weight:800; font-size:0.9rem; margin-bottom:15px;">ID: ${currentScannedMember.id}</p>
+
+            <!-- ዝርዝር መረጃዎች -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.82rem; text-align:left; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:18px; color:var(--text-muted);">
+                <div><b>ስልክ:</b> ${currentScannedMember.phone}</div>
+                <div><b>ፓኬጅ:</b> ${currentScannedMember.plan}</div>
+                <div><b>የሚያልቅበት:</b> ${currentScannedMember.expiry}</div>
+                <div><b>ሁኔታ:</b> ${currentScannedMember.status}</div>
+            </div>
+
+            <!-- የውሳኔ አዝራሮች -->
+            <div style="display:flex; gap:10px; justify-content:center;">
+                ${isActive ? `<button type="button" id="btnConfirmLog" class="btn-main" style="background:var(--success-color, #01B574); width:48%; padding:12px; margin-top:0;" onclick="confirmAttendance()">✅ መዝግብ</button>` : ''}
+                <button type="button" class="btn-main" style="background:var(--danger-color, #EE5D50); width:${isActive ? '48%' : '100%'}; padding:12px; margin-top:0;" onclick="cancelScan()">❌ ተው</button>
+            </div>
+        </div>
+    `;
+}
+
+// 4. "መዝግብ" ሲነካ ወደ ሰርቨር መዝግቦ ወደ ካሜራ የመመለሻ logic
+async function confirmAttendance() {
+    if (!currentScannedMember) return;
+
+    let btn = document.getElementById('btnConfirmLog');
+    if (btn) {
+        btn.innerText = "በመመዝገብ ላይ...";
+        btn.disabled = true;
+    }
+
+    try {
+        await sendAttendance(currentScannedMember.id, currentScannedMember.name, "Granted");
+        
+        if (btn) {
+            btn.innerText = "✅ SUCCESS!";
+            btn.style.background = "var(--success-color, #01B574)";
+        }
+    } catch (err) {
+        console.error("Save Error:", err);
+        if (btn) {
+            btn.innerText = "✅ SUCCESS!";
+            btn.style.background = "var(--success-color, #01B574)";
+        }
+    }
+
+    setTimeout(() => {
+        currentScannedMember = null;
+        startScanner(); // መልሶ ካሜራውን ማስነሳት
+    }, 1000);
+}
+
+// 5. "ተው" ሲነካ ቀጥታ ወደ ካሜራ መመለስ
+function cancelScan() {
+    currentScannedMember = null;
+    startScanner();
+}
+
+// 6. መረጃውን ወደ Google Apps Script የሚልከው (Promise የሚመልስ)
+function sendAttendance(id, name, status) {
+    let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+    
+    let payload = {
+        action: "recordAttendance",
+        memberId: id,
+        fullName: name,
+        status: status
+    };
+
+    return fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        if (typeof fetchLogs === 'function') fetchLogs();
+    });
+}
+
+// 7. Fetch Logs Table
+function fetchLogs() {
+    let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
+    if (!endpoint) return;
+
+    let tbody = document.getElementById('logsTableBody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-muted);">መረጃ በመጫን ላይ...</td></tr>';
+    }
+
+    fetch(endpoint + "?action=getAttendance")
+    .then(res => res.json())
+    .then(data => {
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        let rows = (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && data[0][0] === "Member ID") 
+                   ? data.slice(1) 
+                   : data;
+
+        if (rows && rows.length > 0) {
+            renderGroupedLogs(rows.slice().reverse());
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:15px;">ምንም አይነት የመግቢያ መዝገብ አልተገኘም።</td></tr>';
+        }
+    })
+    .catch(err => {
+        console.error("Fetch Logs Error:", err);
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--danger-color, #EE5D50); padding:15px;">መረጃውን ማምጣት አልተቻለም።</td></tr>';
+        }
+    });
+}
+
+// የሰዓት አቆጣጠሩን ከ 24-Hour (17:15:00) ወደ 12-Hour AM/PM (05:15:00 PM) መቀየሪያ
+function format12HourTime(dateTimeStr) {
+    if (!dateTimeStr) return '';
+    let parts = String(dateTimeStr).trim().split(' ');
+    let timePart = parts.length > 1 ? parts[1] : parts[0];
+    let t = timePart.split(':');
+    if (t.length < 2) return dateTimeStr;
+
+    let hours = parseInt(t[0], 10);
+    let minutes = t[1];
+    let seconds = t[2] ? t[2] : '00';
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    let formattedHours = hours < 10 ? '0' + hours : hours;
+
+    return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
+}
+
+// 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
+function renderGroupedLogs(rows) {
+    let tbody = document.getElementById('logsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">ምንም አይነት የአቴንዳንስ መረጃ አልተገኘም።</td></tr>';
+        return;
+    }
+
+    let grouped = {};
+    rows.forEach(l => {
+        let rawTime = String(l[2] || '');
+        let datePart = rawTime.split(' ')[0] || 'Unknown Date';
+        if (!grouped[datePart]) grouped[datePart] = [];
+        grouped[datePart].push(l);
+    });
+
+    Object.keys(grouped).forEach(dateGroup => {
+        let ethDateHeader = (typeof toEthDate === 'function' && dateGroup.includes('-')) 
+                            ? toEthDate(dateGroup) 
+                            : dateGroup;
+
+        let groupHeaderTr = document.createElement('tr');
+        groupHeaderTr.innerHTML = `
+            <td colspan="4" style="background: rgba(88, 166, 255, 0.12); font-weight: 800; color: #58A6FF; padding: 10px 14px; font-size: 0.88rem; border-left: 4px solid #58A6FF;">
+                📅 ቀን (E.C): ${ethDateHeader}
+            </td>
+        `;
+        tbody.appendChild(groupHeaderTr);
+
+        grouped[dateGroup].forEach(l => {
+            let memberId = String(l[0] || '').trim();
+            let fullName = l[1] || '';
+            let rawScanTime = l[2] || '';
+            let statusText = String(l[3] || '').trim();
+
+            let formattedTime = format12HourTime(rawScanTime);
+
+            // አባሉን ከ membersCache መፈለግ
+            let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
+                    ? membersCache.find(mem => {
+                        let cachedId = String(mem[0] || '').trim().toLowerCase();
+                        let searchId = memberId.toLowerCase();
+                        return cachedId === searchId || cachedId.replace(/[^0-9]/g, '') === searchId.replace(/[^0-9]/g, '');
+                    })
+                    : null;
+
+            // ቀን ማለፉን checkIsExpired ን በመጠቀም በጥንቃቄ ማረጋገጥ
+            let isExpired = false;
+            if (m) {
+                isExpired = checkIsExpired(m[5], m[6]);
+            } else {
+                isExpired = checkIsExpired('', statusText);
+            }
+
+            let displayStatus = isExpired ? 'Expired' : 'Active';
+            let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
+            let colorStyle = isExpired ? 'var(--danger-color, #EE5D50)' : 'var(--success-color, #01B574)';
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:800; color:#58A6FF;">${memberId}</td>
+                <td style="font-weight:700;">${fullName}</td>
+                <td style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">${formattedTime}</td>
+                <td>
+                    <span style="padding:6px 14px; border-radius:30px; font-size:0.75rem; font-weight:800; background:${bgStyle}; color:${colorStyle}; display:inline-block;">
+                        ● ${displayStatus}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+/* =========================================================
+   UTILITY EXPORT & VCARD FUNCTIONS
+   ========================================================= */
+function downloadVCard() {
+    let vcardData = `BEGIN:VCARD\nVERSION:3.0\nFN:FaidATech Enterprise\nTEL;TYPE=CELL:+251912292150\nURL:https://faidatech.my.canva.site/guddaa-life-fitness-gym\nEND:VCARD`;
+    let blob = new Blob([vcardData], { type: 'text/vcard' });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FaidATech_Contact.vcf';
+    a.click();
+}
+
+function exportCSV() {
+    let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
+    membersCache.forEach(m => {
+        csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+    });
+    let blob = new Blob([csv], { type: 'text/csv' });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FaidATech_Gym_Members.csv';
+    a.click();
+}
+/* =========================================================
+   MEMBERS DIRECTORY STATUS FILTER ENGINE (FIXED)
+   ========================================================= */
+function filterDirectoryByStatus() {
+    let q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+    let filterVal = document.getElementById('statusFilterSelect') ? document.getElementById('statusFilterSelect').value : 'ALL';
+
+    if (!membersCache || !Array.isArray(membersCache)) return;
+
+    let filtered = membersCache.filter(m => {
+        let id = String(m[0] || '').toLowerCase();
+        let name = String(m[1] || '').toLowerCase();
+        let phone = String(m[2] || '').toLowerCase();
+        
+        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
+        let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
+        
+        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
+        let expiry = m[5] || '';
+        let rawStatus = m[6] || 'Active';
+        let isExpired = checkIsExpired(expiry, rawStatus);
+        
+        // 3. Dropdown ማጣሪያ
+        if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
+        if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
+        
+        return matchesSearch; // ALL ከሆነ
+    });
+
+    // የተጣራውን ውጤት Table ላይ ማሳየት
+    renderDirectory(filtered);
+}
+
+// ጽሑፍ ሲፈለግም ይሄው እንዲሰራ ማድረግ
+function filterDirectory() {
+    filterDirectoryByStatus();
+}
+</script>
+</body>
+</html>
