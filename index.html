@@ -1099,20 +1099,20 @@
         <div class="smart-id-card-wrap" id="printableSmartCard" style="width:100%; max-width:340px; margin:0 auto; filter:drop-shadow(0 20px 30px rgba(0,0,0,0.6));">
             
             <!-- Front View -->
-            <div id="idCardFrontView" style="background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; position:relative; min-height:480px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
+            <div id="idCardFrontView" style="background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; position:relative; height:520px; min-height:520px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
                 
                 <div>
                     <!-- Top Gradient Header -->
                     <div class="id-header" style="background:linear-gradient(135deg, #1E293B 0%, #0F172A 100%); padding:18px 12px 28px 12px; text-align:center; border-bottom:2px solid #FF5E00; position:relative;">
                         <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
-                        <img id="cardGymLogo" src="https://via.placeholder.com/40" alt="Gym Logo" style="height:36px; width:auto; margin-bottom:6px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
+                        <img id="cardGymLogo" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=GUDDA" alt="Gym Logo" style="height:36px; width:auto; margin-bottom:6px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4)); border-radius:50%;">
                         <h4 id="cardGymName" style="color:#f4e7dc; font-size:1.05rem; font-weight:900; margin:0; letter-spacing:1px; text-transform:uppercase;">GUDDA LIFE FITNESS</h4>
                         <p style="color:#FF5E00; font-size:0.58rem; font-weight:800; margin:3px 0 0 0; letter-spacing:1.5px; opacity:0.95;">FIT FOR LIFE • SINCE 2007</p>
                     </div>
 
                     <!-- Glowing Photo Frame -->
                     <div class="id-photo-frame" style="text-align:center; margin-top:-32px; position:relative; z-index:5;">
-                        <img id="cardMemberPhoto" src="https://via.placeholder.com/100" alt="Athlete Photo" style="width:92px; height:92px; border-radius:50%; border:3.5px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 20px rgba(255, 94, 0, 0.45), 0 8px 16px rgba(0,0,0,0.6);">
+                        <img id="cardMemberPhoto" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" alt="Athlete Photo" style="width:92px; height:92px; border-radius:50%; border:3.5px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 20px rgba(255, 94, 0, 0.45), 0 8px 16px rgba(0,0,0,0.6);">
                     </div>
 
                     <!-- Body Details -->
@@ -1124,7 +1124,7 @@
                             <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">FAIDA EDID:</span> <b id="cardEdid" style="color:#FFFFFF; font-weight:800; font-family:monospace;">EDID-FAN-2589341592</b></p>
                             <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">PHONE:</span> <b id="cardPhone" style="color:#FFFFFF; font-weight:800;">0912132353</b></p>
                             <p style="display:none;"><span style="color:#94A3B8; font-weight:700;">EXPIRY (E.C):</span> <b id="cardExpiry">4/13/2018 E.C</b></p>
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b style="color:#FFFFFF; font-weight:800;">Bolo, Adama, Ethiopia</b></p>
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b id="cardLocation" style="color:#FFFFFF; font-weight:800;">Bolo, Adama, Ethiopia</b></p>
                         </div>
 
                         <!-- High Contrast Neon QR Container -->
@@ -1133,7 +1133,9 @@
                                 <div style="font-size:0.55rem; color:rgba(255,255,255,0.85); font-weight:800; letter-spacing:0.5px;">MEMBER ID</div>
                                 <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.15rem; font-weight:900; font-family:monospace; letter-spacing:1px; text-shadow:0 2px 4px rgba(0,0,0,0.3);">GYM-7503</div>
                             </div>
-                            <div id="cardQrCode" style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.3);"></div>
+                            <div id="cardQrCode" style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=GYM-7503" style="width:48px; height:48px; display:block;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1141,12 +1143,12 @@
                 <!-- Footer with Bigger & Raised Image Logo -->
                 <div id="cardFooterText" style="background:#FFFFFF; color:#0F172A; font-size:0.7rem; font-weight:800; text-align:center; padding:10px 12px; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <span style="color:#475569; font-weight:700;">Powered by</span>
-                    <img src="images/faidatech-logo.png" alt="FaidATech Logo" style="height:26px; width:auto; object-fit:contain; display:inline-block;">
+                    <img src="images/faidatech-logo.png" onerror="this.onerror=null; this.src='faidatech-logo.png';" alt="FaidATech Logo" style="height:26px; width:auto; object-fit:contain; display:inline-block;">
                 </div>
             </div>
 
             <!-- Back View -->
-            <div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; min-height:480px; height:100%; box-sizing:border-box; padding:20px 16px 0 16px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
+            <div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid rgba(255, 94, 0, 0.6); border-radius:20px; overflow:hidden; height:520px; min-height:520px; box-sizing:border-box; padding:20px 16px 0 16px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
                 <div>
                     <div style="height:4px; position:absolute; top:0; left:0; right:0; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
                     <h3 style="color:#FF5E00; font-weight:900; font-size:1.1rem; margin:6px 0 4px 0; letter-spacing:0.8px; text-transform:uppercase;">GUDDA LIFE FITNESS</h3>
@@ -1154,11 +1156,11 @@
                     
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:18px;">
                         <div style="background:rgba(255,255,255,0.03); padding:10px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardCbeQr" src="https://via.placeholder.com/100?text=CBE+QR" style="width:90px; height:90px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
+                            <img id="cardCbeQr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CBE-BIRR-1000" style="width:85px; height:85px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
                             <span style="font-size:0.68rem; font-weight:800; color:#FFFFFF; display:block; margin-top:6px; letter-spacing:0.5px;">CBE BIRR</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.03); padding:10px 8px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardTeleQr" src="https://via.placeholder.com/100?text=Telebirr+QR" style="width:90px; height:90px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
+                            <img id="cardTeleQr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TELEBIRR-1000" style="width:85px; height:85px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
                             <span style="font-size:0.68rem; font-weight:800; color:#38BDF8; display:block; margin-top:6px; letter-spacing:0.5px;">TELEBIRR</span>
                         </div>
                     </div>
@@ -1171,20 +1173,49 @@
                 <!-- Back View Footer with Image Logo -->
                 <div style="background:#020617; color:#94A3B8; font-size:0.65rem; font-weight:700; text-align:center; padding:10px 0; border-top:1px solid rgba(255,255,255,0.05); margin:0 -16px; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <span>Powered by</span>
-                    <img src="images/faidatech-logo.png" alt="FaidATech Logo" style="height:22px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
+                    <img src="images/faidatech-logo.png" onerror="this.onerror=null; this.src='faidatech-logo.png';" alt="FaidATech Logo" style="height:22px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
                 </div>
             </div>
 
         </div>
 
         <!-- Buttons -->
-        <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#3B82F6; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.3);" onclick="toggleIdPage()">🔄 Flip Card</button>
-            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#FF5E00; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(255,94,0,0.3);" onclick="window.print()">🖨️ Print ID</button>
-            <button type="button" class="btn-main" style="width:auto; padding:10px 18px; margin-top:0; background:#475569; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
+        <div style="margin-top:20px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0; background:#3B82F6; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.3);" onclick="toggleIdPage()">🔄 Flip Card</button>
+            <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0; background:#10B981; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(16,185,129,0.3);" onclick="downloadBothSides()">📥 Download ID</button>
+            <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0; background:#FF5E00; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(255,94,0,0.3);" onclick="shareSmartId()">🔗 Share ID</button>
+            <button type="button" class="btn-main" style="width:auto; padding:10px 14px; margin-top:0; background:#475569; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
         </div>
     </div>
 </div>
+
+<!-- JavaScript helpers for Download & Share -->
+<script>
+function downloadBothSides() {
+    window.print();
+}
+
+async function shareSmartId() {
+    const name = document.getElementById('cardMemberName')?.innerText || 'Member';
+    const id = document.getElementById('cardMemberId')?.innerText || '';
+    const shareText = `Official Smart ID: ${name} (${id})`;
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Smart ID Card',
+                text: shareText,
+                url: window.location.href
+            });
+        } catch (e) {
+            console.log('Share dismissed');
+        }
+    } else {
+        navigator.clipboard.writeText(`${shareText}\n${window.location.href}`);
+        alert('የካርዱ መረጃ ኮፒ ተደርጓል!');
+    }
+}
+</script>
 <script>
         /* =========================================================
            GLOBAL SYSTEM CONFIGURATION & STATE ENGINE
