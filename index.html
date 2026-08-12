@@ -1783,32 +1783,26 @@ function openMemberSmartId(memberId) {
 }
 
 /* =========================================================
-   SMART ID CARD ENGINE (100% SAFE - STRICTLY NO HTML CHANGES)
+   SMART ID CARD ENGINE (ORIGINAL CODE + POWERED BY FOOTER)
    ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo) {
-    let memberId = id || 'GM-0001';
-    let memberName = String(name || 'MEMBER NAME').toUpperCase();
-    let memberPhone = phone || 'N/A';
-    let memberEdid = edid || 'EDID-FAN-2589341592';
-    let memberPhoto = photo || 'https://via.placeholder.com/100';
-
-    // 1. ነባር ኤለመንቶች ላይ መረጃዎችን ማስገባት እና ስታይል መስጠት
+    // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
     if (document.getElementById('cardMemberId')) {
         let idEl = document.getElementById('cardMemberId');
-        idEl.innerText = memberId;
+        idEl.innerText = id || 'GM-0001';
         idEl.style.color = '#FF5E00';
         idEl.style.fontWeight = '900';
     }
     
     if (document.getElementById('cardMemberName')) {
         let nameEl = document.getElementById('cardMemberName');
-        nameEl.innerText = memberName;
+        nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
         nameEl.style.color = '#111827';
         nameEl.style.fontWeight = '900';
     }
     
-    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = memberPhone;
-    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = memberEdid;
+    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
+    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
     
     // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
     let expiryEl = document.getElementById('cardExpiry');
@@ -1822,7 +1816,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     // 3. የፎቶ ዲዛይን (Powerful Border & Shadow)
     if (document.getElementById('cardMemberPhoto')) {
         let photoEl = document.getElementById('cardMemberPhoto');
-        photoEl.src = memberPhoto;
+        photoEl.src = photo || 'https://via.placeholder.com/100';
         photoEl.style.border = '4px solid #FF5E00';
         photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
         photoEl.style.borderRadius = '50%';
@@ -1833,28 +1827,17 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
     if (qrContainer) {
         qrContainer.innerHTML = "";
         if (typeof QRCode !== 'undefined') {
-            new QRCode(qrContainer, { text: memberId, width: 85, height: 85 });
+            new QRCode(qrContainer, { text: id || 'GM-0001', width: 85, height: 85 });
         }
     }
 
-    // 5. የካርድ ገጽታ ማሳመር እና "Powered by FaidATech" መጨመር
+    // 5. የካርድ ገጽታ ማሳመር
     let frontView = document.getElementById('idCardFrontView');
     if (frontView) {
         frontView.style.display = 'block';
         frontView.style.background = 'linear-gradient(180deg, #ffffff 60%, #fff7f2 100%)';
         frontView.style.border = '2px solid #FF5E00';
         frontView.style.borderRadius = '16px';
-        frontView.style.position = 'relative';
-        frontView.style.paddingBottom = '25px';
-
-        // "Powered by FaidATech" ከታች በደህና መጨመር
-        if (!document.getElementById('faidaFooterFront')) {
-            let footerFront = document.createElement('div');
-            footerFront.id = 'faidaFooterFront';
-            footerFront.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
-            footerFront.style.cssText = 'position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:0.62rem; color:#64748B; font-weight:700;';
-            frontView.appendChild(footerFront);
-        }
     }
     
     let backView = document.getElementById('idCardBackView');
@@ -1863,17 +1846,11 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         backView.style.background = 'linear-gradient(180deg, #111827 0%, #1f2937 100%)';
         backView.style.border = '2px solid #FF5E00';
         backView.style.borderRadius = '16px';
-        backView.style.position = 'relative';
-        backView.style.paddingBottom = '25px';
+    }
 
-        // "Powered by FaidATech" ከኋላ በደህና መጨመር
-        if (!document.getElementById('faidaFooterBack')) {
-            let footerBack = document.createElement('div');
-            footerBack.id = 'faidaFooterBack';
-            footerBack.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
-            footerBack.style.cssText = 'position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:0.62rem; color:#94A3B8; font-weight:700;';
-            backView.appendChild(footerBack);
-        }
+    // 6. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
+    if (document.getElementById('cardFooterText')) {
+        document.getElementById('cardFooterText').innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
     }
 
     let modal = document.getElementById('smartIdModal');
