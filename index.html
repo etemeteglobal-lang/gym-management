@@ -1129,14 +1129,14 @@
                             <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b id="cardLocation" style="color:#FFFFFF; font-weight:800;">Bolo, Adama</b></p>
                         </div>
 
-                        <!-- Dynamic Member QR (Enlarged Container & Image) -->
+                        <!-- Dynamic Member QR -->
                         <div style="background:linear-gradient(135deg, #FF5E00 0%, #D94600 100%); padding:8px 12px; border-radius:10px; display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
                             <div style="text-align:left;">
                                 <div style="font-size:0.55rem; color:rgba(255,255,255,0.9); font-weight:800;">MEMBER ID</div>
                                 <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.1rem; font-weight:900; font-family:monospace;">GYM-0001</div>
                             </div>
                             <div style="background:#FFFFFF; padding:4px; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=GYM-0001" alt="Member QR" style="width:60px; height:60px; display:block; object-fit:contain;">
+                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GYM-0001" alt="Member QR" style="width:58px; height:58px; display:block; object-fit:contain;">
                             </div>
                         </div>
                     </div>
@@ -1144,26 +1144,26 @@
 
                 <!-- Front Footer Logo -->
                 <div style="background:#FFFFFF; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; height:34px; box-sizing:border-box;">
-                    <img src="./images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('frontFooterText').style.display='inline';" alt="FaidATech Logo" style="height:20px; width:auto; object-fit:contain; max-width:100%;">
+                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('frontFooterText').style.display='inline';" alt="FaidATech Logo" style="height:20px; width:auto; object-fit:contain; max-width:100%;">
                     <span id="frontFooterText" style="display:none; color:#0F172A; font-weight:900; font-size:0.75rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
                 </div>
             </div>
 
-            <!-- BACK VIEW -->
+            <!-- BACK VIEW (ኦሪጅናል የባንክ QRዎች እንዳበሩ) -->
             <div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; height:490px; box-sizing:border-box; padding:16px 14px 0 14px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
                 <div>
                     <div style="height:3px; position:absolute; top:0; left:0; right:0; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
                     <h3 id="cardBackGymName" style="color:#FF5E00; font-weight:900; font-size:1rem; margin:4px 0 2px 0; text-transform:uppercase;">GUDDA LIFE FITNESS</h3>
                     <p style="font-size:0.62rem; color:#94A3B8; line-height:1.4; margin-bottom:12px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
                     
-                    <!-- QR Payment Images Section -->
+                    <!-- Original Bank QR Elements -->
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
                         <div style="background:rgba(255,255,255,0.03); padding:8px 6px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardCbeQr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CBE-BIRR-PAYMENT" alt="CBE Birr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
+                            <img id="cardCbeQr" src="" alt="CBE Birr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
                             <span style="font-size:0.65rem; font-weight:800; color:#FFFFFF; display:block; margin-top:4px;">CBE BIRR</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.03); padding:8px 6px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardTeleQr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TELEBIRR-PAYMENT" alt="Telebirr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
+                            <img id="cardTeleQr" src="" alt="Telebirr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
                             <span style="font-size:0.65rem; font-weight:800; color:#38BDF8; display:block; margin-top:4px;">TELEBIRR</span>
                         </div>
                     </div>
@@ -1173,16 +1173,16 @@
                     </div>
                 </div>
 
-                <!-- Back Footer Logo (Fixed) -->
+                <!-- Back Footer -->
                 <div style="background:#020617; text-align:center; padding:8px 0; border-top:1px solid rgba(255,255,255,0.05); margin:0 -14px; display:flex; align-items:center; justify-content:center; height:34px; box-sizing:border-box;">
-                    <img src="./images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('backFooterText').style.display='inline';" alt="FaidATech Logo" style="height:18px; width:auto; object-fit:contain; filter:brightness(0) invert(1); max-width:100%;">
+                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('backFooterText').style.display='inline';" alt="FaidATech Logo" style="height:18px; width:auto; object-fit:contain; filter:brightness(0) invert(1); max-width:100%;">
                     <span id="backFooterText" style="display:none; color:#94A3B8; font-weight:800; font-size:0.7rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
                 </div>
             </div>
 
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Buttons -->
         <div style="margin-top:12px; display:flex; gap:6px; justify-content:center; flex-wrap:nowrap; width:100%;">
             <button type="button" style="flex:1; padding:9px 4px; background:#3B82F6; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="toggleIdPage()">🔄 Flip</button>
             <button type="button" style="flex:1; padding:9px 4px; background:#FF5E00; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="downloadBothSides()">📥 Download</button>
@@ -1192,40 +1192,8 @@
     </div>
 </div>
 
-<!-- JavaScript Helpers & Modal Opener -->
 <script>
-    // 1. OPEN SMART ID MODAL (Main function to dynamic populate details)
-    function openSmartIdModal(member) {
-        if(!member) {
-            member = {
-                name: 'GETNET GIRMA',
-                edid: 'EDID-FAN-258934',
-                phone: '0912132353',
-                location: 'Bolo, Adama',
-                id: 'GYM-0001'
-            };
-        }
-
-        // Set Texts
-        document.getElementById('cardMemberName').innerText = member.name || 'GETNET GIRMA';
-        document.getElementById('cardEdid').innerText = member.edid || member.faidaId || 'EDID-FAN-258934';
-        document.getElementById('cardPhone').innerText = member.phone || '0912132353';
-        document.getElementById('cardLocation').innerText = member.location || 'Bolo, Adama';
-        document.getElementById('cardMemberId').innerText = member.id || 'GYM-0001';
-
-        // Photos & QR
-        if (member.photo) document.getElementById('cardMemberPhoto').src = member.photo;
-        
-        const memberIdVal = member.id || 'GYM-0001';
-        document.getElementById('cardQrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(memberIdVal)}`;
-
-        // Open Modal Resetting to Front View
-        document.getElementById('idCardFrontView').style.display = 'flex';
-        document.getElementById('idCardBackView').style.display = 'none';
-        document.getElementById('smartIdModal').style.display = 'flex';
-    }
-
-    // 2. Flip Card Toggle
+    // 1. Flip Card Toggle
     function toggleIdPage() {
         const front = document.getElementById('idCardFrontView');
         const back = document.getElementById('idCardBackView');
@@ -1269,8 +1237,7 @@
                 scale: 2,
                 backgroundColor: '#0F172A',
                 useCORS: true,
-                allowTaint: true,
-                logging: false
+                allowTaint: true
             });
             document.body.removeChild(tempContainer);
             return canvas;
@@ -1280,7 +1247,7 @@
         }
     }
 
-    // 3. Download Both Sides (PNG Image)
+    // 2. Download Both Sides
     async function downloadBothSides() {
         try {
             const canvas = await generateCombinedCanvas();
@@ -1291,11 +1258,11 @@
             link.click();
         } catch (err) {
             console.error("Download Error:", err);
-            alert("ካርዱን ለማውረድ አልተቻለም። እባክዎ እንደገና ይሞክሩ።");
+            alert("ካርዱን ለማውረድ አልተቻለም።");
         }
     }
 
-    // 4. Share Functionality
+    // 3. Share Functionality
     async function shareSmartId() {
         const name = document.getElementById('cardMemberName')?.innerText || 'Member';
         const id = document.getElementById('cardMemberId')?.innerText || '';
@@ -1303,23 +1270,13 @@
         try {
             const canvas = await generateCombinedCanvas();
             canvas.toBlob(async (blob) => {
-                if(!blob) {
-                    alert('ምስሉን ማዘጋጀት አልተቻለም።');
-                    return;
-                }
+                if(!blob) return;
                 const file = new File([blob], `${id}_Smart_ID.png`, { type: 'image/png' });
-                
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         title: 'Official Gym Smart ID Card',
                         text: `የስፖርት ማዕከል ዲጂታል አባልነት ካርድ: ${name} (${id})`,
                         files: [file]
-                    });
-                } else if (navigator.share) {
-                    await navigator.share({
-                        title: 'Official Gym Smart ID Card',
-                        text: `Official Smart ID Card: ${name} (${id})`,
-                        url: window.location.href
                     });
                 } else {
                     navigator.clipboard.writeText(`Official Smart ID Card: ${name} (${id})\n${window.location.href}`);
@@ -1328,7 +1285,6 @@
             }, 'image/png');
         } catch (e) {
             console.error("Share Error:", e);
-            alert('ማጋራት አልተቻለም።');
         }
     }
 </script>
