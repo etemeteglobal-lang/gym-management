@@ -1102,7 +1102,7 @@
         <div class="smart-id-card-wrap" id="printableSmartCard" style="width:100%; margin:0 auto; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
             
             <!-- FRONT VIEW -->
-            <div id="idCardFrontView" style="background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; position:relative; height:490px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
+            <div id="idCardFrontView" style="background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; position:relative; height:480px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
                 
                 <div>
                     <!-- Header -->
@@ -1123,41 +1123,40 @@
                         <h2 id="cardMemberName" style="color:#FFFFFF; font-size:1.05rem; font-weight:900; margin:0; text-transform:uppercase;">GETNET GIRMA</h2>
                         <div style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px; border:1px solid rgba(255, 94, 0, 0.3);">OFFICIAL GYM MEMBER</div>
                         
-                        <div style="margin:8px 0; background:rgba(255, 255, 255, 0.04); border-radius:10px; padding:8px 10px; border:1px solid rgba(255,255,255,0.08); font-size:0.68rem; line-height:1.7; text-align:left;">
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">FAIDA EDID:</span> <b id="cardEdid" style="color:#FFFFFF; font-weight:800; font-family:monospace;">EDID-FAN-258934</b></p>
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">PHONE:</span> <b id="cardPhone" style="color:#FFFFFF; font-weight:800;">0912132353</b></p>
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b id="cardLocation" style="color:#FFFFFF; font-weight:800;">Bolo, Adama</b></p>
+                        <div style="margin:8px 0; background:rgba(255, 255, 255, 0.04); border-radius:10px; padding:8px 10px; border:1px solid rgba(255,255,255,0.08); font-size:0.65rem; line-height:1.6; text-align:left;">
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">FAIDA EDID:</span> <b id="cardEdid" style="color:#FFFFFF; font-weight:800; font-family:monospace;"></b></p>
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">PHONE:</span> <b id="cardPhone" style="color:#FFFFFF; font-weight:800;"></b></p>
+                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b id="cardLocation" style="color:#FFFFFF; font-weight:800;"></b></p>
                         </div>
 
                         <!-- Dynamic Member QR -->
-                        <div style="background:linear-gradient(135deg, #FF5E00 0%, #D94600 100%); padding:8px 12px; border-radius:10px; display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
+                        <div style="background:linear-gradient(135deg, #FF5E00 0%, #D94600 100%); padding:6px 10px; border-radius:10px; display:flex; align-items:center; justify-content:space-between;">
                             <div style="text-align:left;">
-                                <div style="font-size:0.55rem; color:rgba(255,255,255,0.9); font-weight:800;">MEMBER ID</div>
-                                <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.1rem; font-weight:900; font-family:monospace;">GYM-0001</div>
+                                <div style="font-size:0.5rem; color:rgba(255,255,255,0.85); font-weight:800;">MEMBER ID</div>
+                                <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1rem; font-weight:900; font-family:monospace;">GYM-0001</div>
                             </div>
-                            <div style="background:#FFFFFF; padding:4px; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GYM-0001" alt="Member QR" style="width:58px; height:58px; display:block; object-fit:contain;">
+                            <div style="background:#FFFFFF; padding:3px; border-radius:6px;">
+                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=GYM-0001" alt="Member QR" style="width:45px; height:45px; display:block;">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Front Footer Logo -->
-                <div style="background:#FFFFFF; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; height:34px; box-sizing:border-box;">
-                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('frontFooterText').style.display='inline';" alt="FaidATech Logo" style="height:20px; width:auto; object-fit:contain; max-width:100%;">
-                    <span id="frontFooterText" style="display:none; color:#0F172A; font-weight:900; font-size:0.75rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
+                <!-- Footer Logo -->
+                <div style="background:#FFFFFF; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; height:32px; box-sizing:border-box;">
+                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" alt="FaidATech Logo" style="height:20px; width:auto; object-fit:contain;">
+                    <span style="display:none; color:#0F172A; font-weight:900; font-size:0.75rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
                 </div>
             </div>
 
-            <!-- BACK VIEW (ኦሪጅናል የባንክ QRዎች እንዳበሩ) -->
-            <div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; height:490px; box-sizing:border-box; padding:16px 14px 0 14px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
+            <!-- BACK VIEW -->
+            <div id="idCardBackView" style="display:none; background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; height:480px; box-sizing:border-box; padding:16px 14px 0 14px; text-align:center; color:#FFFFFF; position:relative; flex-direction:column; justify-content:space-between;">
                 <div>
                     <div style="height:3px; position:absolute; top:0; left:0; right:0; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
                     <h3 id="cardBackGymName" style="color:#FF5E00; font-weight:900; font-size:1rem; margin:4px 0 2px 0; text-transform:uppercase;">GUDDA LIFE FITNESS</h3>
-                    <p style="font-size:0.62rem; color:#94A3B8; line-height:1.4; margin-bottom:12px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
+                    <p style="font-size:0.6rem; color:#94A3B8; line-height:1.4; margin-bottom:14px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
                     
-                    <!-- Original Bank QR Elements -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
                         <div style="background:rgba(255,255,255,0.03); padding:8px 6px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
                             <img id="cardCbeQr" src="" alt="CBE Birr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
                             <span style="font-size:0.65rem; font-weight:800; color:#FFFFFF; display:block; margin-top:4px;">CBE BIRR</span>
@@ -1174,9 +1173,9 @@
                 </div>
 
                 <!-- Back Footer -->
-                <div style="background:#020617; text-align:center; padding:8px 0; border-top:1px solid rgba(255,255,255,0.05); margin:0 -14px; display:flex; align-items:center; justify-content:center; height:34px; box-sizing:border-box;">
-                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; document.getElementById('backFooterText').style.display='inline';" alt="FaidATech Logo" style="height:18px; width:auto; object-fit:contain; filter:brightness(0) invert(1); max-width:100%;">
-                    <span id="backFooterText" style="display:none; color:#94A3B8; font-weight:800; font-size:0.7rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
+                <div style="background:#020617; text-align:center; padding:8px 0; border-top:1px solid rgba(255,255,255,0.05); margin:0 -14px; display:flex; align-items:center; justify-content:center; height:32px; box-sizing:border-box;">
+                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" alt="FaidATech Logo" style="height:18px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
+                    <span style="display:none; color:#94A3B8; font-weight:800; font-size:0.7rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
                 </div>
             </div>
 
@@ -1184,16 +1183,42 @@
 
         <!-- Buttons -->
         <div style="margin-top:12px; display:flex; gap:6px; justify-content:center; flex-wrap:nowrap; width:100%;">
-            <button type="button" style="flex:1; padding:9px 4px; background:#3B82F6; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="toggleIdPage()">🔄 Flip</button>
-            <button type="button" style="flex:1; padding:9px 4px; background:#FF5E00; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="downloadBothSides()">📥 Download</button>
-            <button type="button" style="flex:1; padding:9px 4px; background:#10B981; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="shareSmartId()">🔗 Share</button>
-            <button type="button" style="flex:1; padding:9px 4px; background:#475569; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem; box-shadow:none; margin:0;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
+            <button type="button" style="flex:1; padding:8px 4px; background:#3B82F6; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="toggleIdPage()">🔄 Flip</button>
+            <button type="button" style="flex:1; padding:8px 4px; background:#FF5E00; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="downloadBothSides()">📥 Download</button>
+            <button type="button" style="flex:1; padding:8px 4px; background:#10B981; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="shareSmartId()">🔗 Share</button>
+            <button type="button" style="flex:1; padding:8px 4px; background:#475569; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
         </div>
     </div>
 </div>
 
+<!-- JavaScript Helpers -->
 <script>
-    // 1. Flip Card Toggle
+    // 1. Modal Populate & Display Fix
+    function fillCardData(member) {
+        if(!member) return;
+        
+        // Populate Front Details safely
+        const edidEl = document.getElementById('cardEdid');
+        if(edidEl) edidEl.innerText = member.edid || member.faidaId || 'EDID-FAN-258934';
+        
+        const phoneEl = document.getElementById('cardPhone');
+        if(phoneEl) phoneEl.innerText = member.phone || '0912132353';
+        
+        const locEl = document.getElementById('cardLocation');
+        if(locEl) locEl.innerText = member.location || 'Bolo, Adama';
+        
+        const nameEl = document.getElementById('cardMemberName');
+        if(nameEl) nameEl.innerText = member.name || 'GETNET GIRMA';
+        
+        const idEl = document.getElementById('cardMemberId');
+        if(idEl) idEl.innerText = member.id || 'GYM-0001';
+
+        // QR Code
+        const qrEl = document.getElementById('cardQrCodeImg');
+        if(qrEl) qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(member.id || 'GYM-0001')}`;
+    }
+
+    // 2. Flip Toggle
     function toggleIdPage() {
         const front = document.getElementById('idCardFrontView');
         const back = document.getElementById('idCardBackView');
@@ -1206,7 +1231,7 @@
         }
     }
 
-    // Helper: Side-by-Side Canvas Generator for Download & Share
+    // 3. Side-by-Side Canvas Generator
     async function generateCombinedCanvas() {
         const front = document.getElementById('idCardFrontView');
         const back = document.getElementById('idCardBackView');
@@ -1247,7 +1272,7 @@
         }
     }
 
-    // 2. Download Both Sides
+    // 4. Download Handler
     async function downloadBothSides() {
         try {
             const canvas = await generateCombinedCanvas();
@@ -1262,7 +1287,7 @@
         }
     }
 
-    // 3. Share Functionality
+    // 5. Share Handler
     async function shareSmartId() {
         const name = document.getElementById('cardMemberName')?.innerText || 'Member';
         const id = document.getElementById('cardMemberId')?.innerText || '';
