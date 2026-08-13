@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -1320,51 +1321,88 @@
         }
     }
 
-    // 5. Side-by-Side Canvas Generator
-    async function generateCombinedCanvas() {
-        const front = document.getElementById('idCardFrontView');
-        const back = document.getElementById('idCardBackView');
-        
-        if (!front || !back) throw new Error("ID Card elements not found");
+// 5. Side-by-Side Canvas Generator (የተስተካከለ)
+async function generateCombinedCanvas() {
+    const front = document.getElementById('idCardFrontView');
+    const back = document.getElementById('idCardBackView');
+    
+    if (!front) throw new Error("ID Card element not found");
 
-        const tempContainer = document.createElement('div');
-        tempContainer.style.position = 'fixed';
-        tempContainer.style.top = '-9999px';
-        tempContainer.style.left = '-9999px';
-        tempContainer.style.display = 'flex';
-        tempContainer.style.gap = '20px';
-        tempContainer.style.background = '#0F172A';
-        tempContainer.style.padding = '20px';
+    // የኋላው ካርድ ተደብቆ ከሆነ (display: none) ላፍታ እንዲታይ ማድረግ
+    const backWasHidden = back && (getComputedStyle(back).display === 'none' || back.style.display === 'none');
+    
+    if (back && backWasHidden) {
+        back.style.display = 'block';
+        back.style.position = 'absolute';
+        back.style.left = '-9999px'; // ከስክሪን ውጭ ላፍታ ይቆያል
+    }
 
-        const frontClone = front.cloneNode(true);
-        const backClone = back.cloneNode(true);
-        
-        frontClone.style.display = 'flex';
-        backClone.style.display = 'flex';
-        frontClone.style.width = '340px';
-        backClone.style.width = '340px';
+    try {
+        // 1. የፊቱን ገጽ ምስል ማንሳት
+        const frontCanvas = await html2canvas(front, {
+            scale: 2,
+            backgroundColor: null,
+            useCORS: true,
+            allowTaint: true
+        });
 
-        tempContainer.appendChild(frontClone);
-        tempContainer.appendChild(backClone);
-        document.body.appendChild(tempContainer);
-
-        try {
-            const canvas = await html2canvas(tempContainer, {
+        // 2. የኋላውን ገጽ ምስል ማንሳት (ከአለ)
+        let backCanvas = null;
+        if (back) {
+            backCanvas = await html2canvas(back, {
                 scale: 2,
-                backgroundColor: '#0F172A',
+                backgroundColor: null,
                 useCORS: true,
                 allowTaint: true
             });
-            document.body.removeChild(tempContainer);
-            return canvas;
-        } catch(e) {
-            if(document.body.contains(tempContainer)) {
-                document.body.removeChild(tempContainer);
-            }
-            throw e;
-        }
-    }
 
+            // የኋላውን ካርድ ወደ ነበረበት መመለስ
+            if (backWasHidden) {
+                back.style.display = 'none';
+                back.style.position = '';
+                back.style.left = '';
+            }
+        }
+
+        // 3. ሁለቱን ምስሎች በአንድ ላይ ማዋሃድ
+        const combinedCanvas = document.createElement('canvas');
+        const padding = 30;
+
+        if (backCanvas) {
+            combinedCanvas.width = frontCanvas.width + backCanvas.width + (padding * 3);
+            combinedCanvas.height = Math.max(frontCanvas.height, backCanvas.height) + (padding * 2);
+
+            const ctx = combinedCanvas.getContext('2d');
+
+            // የካርዱ ማዋሃጃ ዳራ ቀለም (Dark Background)
+            ctx.fillStyle = '#0F172A';
+            ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+            // የፊቱን እና የኋላውን ካርድ ጎን ለጎን መሳል
+            ctx.drawImage(frontCanvas, padding, padding);
+            ctx.drawImage(backCanvas, frontCanvas.width + (padding * 2), padding);
+        } else {
+            combinedCanvas.width = frontCanvas.width + (padding * 2);
+            combinedCanvas.height = frontCanvas.height + (padding * 2);
+
+            const ctx = combinedCanvas.getContext('2d');
+            ctx.fillStyle = '#0F172A';
+            ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+            ctx.drawImage(frontCanvas, padding, padding);
+        }
+
+        return combinedCanvas;
+
+    } catch (e) {
+        // Error ቢፈጠር እንኳን የኋላውን ካርድ ወደ ነበረበት መመለስ
+        if (back && backWasHidden) {
+            back.style.display = 'none';
+            back.style.position = '';
+            back.style.left = '';
+        }
+        throw e;
+    }
+}
     // 6. Download Handler
     async function downloadBothSides() {
         try {
