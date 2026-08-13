@@ -1118,15 +1118,25 @@
                         <img id="cardMemberPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Photo" style="width:80px; height:80px; border-radius:50%; border:3px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 15px rgba(255, 94, 0, 0.4); margin:0 auto; display:block;">
                     </div>
 
-                    <!-- Body Details -->
-                    <div style="padding:6px 14px 0 14px;">
-                        <h2 id="cardMemberName" style="color:#FFFFFF; font-size:1.05rem; font-weight:900; margin:0; text-transform:uppercase;">GETNET GIRMA</h2>
-                        <div style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px; border:1px solid rgba(255, 94, 0, 0.3);">OFFICIAL GYM MEMBER</div>
-                        
-                        <div style="margin:8px 0; background:rgba(255, 255, 255, 0.04); border-radius:10px; padding:8px 10px; border:1px solid rgba(255,255,255,0.08); font-size:0.65rem; line-height:1.6; text-align:left;">
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">FAIDA EDID:</span> <b id="cardEdid" style="color:#FFFFFF; font-weight:800; font-family:monospace;">EDID-FAN-258934</b></p>
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">PHONE:</span> <b id="cardPhone" style="color:#FFFFFF; font-weight:800;">0912132353</b></p>
-                            <p style="margin:0; display:flex; justify-content:space-between;"><span style="color:#94A3B8; font-weight:700;">LOCATION:</span> <b id="cardLocation" style="color:#FFFFFF; font-weight:800;">Bolo, Adama</b></p>
+                    <!-- Body Details (የተስተካከለ) -->
+                        <div style="padding:6px 14px 0 14px;">
+                            <h2 id="cardMemberName" style="color:#0F172A; font-size:1.05rem; font-weight:900; margin:0; text-transform:uppercase;">GETNET GIRMA</h2>
+                            <div style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px; border:1px solid rgba(255, 94, 0, 0.3);">OFFICIAL GYM MEMBER</div>
+                            
+                            <div style="margin:8px 0; background:#F8FAFC; border-radius:10px; padding:8px 10px; border:1px solid #E2E8F0; font-size:0.65rem; line-height:1.6; text-align:left;">
+                                <p style="margin:0; display:flex; justify-content:space-between;">
+                                    <span style="color:#64748B; font-weight:700;">FAIDA EDID:</span> 
+                                    <b id="cardEdid" style="color:#0F172A; font-weight:800; font-family:monospace;">EDID-FAN-258934</b>
+                                </p>
+                                <p style="margin:0; display:flex; justify-content:space-between;">
+                                    <span style="color:#64748B; font-weight:700;">PHONE:</span> 
+                                    <b id="cardPhone" style="color:#0F172A; font-weight:800;">0912132353</b>
+                                </p>
+                                <p style="margin:0; display:flex; justify-content:space-between;">
+                                    <span style="color:#64748B; font-weight:700;">LOCATION:</span> 
+                                    <b id="cardLocation" style="color:#0F172A; font-weight:800;">Bolo, Adama</b>
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Dynamic Member QR -->
@@ -2029,12 +2039,12 @@ function openMemberSmartId(memberId) {
 /* =========================================================
    SMART ID CARD ENGINE (STRICTLY STYLING & COLORS ONLY)
    ========================================================= */
-function showSmartIdCard(id, name, phone, edid, expiry, photo) {
+function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
     // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
     if (document.getElementById('cardMemberId')) {
         let idEl = document.getElementById('cardMemberId');
         idEl.innerText = id || 'GM-0001';
-        idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ በግልጽ እንዲታይ
+        idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ እንዲታይ
         idEl.style.fontWeight = '900';
     }
     
@@ -2045,8 +2055,26 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         nameEl.style.fontWeight = '900';
     }
     
-    if (document.getElementById('cardPhone')) document.getElementById('cardPhone').innerText = phone || 'N/A';
-    if (document.getElementById('cardEdid')) document.getElementById('cardEdid').innerText = edid || 'EDID-FAN-2589341592';
+    // EDID - እሴት መስጠት እና ቀለሙን ጥቁር ማድረግ
+    if (document.getElementById('cardEdid')) {
+        let edidEl = document.getElementById('cardEdid');
+        edidEl.innerText = edid || 'EDID-FAN-2589341592';
+        edidEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+    }
+
+    // PHONE - እሴት መስጠት እና ቀለሙን ጥቁር ማድረግ
+    if (document.getElementById('cardPhone')) {
+        let phoneEl = document.getElementById('cardPhone');
+        phoneEl.innerText = phone || 'N/A';
+        phoneEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+    }
+
+    // LOCATION - ተረስቶ የነበረው አሁን ተጨምሯል
+    if (document.getElementById('cardLocation')) {
+        let locEl = document.getElementById('cardLocation');
+        locEl.innerText = location || 'Adama, Ethiopia';
+        locEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+    }
     
     // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
     let expiryEl = document.getElementById('cardExpiry');
@@ -2066,15 +2094,21 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         photoEl.style.borderRadius = '50%';
         photoEl.style.objectFit = 'cover';
     }
-
-    // 4. QR Code ማመንጨት
-    let qrContainer = document.getElementById('cardQrCode');
-    if (qrContainer) {
-        qrContainer.innerHTML = "";
-        if (typeof QRCode !== 'undefined') {
-            new QRCode(qrContainer, { text: id || 'GM-0001', width: 85, height: 85 });
-        }
+// 4. QR Code ማመንጨት (በስታንዳርድ ሳይዝ የተስተካከለ)
+let qrContainer = document.getElementById('cardQrCode');
+if (qrContainer) {
+    qrContainer.innerHTML = "";
+    if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+            text: id || 'GM-0001',
+            width: 100,  // ከ 85 ወደ 100 ከፍ ተደርጓል (በጣም ተመራጭ ሳይዝ)
+            height: 100,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H // ግልጽ እና በፍጥነት እንዲነበብ ያደርገዋል
+        });
     }
+}
 
     // 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ)
     let frontView = document.getElementById('idCardFrontView');
@@ -2083,18 +2117,18 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo) {
         frontView.style.background = '#FFFFFF';
         frontView.style.border = '3px solid #FF5E00';
         frontView.style.borderRadius = '16px';
-        frontView.style.overflow = 'hidden'; // ነጭ ወሰን እንዳይበላሽ
+        frontView.style.overflow = 'hidden';
         frontView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
     }
     
     let backView = document.getElementById('idCardBackView');
     if (backView) {
         backView.style.display = 'none';
-        backView.style.background = '#0F172A'; // ሙሉውን ጥቁር ዳራ ማድረግ
+        backView.style.background = '#0F172A';
         backView.style.border = '3px solid #FF5E00';
         backView.style.borderRadius = '16px';
         backView.style.color = '#FFFFFF';
-        backView.style.overflow = 'hidden'; // ከስር ነጭ ተቆርጦ የሚታየውን ያስተካክላል
+        backView.style.overflow = 'hidden';
         backView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
     }
 
@@ -2146,13 +2180,13 @@ function submitRegistration() {
         }).then(() => {
             if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
             
-            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
+            (payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
             
             if (document.getElementById('regForm')) {
                 document.getElementById('regForm').reset();
             }
             if (document.getElementById('regGregDate')) {
-                document.getElementById('regGregDate').valueAsDate = new Date();
+                doshowSmartIdCardcument.getElementById('regGregDate').valueAsDate = new Date();
             }
             
             let newMemberRow = [
