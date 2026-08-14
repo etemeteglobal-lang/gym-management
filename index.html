@@ -1152,9 +1152,10 @@
                     </div>
                 </div>
 
-                <!-- Footer (ቀለል ያለ ብራንዲንግ - ያለ ጥቁር ባር) -->
-                <div style="text-align:center; padding-bottom:8px;">
-                    <span style="color:#64748B; font-weight:700; font-size:0.65rem;">Powered by <b style="color:#FF5E00;">FaidATech</b></span>
+                <!-- Footer (FaidATech Logo Integration) -->
+                <div style="text-align:center; padding-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <span style="color:#64748B; font-weight:800; font-size:0.6rem; letter-spacing:0.5px; text-transform:uppercase;">POWERED BY</span>
+                    <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height:18px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle;">
                 </div>
             </div>
 
@@ -1183,9 +1184,11 @@
                 </div>
 
                 <!-- Back Footer -->
-                <div style="text-align:center; padding-bottom:8px;">
-                    <span style="color:#64748B; font-weight:700; font-size:0.65rem;">Powered by <b style="color:#FF5E00;">FaidATech</b></span>
+                <div style="text-align:center; padding-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <span style="color:#64748B; font-weight:800; font-size:0.6rem; letter-spacing:0.5px; text-transform:uppercase;">POWERED BY</span>
+                    <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height:18px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle;">
                 </div>
+                
             </div>
 
         </div>
@@ -1399,37 +1402,61 @@ async function generateCombinedCanvas() {
         throw e;
     }
 }
-// 6. Download Handler (በጥራት የሚያወርድ የተስተካከለ)
+// 6. Download Handler (ሁለቱንም ገጽ በአንድ ላይ በጥራት የሚያወርድ)
     async function downloadBothSides() {
         try {
             let front = document.getElementById('idCardFrontView');
             let back = document.getElementById('idCardBackView');
-            
-            // አሁን ስክሪኑ ላይ የሚታየውን ገጽ መምረጥ
-            let target = (back && getComputedStyle(back).display !== 'none') ? back : front;
 
             if (typeof html2canvas === 'undefined') {
                 alert("html2canvas አልተጫነም! እባክዎን HTML head ላይ መኖሩን ያረጋግጡ።");
                 return;
             }
 
-            const canvas = await html2canvas(target, {
-                scale: 3, // ከፍተኛ ጥራት (HD) እንዲኖረው
-                useCORS: true,
-                allowTaint: true
-            });
+            // 1. ሁለቱንም ገፆች Capture ለማድረግ ለአፍታ Display Status ቀይር
+            const origFrontDisplay = front.style.display;
+            const origBackDisplay = back.style.display;
 
+            front.style.display = 'flex';
+            back.style.display = 'flex';
+
+            // HD Canvas Capture (scale: 3)
+            const canvasFront = await html2canvas(front, { scale: 3, useCORS: true, allowTaint: true });
+            const canvasBack = await html2canvas(back, { scale: 3, useCORS: true, allowTaint: true });
+
+            // የቀደመውን Display status መልስ
+            front.style.display = origFrontDisplay;
+            back.style.display = origBackDisplay;
+
+            // 2. ሁለቱንም ገጾች ጎን ለጎን የሚያቀናጅ Master Canvas መፍጠር
+            const masterCanvas = document.createElement('canvas');
+            const gap = 30; // በካርዶቹ መካከል ያለው ክፍተት
+
+            masterCanvas.width = canvasFront.width + canvasBack.width + gap;
+            masterCanvas.height = Math.max(canvasFront.height, canvasBack.height);
+
+            const ctx = masterCanvas.getContext('2d');
+
+            // የጀርባው ከለር (Dark background)
+            ctx.fillStyle = "#0F172A";
+            ctx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
+
+            // Front እና Back ምስሎችን መሳል
+            ctx.drawImage(canvasFront, 0, 0);
+            ctx.drawImage(canvasBack, canvasFront.width + gap, 0);
+
+            // 3. ማውረድ
             let memberId = document.getElementById('cardMemberId')?.innerText || 'GYM-MEMBER';
             let link = document.createElement('a');
-            link.download = `${memberId}_Smart_ID.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = `${memberId}_Full_Smart_ID.png`;
+            link.href = masterCanvas.toDataURL('image/png');
             link.click();
+
         } catch (err) {
             console.error("Download Error:", err);
             alert("ካርዱን ለማውረድ አልተቻለም።");
         }
     }
-
     // 7. Share Handler (ለስልክም ለኮምፒውተርም የሚሰራ)
     async function shareSmartId() {
         try {
