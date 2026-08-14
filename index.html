@@ -1159,38 +1159,53 @@
                 </div>
             </div>
 
-            <!-- BACK VIEW -->
-            <div id="idCardBackView" style="display:none; background:#FFFFFF; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; height:490px; box-sizing:border-box; padding:16px 14px 0 14px; text-align:center; color:#0F172A; position:relative; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="height:3px; position:absolute; top:0; left:0; right:0; background:linear-gradient(90deg, #FF5E00, #FFB800, #FF5E00);"></div>
-                    <h3 id="cardBackGymName" style="color:#FF5E00; font-weight:900; font-size:1rem; margin:4px 0 2px 0; text-transform:uppercase;">GUDDA LIFE FITNESS</h3>
-                    <p style="font-size:0.6rem; color:#64748B; line-height:1.4; margin-bottom:14px;">"ጤናዎንና የአካል ብቃትን በዘመናዊ መንገድ ለመለወጥ የተቋቋመ ማዕከል ነው።"</p>
-                    
-                    <!-- Bigger Payment QRs -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
-                        <div style="background:#F8FAFC; padding:10px 6px; border-radius:10px; border:1px solid #E2E8F0;">
-                            <img id="cardCbeQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='85' height='85' viewBox='0 0 24 24' fill='%236B7280'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="CBE Birr" style="width:85px; height:85px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
-                            <span style="font-size:0.65rem; font-weight:800; color:#0F172A; display:block; margin-top:6px;">CBE BIRR</span>
-                        </div>
-                        <div style="background:#F8FAFC; padding:10px 6px; border-radius:10px; border:1px solid #E2E8F0;">
-                            <img id="cardTeleQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='85' height='85' viewBox='0 0 24 24' fill='%230284C7'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="Telebirr" style="width:85px; height:85px; object-fit:contain; background:#FFFFFF; padding:4px; border-radius:8px; display:inline-block;">
-                            <span style="font-size:0.65rem; font-weight:800; color:#0284C7; display:block; margin-top:6px;">TELEBIRR</span>
-                        </div>
-                    </div>
-                    
-                    <div style="font-size:0.65rem; color:#475569; font-weight:700; border-top:1px dashed #CBD5E1; padding:8px; background:#F8FAFC; border-radius:6px;">
-                        📞 <span id="cardGymPhone">+251912292150</span> &nbsp;|&nbsp; 📍 <span id="cardGymLoc">Bolo, Adama</span>
-                    </div>
+            <!-- Back View ID Card Container (Matching Front Styling) -->
+        <div id="idCardBackView" style="width: 330px; background: #FFFFFF; border: 3px solid #FF5E00; border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; flex-direction: column;">
+            
+            <!-- Top Header (Dark Header - Same as Front) -->
+            <div style="background: #0B132B; padding: 16px 12px; text-align: center;">
+                <div style="color: #FF5E00; font-weight: 900; font-size: 1rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                    GUDDA LIFE FITNESS
                 </div>
-
-                <!-- Back Footer -->
-                <div style="text-align:center; margin-top:14px; padding-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <span style="color:#64748B; font-weight:800; font-size:0.68rem; letter-spacing:0.8px; text-transform:uppercase;">POWERED BY</span>
-                    <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height:24px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle;">
+                <div style="color: #94A3B8; font-size: 0.58rem; margin-top: 3px; font-style: italic;">
+                    "ጤንነትዎን በጥበብ፣ ብቃትዎን በልምድ የሚያሳድጉበት የላቀ ማዕከል ነው!"
                 </div>
-                
             </div>
 
+            <!-- Card Main Body (White Background - Same as Front) -->
+            <div style="padding: 16px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                
+                <!-- Payment QRs Section -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <!-- CBE Birr Box -->
+                    <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px; text-align: center;">
+                        <div id="cbeQrContainer" style="display: flex; justify-content: center; margin-bottom: 6px;">
+                            <!-- CBE QR Code Here -->
+                        </div>
+                        <span style="font-weight: 800; font-size: 0.65rem; color: #1E293B; text-transform: uppercase;">CBE BIRR</span>
+                    </div>
+
+                    <!-- Telebirr Box -->
+                    <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px; text-align: center;">
+                        <div id="telebirrQrContainer" style="display: flex; justify-content: center; margin-bottom: 6px;">
+                            <!-- Telebirr QR Code Here -->
+                        </div>
+                        <span style="font-weight: 800; font-size: 0.65rem; color: #0284C7; text-transform: uppercase;">TELEBIRR</span>
+                    </div>
+                </div>
+
+                <!-- Gym Contact Info Box -->
+                <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 8px 10px; text-align: center; font-size: 0.68rem; font-weight: 700; color: #334155;">
+                    📞 <span id="cardGymPhone">+251912292150</span> &nbsp;|&nbsp; 📍 <span id="cardGymLoc">Bolo, Adama</span>
+                </div>
+
+                <!-- Back Footer (FaidATech Logo Branding) -->
+                <div style="text-align: center; margin-top: 14px; padding-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="color: #64748B; font-weight: 800; font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;">POWERED BY</span>
+                    <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height: 24px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
+                </div>
+
+            </div>
         </div>
 
         <!-- Action Buttons -->
