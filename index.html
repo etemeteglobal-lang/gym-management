@@ -686,8 +686,9 @@
         }
 /* =========================================================
    WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (FIXED)
-   ========================================================= */
-
+   =/* =========================================================
+       WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (FIXED)
+       ========================================================= */
     @media (max-width: 900px) {
         body {
             overflow-x: hidden !important;
@@ -729,17 +730,22 @@
             width: 100% !important;
             margin-left: 0 !important;
             padding: 0 !important;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 📱 TOPBAR & ICONS FIX FOR MOBILE */
+        /* 📱 TOPBAR FIX (ከላይ ተሸፍኖ የነበረውን ማስተካከያ) */
         .topbar {
-            padding: 8px 12px !important;
+            padding: 10px 14px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
             gap: 8px !important;
             width: 100% !important;
             box-sizing: border-box !important;
+            min-height: 60px !important;
+            flex-shrink: 0 !important;
         }
 
         /* ከላይ ያሉትን አይከኖች እና ባጆች በስልክ ላይ በጥሩ ሁኔታ ማደራጀት */
@@ -748,10 +754,10 @@
             display: flex !important;
             align-items: center !important;
             gap: 6px !important;
-            flex-wrap: nowrap !important; /* እንዳይታጠፉና እንዳይደበቁ ያደርጋል */
+            flex-wrap: nowrap !important;
         }
 
-        /* ንዑስ ጽሁፎችን ብቻ ይደብቃል (አይከኖችና ባጆች አይነኩም) */
+        /* ንዑስ ጽሁፎችን ብቻ ይደብቃል */
         .topbar p.sub-title, 
         .topbar small {
             display: none !important;
@@ -769,6 +775,8 @@
         .content-scroll {
             padding: 12px 10px 90px 10px !important;
             overflow-x: hidden !important;
+            flex: 1;
+            overflow-y: auto !important;
         }
 
         /* 1. KPI Metrics Grid ማስተካከያ */
@@ -796,11 +804,28 @@
             height: 230px !important;
         }
 
-        /* 4. Table Overflow Handling */
-        .table-responsive, table {
+        /* 4. Table Overflow Handling (በሞባይል ላይ በትክክል እንዲሸራተት) */
+        .table-responsive {
             width: 100% !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
+            display: block !important;
+        }
+
+        /* በስልክ ላይ የሰንጠረዥ ጽሑፎችና አዝራሮች ማስተካከያ */
+        th, td {
+            padding: 10px 12px !important;
+            font-size: 0.78rem !important;
+        }
+
+        .action-btn-group {
+            min-width: max-content !important;
+            gap: 4px !important;
+        }
+
+        .btn-action {
+            padding: 6px 10px !important;
+            font-size: 0.7rem !important;
         }
 
         /* 5. Touch Friendly Input Controls */
