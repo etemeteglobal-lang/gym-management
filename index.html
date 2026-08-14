@@ -2594,13 +2594,11 @@ async function processScan(scannedData) {
 
     let searchId = extractedId.toLowerCase();
 
-    // የተቀኘው ID ባዶ ከሆነ አቁም
     if (!searchId) {
         alert("⚠️ የተቀኘው QR Code ባዶ ነው!");
         return;
     }
 
-    // ስካን እንደተደረገ ካሜራውን አቁሞ መሸፈን
     await stopScanner();
     let cameraArea = document.getElementById('cameraArea');
     if (cameraArea) cameraArea.style.display = 'none';
@@ -2608,21 +2606,19 @@ async function processScan(scannedData) {
     let resultCard = document.getElementById('scanProfileResult');
     if (resultCard) resultCard.style.display = 'block';
 
-    // አባሉን ከ Cache መፈለግ (ለ Array እና ለ Object ቅርጾች ጥንቃቄ ተደርጓል)
     let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) ? membersCache : [];
     
+    // 🚨 ጥብቅ እና ትክክለኛ አባል የመፈለጊያ Logic
     let m = membersList.find(item => {
         if (!item) return false;
 
-        // 1. ከአሬይ (Array) ከሆነ index 0 እና 9ን መውሰድ
         let mIdArr = Array.isArray(item) ? String(item[0] || '').trim().toLowerCase() : '';
         let edidArr = Array.isArray(item) ? String(item[9] || '').trim().toLowerCase() : '';
 
-        // 2. ከኦብጀክት (Object) ከሆነ id, memberId, edid መውሰድ
         let mIdObj = item.id ? String(item.id).trim().toLowerCase() : (item.memberId ? String(item.memberId).trim().toLowerCase() : '');
         let edidObj = item.edid ? String(item.edid).trim().toLowerCase() : '';
 
-        // 3. ንፅፅር (ባዶ ያልሆኑትን ብቻ ማወዳደር)
+        // ባዶ ንፅፅር እንዳይፈጠር ማረጋገጥ
         let matchId = (mIdArr !== '' && mIdArr === searchId) || (mIdObj !== '' && mIdObj === searchId);
         let matchEdid = (edidArr !== '' && edidArr === searchId) || (edidObj !== '' && edidObj === searchId);
 
@@ -2642,7 +2638,6 @@ async function processScan(scannedData) {
         return;
     }
 
-    // ከ አሬይ ወይም ኦብጀክት መረጃዎችን ነጥሎ ማውጣት
     let mId = Array.isArray(m) ? (m[0] || extractedId) : (m.id || m.memberId || extractedId);
     let mName = Array.isArray(m) ? (m[1] || "Member") : (m.fullName || m.name || "Member");
     let mPhone = Array.isArray(m) ? (m[2] || "N/A") : (m.phone || "N/A");
@@ -2651,62 +2646,16 @@ async function processScan(scannedData) {
     let mStatusRaw = Array.isArray(m) ? (m[6] || "Active") : (m.status || "Active");
     let mPhoto = Array.isArray(m) ? (m[10] || "https://placehold.co/120") : (m.photo || "https://placehold.co/120");
 
-    // === የኢትዮጵያ ቀንን (E.C) EXPIRY ቼክ ማድረጊያ LOGIC ===
     let isExpired = false;
-
-    if (rawExpiry && rawExpiry !== "N/A") {
-        let cleanDate = String(rawExpiry).split('(')[0].replace(/E\.C|E\/C/gi, '').trim();
-        let parts = cleanDate.split('/');
-        
-        if (parts.length === 3) {
-            let ethDay = parseInt(parts[0], 10);
-            let ethMonth = parseInt(parts[1], 10);
-            let ethYear = parseInt(parts[2], 10);
-
-            let today = new Date();
-            let gYear = today.getFullYear();
-            let gMonth = today.getMonth() + 1;
-            let gDay = today.getDate();
-
-            let curEthYear = (gMonth < 9 || (gMonth === 9 && gDay < 11)) ? (gYear - 8) : (gYear - 7);
-            let curEthMonth = 1;
-            let curEthDay = 1;
-
-            if (gMonth === 8) { // August -> ነሐሴ
-                curEthMonth = 12;
-                curEthDay = gDay - 6; 
-            } else if (gMonth === 7) { // July -> ሐምሌ
-                curEthMonth = 11;
-                curEthDay = gDay - 7;
-            }
-
-            if (ethYear < curEthYear) {
-                isExpired = true;
-            } else if (ethYear === curEthYear) {
-                if (ethMonth < curEthMonth) {
-                    isExpired = true;
-                } else if (ethMonth === curEthMonth && ethDay < curEthDay) {
-                    isExpired = true;
-                }
-            }
-        } else {
-            let expD = new Date(rawExpiry);
-            let today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (!isNaN(expD.getTime()) && expD < today) {
-                isExpired = true;
-            }
-        }
-    }
-
-    if (mStatusRaw && String(mStatusRaw).trim().toLowerCase() === 'expired') {
-        isExpired = true;
+    if (typeof checkIsExpired === 'function') {
+        isExpired = checkIsExpired(rawExpiry, mStatusRaw);
+    } else {
+        isExpired = String(mStatusRaw).toLowerCase() === 'expired';
     }
 
     let calculatedStatus = isExpired ? "Expired" : (mStatusRaw || "Active");
     let isActive = !isExpired && String(calculatedStatus).toLowerCase() === "active";
 
-    // የአባሉን መረጃዎች ማዘጋጀት
     currentScannedMember = {
         id: mId,
         name: mName,
@@ -2717,7 +2666,6 @@ async function processScan(scannedData) {
         photo: mPhoto
     };
 
-    // UI ማሳያ
     resultCard.innerHTML = `
         <div style="text-align:center;">
             <div style="padding:10px; border-radius:12px; font-weight:800; margin-bottom:15px; background:${isActive ? 'rgba(1,181,116,0.15)' : 'rgba(238,93,80,0.15)'}; color:${isActive ? 'var(--success-color, #01B574)' : 'var(--danger-color, #EE5D50)'}; border:1px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">
@@ -2745,6 +2693,7 @@ async function processScan(scannedData) {
         </div>
     `;
 }
+
 // 4. "መዝግብ" ሲነካ ወደ ሰርቨር መዝግቦ ወደ ካሜራ የመመለሻ logic
 async function confirmAttendance() {
     if (!currentScannedMember) return;
@@ -2772,7 +2721,7 @@ async function confirmAttendance() {
 
     setTimeout(() => {
         currentScannedMember = null;
-        startScanner(); // መልሶ ካሜራውን ማስነሳት
+        startScanner();
     }, 1000);
 }
 
@@ -2782,7 +2731,7 @@ function cancelScan() {
     startScanner();
 }
 
-// 6. መረጃውን ወደ Google Apps Script የሚልከው (Promise የሚመልስ)
+// 6. መረጃውን ወደ Google Apps Script የሚልከው
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
     
@@ -2837,7 +2786,6 @@ function fetchLogs() {
     });
 }
 
-// የሰዓት አቆጣጠሩን ከ 24-Hour (17:15:00) ወደ 12-Hour AM/PM (05:15:00 PM) መቀየሪያ
 function format12HourTime(dateTimeStr) {
     if (!dateTimeStr) return '';
     let parts = String(dateTimeStr).trim().split(' ');
@@ -2856,7 +2804,7 @@ function format12HourTime(dateTimeStr) {
     return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 }
 
-// 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
+// 2. Attendance Logs ማሳያ (የተስተካከለ የመፈለጊያ Logic)
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
@@ -2896,20 +2844,22 @@ function renderGroupedLogs(rows) {
 
             let formattedTime = format12HourTime(rawScanTime);
 
-            // አባሉን ከ membersCache መፈለግ
+            // 🚨 የተስተካከለ ማጣሪያ፦ ባዶ ንፅፅር እንዳይሰራ በደንብ ተለይቷል
             let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
                     ? membersCache.find(mem => {
+                        if (!mem) return false;
                         let cachedId = String(mem[0] || '').trim().toLowerCase();
                         let searchId = memberId.toLowerCase();
-                        return cachedId === searchId || cachedId.replace(/[^0-9]/g, '') === searchId.replace(/[^0-9]/g, '');
+                        
+                        if (!cachedId || !searchId) return false;
+                        return cachedId === searchId;
                     })
                     : null;
 
-            // ቀን ማለፉን checkIsExpired ን በመጠቀም በጥንቃቄ ማረጋገጥ
             let isExpired = false;
-            if (m) {
+            if (m && typeof checkIsExpired === 'function') {
                 isExpired = checkIsExpired(m[5], m[6]);
-            } else {
+            } else if (typeof checkIsExpired === 'function') {
                 isExpired = checkIsExpired('', statusText);
             }
 
@@ -2932,6 +2882,7 @@ function renderGroupedLogs(rows) {
         });
     });
 }
+
 /* =========================================================
    UTILITY EXPORT & VCARD FUNCTIONS
    ========================================================= */
@@ -2946,15 +2897,18 @@ function downloadVCard() {
 
 function exportCSV() {
     let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
-    membersCache.forEach(m => {
-        csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
-    });
+    if (Array.isArray(membersCache)) {
+        membersCache.forEach(m => {
+            csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+        });
+    }
     let blob = new Blob([csv], { type: 'text/csv' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'FaidATech_Gym_Members.csv';
     a.click();
 }
+
 /* =========================================================
    MEMBERS DIRECTORY STATUS FILTER ENGINE (FIXED)
    ========================================================= */
@@ -2965,30 +2919,29 @@ function filterDirectoryByStatus() {
     if (!membersCache || !Array.isArray(membersCache)) return;
 
     let filtered = membersCache.filter(m => {
+        if (!m) return false;
+
         let id = String(m[0] || '').toLowerCase();
         let name = String(m[1] || '').toLowerCase();
         let phone = String(m[2] || '').toLowerCase();
         
-        // 1. የጽሑፍ ፍለጋ (Name, ID, Phone)
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
         
-        // 2. የማለቂያ ቀን ማረጋገጫ (checkIsExpired ን በመጠቀም)
         let expiry = m[5] || '';
         let rawStatus = m[6] || 'Active';
-        let isExpired = checkIsExpired(expiry, rawStatus);
+        let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(expiry, rawStatus) : false;
         
-        // 3. Dropdown ማጣሪያ
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
         
-        return matchesSearch; // ALL ከሆነ
+        return matchesSearch;
     });
 
-    // የተጣራውን ውጤት Table ላይ ማሳየት
-    renderDirectory(filtered);
+    if (typeof renderDirectory === 'function') {
+        renderDirectory(filtered);
+    }
 }
 
-// ጽሑፍ ሲፈለግም ይሄው እንዲሰራ ማድረግ
 function filterDirectory() {
     filterDirectoryByStatus();
 }
