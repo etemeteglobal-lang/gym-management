@@ -808,7 +808,7 @@
     <!-- 2. SIDEBAR NAVIGATION ENGINE -->
     <aside class="enterprise-sidebar" id="sidebarNav">
         <div class="sidebar-brand-wrapper">
-            <img id="sidebarLogoImg" src="https://via.placeholder.com/44" class="sidebar-brand-logo" alt="Logo">
+            <img id="sidebarLogoImg" src="https://placehold.co/44" class="sidebar-brand-logo" alt="Logo">
             <div class="sidebar-brand-text">
                 <h2 id="sidebarGymName">GUDDA LIFE FITNESS</h2>
                 <span>Enterprise v6.0</span>
@@ -1027,7 +1027,7 @@
 
             <!-- የአባሉ ፎቶ -->
             <div style="margin-bottom:12px;">
-                <img id="scanMemberPhoto" src="https://via.placeholder.com/110" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+            <img id="scanMemberPhoto" src="https://placehold.co/110" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #58A6FF; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
             </div>
 
             <!-- ስም እና ID -->
@@ -1256,7 +1256,7 @@
         // Profile Photo Handling
         const photoEl = document.getElementById('cardMemberPhoto');
         if (photoEl) {
-            if (photoVal && typeof photoVal === 'string' && photoVal.trim() !== '' && !photoVal.includes('via.placeholder.com')) {
+            if (photoVal && typeof photoVal === 'string' && photoVal.trim() !== '' && !photoVal.includes('placehold.co')) {
                 photoEl.src = photoVal;
             } else {
                 photoEl.src = DEFAULT_AVATAR_SVG;
@@ -2052,7 +2052,7 @@ function renderDirectory(data) {
         let paid = m[7] || 0;
         let gender = m[8] || 'Male';
         let edid = m[9] || 'N/A';
-        let photo = m[10] || 'https://via.placeholder.com/100';
+        let photo = m[10] || 'https://placehold.co/100';
 
         // ቀኑ ማለፉን በራስ-ሰር ማረጋገጥ
         let isExpired = checkIsExpired(expiry, rawStatus);
@@ -2069,7 +2069,7 @@ function renderDirectory(data) {
         tr.innerHTML = `
             <td style="font-weight:800; color:#58A6FF;">${id}</td>
             <td>
-                <img src="${photo}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border-light);" onerror="this.src='https://via.placeholder.com/100';" />
+                <img src="${photo}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border-light);" onerror="this.src='https://placehold.co/100';" />
             </td>
             <td style="font-weight:700;">${name}</td>
             <td style="font-size:0.78rem; color:var(--text-muted); font-family:monospace;">${edid}</td>
@@ -2159,7 +2159,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
     // 3. የፎቶ ዲዛይን (Powerful Border & Shadow)
     if (document.getElementById('cardMemberPhoto')) {
         let photoEl = document.getElementById('cardMemberPhoto');
-        photoEl.src = photo || 'https://via.placeholder.com/100';
+        photoEl.src = photo || 'https://placehold.co/100';
         photoEl.style.border = '4px solid #FF5E00';
         photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
         photoEl.style.borderRadius = '50%';
@@ -2245,7 +2245,7 @@ function submitRegistration() {
             amountPaid: document.getElementById('regAmount') ? document.getElementById('regAmount').value : "0",
             joinDate: document.getElementById('regEthJoin') ? document.getElementById('regEthJoin').value : "",
             expiryDate: document.getElementById('regEthExpiry') ? document.getElementById('regEthExpiry').value : "",
-            photoBase64: photoBase64 || "https://via.placeholder.com/100",
+            photoBase64: photoBase64 || "https://placehold.co/100",
             status: "Active"
         };
 
@@ -2306,9 +2306,9 @@ function submitRegistration() {
     };
 
     if (photoFile && typeof fileToBase64 === 'function') {
-        fileToBase64(photoFile).then(b => processSubmit(b)).catch(() => processSubmit("https://via.placeholder.com/100"));
+        fileToBase64(photoFile).then(b => processSubmit(b)).catch(() => processSubmit("https://placehold.co/100"));
     } else {
-        processSubmit("https://via.placeholder.com/100");
+        processSubmit("https://placehold.co/100");
     }
 }
 
@@ -2541,7 +2541,7 @@ async function processScan(scannedData) {
         plan: m[3] || "Monthly",
         expiry: rawExpiry || "N/A",
         status: calculatedStatus,
-        photo: m[10] || "https://via.placeholder.com/120"
+        photo: m[10] || "https://placehold.co/120"
     };
 
     // UI ላይ በፎቶ እና በአዝራሮች አምሮ እንዲታይ ማድረግ
