@@ -1093,14 +1093,14 @@
         </div>
     </div>
 
-<!-- html2canvas Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <!-- OFFICIAL SMART ID CARD MODAL -->
-<div id="smartIdModal" style="position:fixed; inset:0; background:rgba(15, 23, 42, 0.92); backdrop-filter:blur(12px); display:none; justify-content:center; align-items:center; z-index:100000; padding:10px; overflow-y:auto; font-family:'Inter', system-ui, sans-serif;">
-    <div style="background:transparent; text-align:center; max-width:340px; width:100%; margin:auto;">
+<div id="smartIdModal" style="position:fixed; inset:0; background:rgba(15, 23, 42, 0.92); backdrop-filter:blur(12px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto; font-family:'Inter', system-ui, sans-serif;">
+    <div style="background:#1E293B; border:1px solid #334155; border-radius:20px; padding:20px; max-width:360px; width:100%; margin:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center; gap:15px;">
         
-        <div class="smart-id-card-wrap" id="printableSmartCard" style="width:100%; margin:0 auto; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
+        <!-- CARD CONTAINER -->
+        <div class="smart-id-card-wrap" id="printableSmartCard" style="width:100%; max-width:320px; margin:0 auto; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
             
             <!-- FRONT VIEW -->
             <div id="idCardFrontView" style="background:#0F172A; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; position:relative; height:480px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#FFFFFF;">
@@ -1114,49 +1114,48 @@
                         <p style="color:#FF5E00; font-size:0.52rem; font-weight:800; margin:2px 0 0 0; letter-spacing:1px;">FIT FOR LIFE • SINCE 2007</p>
                     </div>
 
-                    <!-- Photo Frame (Offline SVG Placeholder) -->
-                    <div style="text-align:center; margin-top:-26px; position:relative; z-index:5;">
-                        <img id="cardMemberPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Photo" style="width:80px; height:80px; border-radius:50%; border:3px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 15px rgba(255, 94, 0, 0.4); margin:0 auto; display:block;">
+                    <!-- Photo Frame -->
+                    <div style="text-align:center; margin-top:-24px; position:relative; z-index:5;">
+                        <img id="cardMemberPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Photo" style="width:75px; height:75px; border-radius:50%; border:3px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 15px rgba(255, 94, 0, 0.4); margin:0 auto; display:block;">
                     </div>
 
-                    <!-- Body Details (የተስተካከለ) -->
-                        <div style="padding:6px 14px 0 14px;">
-                            <h2 id="cardMemberName" style="color:#0F172A; font-size:1.05rem; font-weight:900; margin:0; text-transform:uppercase;">GETNET GIRMA</h2>
-                            <div style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px; border:1px solid rgba(255, 94, 0, 0.3);">OFFICIAL GYM MEMBER</div>
-                            
-                            <div style="margin:8px 0; background:#F8FAFC; border-radius:10px; padding:8px 10px; border:1px solid #E2E8F0; font-size:0.65rem; line-height:1.6; text-align:left;">
-                                <p style="margin:0; display:flex; justify-content:space-between;">
-                                    <span style="color:#64748B; font-weight:700;">FAIDA EDID:</span> 
-                                    <b id="cardEdid" style="color:#0F172A; font-weight:800; font-family:monospace;">EDID-FAN-258934</b>
-                                </p>
-                                <p style="margin:0; display:flex; justify-content:space-between;">
-                                    <span style="color:#64748B; font-weight:700;">PHONE:</span> 
-                                    <b id="cardPhone" style="color:#0F172A; font-weight:800;">0912132353</b>
-                                </p>
-                                <p style="margin:0; display:flex; justify-content:space-between;">
-                                    <span style="color:#64748B; font-weight:700;">LOCATION:</span> 
-                                    <b id="cardLocation" style="color:#0F172A; font-weight:800;">Bolo, Adama</b>
-                                </p>
-                            </div>
+                    <!-- Body Details -->
+                    <div style="padding:6px 14px 0 14px; text-align:center;">
+                        <h2 id="cardMemberName" style="color:#FFFFFF; font-size:1rem; font-weight:900; margin:4px 0 0 0; text-transform:uppercase;">GETNET GIRMA</h2>
+                        <div style="display:inline-block; background:rgba(255, 94, 0, 0.15); color:#FF7A00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px; border:1px solid rgba(255, 94, 0, 0.3);">OFFICIAL GYM MEMBER</div>
+                        
+                        <div style="margin:8px 0; background:rgba(255,255,255,0.03); border-radius:10px; padding:8px 10px; border:1px solid rgba(255,255,255,0.08); font-size:0.65rem; line-height:1.6; text-align:left;">
+                            <p style="margin:0; display:flex; justify-content:space-between;">
+                                <span style="color:#94A3B8; font-weight:700;">FAIDA EDID:</span> 
+                                <b id="cardEdid" style="color:#FF5E00; font-weight:800; font-family:monospace;">EDID-FAN-258934</b>
+                            </p>
+                            <p style="margin:0; display:flex; justify-content:space-between;">
+                                <span style="color:#94A3B8; font-weight:700;">PHONE:</span> 
+                                <b id="cardPhone" style="color:#FFFFFF; font-weight:800;">0912132353</b>
+                            </p>
+                            <p style="margin:0; display:flex; justify-content:space-between;">
+                                <span style="color:#94A3B8; font-weight:700;">LOCATION:</span> 
+                                <b id="cardLocation" style="color:#FFFFFF; font-weight:800;">Bolo, Adama</b>
+                            </p>
                         </div>
 
                         <!-- Dynamic Member QR -->
                         <div style="background:linear-gradient(135deg, #FF5E00 0%, #D94600 100%); padding:6px 10px; border-radius:10px; display:flex; align-items:center; justify-content:space-between;">
                             <div style="text-align:left;">
                                 <div style="font-size:0.5rem; color:rgba(255,255,255,0.85); font-weight:800;">MEMBER ID</div>
-                                <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1rem; font-weight:900; font-family:monospace;">GYM-0001</div>
+                                <div id="cardMemberId" style="color:#FFFFFF !important; font-size:0.95rem; font-weight:900; font-family:monospace;">GYM-0001</div>
                             </div>
                             <div style="background:#FFFFFF; padding:3px; border-radius:6px;">
-                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=GYM-0001" alt="Member QR" style="width:45px; height:45px; display:block;">
+                                <img id="cardQrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=GYM-0001" alt="Member QR" style="width:40px; height:40px; display:block;">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Footer Logo -->
-                <div style="background:#FFFFFF; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; height:32px; box-sizing:border-box;">
-                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" alt="FaidATech Logo" style="height:20px; width:auto; object-fit:contain;">
-                    <span style="display:none; color:#0F172A; font-weight:900; font-size:0.75rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
+                <div style="background:#020617; text-align:center; padding:6px 10px; display:flex; align-items:center; justify-content:center; height:32px; box-sizing:border-box; border-top:1px solid rgba(255,255,255,0.05);">
+                    <img src="images/faidatech-logo.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" alt="FaidATech Logo" style="height:18px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
+                    <span style="display:none; color:#94A3B8; font-weight:800; font-size:0.7rem;">Powered by <span style="color:#FF5E00;">FaidATech</span></span>
                 </div>
             </div>
 
@@ -1169,11 +1168,11 @@
                     
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
                         <div style="background:rgba(255,255,255,0.03); padding:8px 6px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardCbeQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 24 24' fill='%236B7280'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="CBE Birr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
+                            <img id="cardCbeQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 24 24' fill='%236B7280'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="CBE Birr" style="width:70px; height:70px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
                             <span style="font-size:0.65rem; font-weight:800; color:#FFFFFF; display:block; margin-top:4px;">CBE BIRR</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.03); padding:8px 6px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                            <img id="cardTeleQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 24 24' fill='%2338BDF8'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="Telebirr" style="width:75px; height:75px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
+                            <img id="cardTeleQr" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='75' height='75' viewBox='0 0 24 24' fill='%2338BDF8'><path d='M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 2h2v3h-2zm3 3h3v3h-3zm-3 1h2v2h-2z'/></svg>" alt="Telebirr" style="width:70px; height:70px; object-fit:contain; background:#FFFFFF; padding:3px; border-radius:6px; display:inline-block;">
                             <span style="font-size:0.65rem; font-weight:800; color:#38BDF8; display:block; margin-top:4px;">TELEBIRR</span>
                         </div>
                     </div>
@@ -1192,17 +1191,93 @@
 
         </div>
 
-        <!-- Buttons -->
-        <div style="margin-top:12px; display:flex; gap:6px; justify-content:center; flex-wrap:nowrap; width:100%;">
-            <button type="button" style="flex:1; padding:8px 4px; background:#3B82F6; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="toggleIdPage()">🔄 Flip</button>
-            <button type="button" style="flex:1; padding:8px 4px; background:#FF5E00; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="downloadBothSides()">📥 Download</button>
-            <button type="button" style="flex:1; padding:8px 4px; background:#10B981; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="shareSmartId()">🔗 Share</button>
-            <button type="button" style="flex:1; padding:8px 4px; background:#475569; color:#FFF; border-radius:8px; border:none; font-weight:700; cursor:pointer; font-size:0.72rem;" onclick="document.getElementById('smartIdModal').style.display='none'">Close</button>
+        <!-- Action Buttons Grid (በስርዓት ከስር የተቀመጡ) -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;">
+            <button type="button" style="padding:10px; background:#2563EB; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="toggleIdPage()">🔄 Flip Card</button>
+            <button type="button" style="padding:10px; background:#FF5E00; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="downloadBothSides()">📥 Download</button>
+            <button type="button" style="padding:10px; background:#10B981; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="shareSmartId()">🔗 Share</button>
+            <button type="button" style="padding:10px; background:#475569; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="document.getElementById('smartIdModal').style.display='none'">❌ Close</button>
         </div>
     </div>
 </div>
 
 <!-- JavaScript Helpers -->
+<script>
+    // 1. Flip Function
+    function toggleIdPage() {
+        let front = document.getElementById('idCardFrontView');
+        let back = document.getElementById('idCardBackView');
+        if (front.style.display !== 'none') {
+            front.style.display = 'none';
+            back.style.display = 'flex';
+        } else {
+            front.style.display = 'flex';
+            back.style.display = 'none';
+        }
+    }
+
+    // 2. Download Handler
+    async function downloadBothSides() {
+        try {
+            let front = document.getElementById('idCardFrontView');
+            let back = document.getElementById('idCardBackView');
+            let target = (back && getComputedStyle(back).display !== 'none') ? back : front;
+
+            if (typeof html2canvas === 'undefined') {
+                alert("html2canvas አልተጫነም!");
+                return;
+            }
+
+            const canvas = await html2canvas(target, {
+                scale: 3,
+                useCORS: true,
+                allowTaint: true
+            });
+
+            let memberId = document.getElementById('cardMemberId')?.innerText || 'GYM-MEMBER';
+            let link = document.createElement('a');
+            link.download = `${memberId}_Smart_ID.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (err) {
+            console.error("Download Error:", err);
+            alert("ካርዱን ለማውረድ አልተቻለም።");
+        }
+    }
+
+    // 3. Share Handler
+    async function shareSmartId() {
+        try {
+            let front = document.getElementById('idCardFrontView');
+            let back = document.getElementById('idCardBackView');
+            let target = (back && getComputedStyle(back).display !== 'none') ? back : front;
+
+            const canvas = await html2canvas(target, { scale: 2, useCORS: true, allowTaint: true });
+            
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                const memberId = document.getElementById('cardMemberId')?.innerText || 'GYM-MEMBER';
+                const file = new File([blob], `${memberId}_Smart_ID.png`, { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'Gym Smart ID Card',
+                        text: 'የስፖርት ማዕከል ዲጂታል አባልነት ካርድ',
+                        files: [file]
+                    });
+                } else {
+                    let a = document.createElement('a');
+                    a.download = `${memberId}_Smart_ID.png`;
+                    a.href = URL.createObjectURL(blob);
+                    a.click();
+                }
+            }, 'image/png');
+        } catch (e) {
+            console.error("Share Error:", e);
+            alert("Share ማድረግ አልተቻለም!");
+        }
+    }
+</script>
 <script>
     const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
     
