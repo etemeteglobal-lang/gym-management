@@ -2221,7 +2221,7 @@ if (qrContainer) {
     }
 }
 
-   // 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ)
+// 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ ቁመት እንዲስተካከል)
     let frontView = document.getElementById('idCardFrontView');
     if (frontView) {
         frontView.style.display = 'block';
@@ -2240,18 +2240,36 @@ if (qrContainer) {
         backView.style.borderRadius = '16px';
         backView.style.color = '#FFFFFF';
         backView.style.overflow = 'hidden';
+        backView.style.minHeight = '100%'; // 💡 ነጩ የOverflow መስመር እንዳይታይ የኋላው ገጽ ከፊት ገጹ ጋር እኩል ያደርገዋል
         backView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
 
-        // 💡 ነጩን ሳጥን ለማስወገድ እና Layout እንዲስተካከል የተጨመሩ መስመሮች፦
+        // በውስጡ ያሉትን አላስፈላጊ ነጭ Backgrounds በሙሉ ማጽዳት
         let childDivs = backView.querySelectorAll('div');
         childDivs.forEach(div => {
-            // በውስጡ ያሉትን አላስፈላጊ ነጭ Backgrounds በሙሉ ማጽዳት
             if (div.style.backgroundColor === 'white' || div.style.background === 'rgb(255, 255, 255)' || div.style.backgroundColor === '#ffffff') {
                 div.style.background = 'transparent';
             }
         });
     }
-    // 6. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
+
+    // 6. CBE እና Telebirr QR ምስሎችን በካርዱ የኋላ ገጽ ላይ በስታንዳርድ ሳይዝ መጫን
+    if (typeof systemSettings !== 'undefined') {
+        let cbeQrImg = document.getElementById('cbeQrImg') || document.getElementById('cardCbeQr');
+        let teleQrImg = document.getElementById('telebirrQrImg') || document.getElementById('cardTeleQr');
+
+        if (cbeQrImg && systemSettings.cbeQrBase64) {
+            cbeQrImg.src = systemSettings.cbeQrBase64;
+            cbeQrImg.style.maxHeight = '90px'; // 💡 ምስሉ በነጩ ሳጥን ልክ እንዲመጣጠን
+            cbeQrImg.style.objectFit = 'contain';
+        }
+        if (teleQrImg && systemSettings.teleQrBase64) {
+            teleQrImg.src = systemSettings.teleQrBase64;
+            teleQrImg.style.maxHeight = '90px'; // 💡 ምስሉ በነጩ ሳጥን ልክ እንዲመጣጠን
+            teleQrImg.style.objectFit = 'contain';
+        }
+    }
+
+    // 7. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
     if (document.getElementById('cardFooterText')) {
         let footerEl = document.getElementById('cardFooterText');
         footerEl.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
