@@ -835,6 +835,51 @@
             padding: 10px 12px !important;
         }
     }
+    /* Members Directory Header and Controls Fix */
+        .directory-header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            flex-direction: column; /* በስልክ ላይ አንዱ ከሌላው በታች እንዲሆን */
+            gap: 14px;
+        }
+
+        .directory-controls {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            flex-wrap: wrap; /* በስልክ ላይ ስክሪን ካልበቃው ወደ ታች እንዲወርድ */
+        }
+
+        .filter-input {
+            flex: 1 1 100% !important; /* የፍለጋ ሳጥኑ በስልክ ላይ ሙሉ መስመር እንዲይዝ */
+            padding: 10px 12px !important;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-light);
+            background: var(--bg-canvas);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .filter-select {
+            flex: 1 !important; /* Dropdown ገበታውን በተመጣጣኝ እንዲይዝ */
+            padding: 10px 12px !important;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-light);
+            background: var(--bg-canvas);
+            color: var(--text-main);
+            font-weight: 700;
+            outline: none;
+        }
+
+        .export-btn {
+            flex: 1 !important;
+            width: auto !important;
+            padding: 10px 14px !important;
+            margin-top: 0 !important;
+            white-space: nowrap !important;
+        }
     </style>
 </head>
 <body>
@@ -1014,23 +1059,24 @@
 <!-- VIEW 3: MEMBERS DIRECTORY -->
 <div id="membersView" class="view-section">
     <div class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+        <div class="directory-header-wrapper">
             <div>
                 <h2 style="font-size: 1.15rem; font-weight: 800;">Members Directory</h2>
                 <p style="color:var(--text-muted); font-size: 0.8rem;">Search, manage and export athlete registry.</p>
             </div>
-            <div style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
+            
+            <div class="directory-controls">
                 <!-- የጽሁፍ መፈለጊያ -->
-                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" style="flex:1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); outline:none;">
+                <input type="text" id="searchInput" placeholder="Search by name, ID, phone..." onkeyup="filterDirectory()" class="filter-input">
                 
                 <!-- የ Status መምረጫ Dropdown -->
-                <select id="statusFilterSelect" onchange="filterDirectory()" style="padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-light); background: var(--bg-canvas); color: var(--text-main); font-weight: 700; cursor: pointer; outline:none;">
+                <select id="statusFilterSelect" onchange="filterDirectory()" class="filter-select">
                     <option value="ALL">🔍 ሁሉም</option>
                     <option value="ACTIVE">🟢 Active ብቻ</option>
                     <option value="EXPIRED">🔴 Expired ብቻ</option>
                 </select>
 
-                <button type="button" class="btn-main" style="width:auto; padding:12px 18px; margin-top:0;" onclick="exportCSV()">Export CSV</button>
+                <button type="button" class="btn-main export-btn" onclick="exportCSV()">Export CSV</button>
             </div>
         </div>
         
