@@ -1159,54 +1159,56 @@
                 </div>
             </div>
 
-            <!-- Back View ID Card Container (Matching Front Styling) -->
-        <div id="idCardBackView" style="width: 330px; background: #FFFFFF; border: 3px solid #FF5E00; border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; flex-direction: column;">
-            
-            <!-- Top Header (Dark Header - Same as Front) -->
-            <div style="background: #0B132B; padding: 16px 12px; text-align: center;">
-                <div style="color: #FF5E00; font-weight: 900; font-size: 1rem; letter-spacing: 0.5px; text-transform: uppercase;">
-                    GUDDA LIFE FITNESS
-                </div>
-                <div style="color: #94A3B8; font-size: 0.58rem; margin-top: 3px; font-style: italic;">
-                    "ጤንነትዎን በጥበብ፣ ብቃትዎን በልምድ የሚያሳድጉበት የላቀ ማዕከል ነው!"
-                </div>
-            </div>
-
-            <!-- Card Main Body (White Background - Same as Front) -->
-            <div style="padding: 16px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <!-- Corrected Back View ID Card Container -->
+            <div id="idCardBackView" style="width: 330px; background: #FFFFFF; border: 3px solid #FF5E00; border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; flex-direction: column;">
                 
-                <!-- Payment QRs Section -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <!-- CBE Birr Box -->
-                    <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px; text-align: center;">
-                        <div id="cbeQrContainer" style="display: flex; justify-content: center; margin-bottom: 6px;">
-                            <!-- CBE QR Code Here -->
-                        </div>
-                        <span style="font-weight: 800; font-size: 0.65rem; color: #1E293B; text-transform: uppercase;">CBE BIRR</span>
+                <!-- 1. Top Header (Dark Blue Section) -->
+                <div style="background: #0B132B; padding: 14px 10px; text-align: center;">
+                    <div style="color: #FF5E00; font-weight: 900; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                        GUDDA LIFE FITNESS
                     </div>
-
-                    <!-- Telebirr Box -->
-                    <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px; text-align: center;">
-                        <div id="telebirrQrContainer" style="display: flex; justify-content: center; margin-bottom: 6px;">
-                            <!-- Telebirr QR Code Here -->
-                        </div>
-                        <span style="font-weight: 800; font-size: 0.65rem; color: #0284C7; text-transform: uppercase;">TELEBIRR</span>
+                    <div style="color: #94A3B8; font-size: 0.55rem; margin-top: 3px; font-style: italic;">
+                        "ጤንነትዎን በጥበብ፣ ብቃትዎን በልምድ የሚያሳድጉበት የላቀ ማዕከል ነው!"
                     </div>
                 </div>
 
-                <!-- Gym Contact Info Box -->
-                <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 8px 10px; text-align: center; font-size: 0.68rem; font-weight: 700; color: #334155;">
-                    📞 <span id="cardGymPhone">+251912292150</span> &nbsp;|&nbsp; 📍 <span id="cardGymLoc">Bolo, Adama</span>
-                </div>
+                <!-- 2. Card Body (White Section) -->
+                <div style="padding: 14px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    
+                    <!-- Payment QRs Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <!-- CBE Birr Box -->
+                        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 8px; text-align: center;">
+                            <div id="cbeQrContainer" style="display: flex; justify-content: center; align-items: center; min-height: 85px; margin-bottom: 4px;">
+                                <img id="cbeQrImg" src="" alt="CBE QR" style="max-width: 85px; max-height: 85px; width: auto; height: auto; object-fit: contain; display: none;">
+                                <span id="cbeQrPlaceholder" style="font-size: 0.6rem; color: #94A3B8;">QR አልተመረጠም</span>
+                            </div>
+                            <span style="font-weight: 800; font-size: 0.65rem; color: #1E293B; text-transform: uppercase; display: block;">CBE BIRR</span>
+                        </div>
 
-                <!-- Back Footer (FaidATech Logo Branding) -->
-                <div style="text-align: center; margin-top: 14px; padding-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span style="color: #64748B; font-weight: 800; font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;">POWERED BY</span>
-                    <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height: 24px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
-                </div>
+                        <!-- Telebirr Box -->
+                        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 8px; text-align: center;">
+                            <div id="telebirrQrContainer" style="display: flex; justify-content: center; align-items: center; min-height: 85px; margin-bottom: 4px;">
+                                <img id="telebirrQrImg" src="" alt="Telebirr QR" style="max-width: 85px; max-height: 85px; width: auto; height: auto; object-fit: contain; display: none;">
+                                <span id="telebirrQrPlaceholder" style="font-size: 0.6rem; color: #0284C7; text-transform: uppercase; display: block;">TELEBIRR</span>
+                            </div>
+                            <span style="font-weight: 800; font-size: 0.65rem; color: #0284C7; text-transform: uppercase; display: block;">TELEBIRR</span>
+                        </div>
+                    </div>
 
+                    <!-- Gym Contact Box -->
+                    <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.65rem; font-weight: 700; color: #334155;">
+                        📞 <span id="cardGymPhone">+251912292150</span> &nbsp;|&nbsp; 📍 <span id="cardGymLoc">Bolo, Adama</span>
+                    </div>
+
+                    <!-- Back Footer Branding -->
+                    <div style="text-align: center; margin-top: 12px; padding-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span style="color: #64748B; font-weight: 800; font-size: 0.65rem; letter-spacing: 0.8px; text-transform: uppercase;">POWERED BY</span>
+                        <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height: 22px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
+                    </div>
+
+                </div>
             </div>
-        </div>
 
         <!-- Action Buttons -->
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;">
