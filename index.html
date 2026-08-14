@@ -2264,14 +2264,14 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
         idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ እንዲታይ
         idEl.style.fontWeight = '900';
     }
-    
+
     if (document.getElementById('cardMemberName')) {
         let nameEl = document.getElementById('cardMemberName');
         nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
         nameEl.style.color = '#0F172A'; // ደማቅ ጥቁር ከለር
         nameEl.style.fontWeight = '900';
     }
-    
+
     // EDID - እሴት መስጠት እና ቀለሙን ጥቁር ማድረግ
     if (document.getElementById('cardEdid')) {
         let edidEl = document.getElementById('cardEdid');
@@ -2292,7 +2292,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
         locEl.innerText = location || 'Adama, Ethiopia';
         locEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
     }
-    
+
     // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
     let expiryEl = document.getElementById('cardExpiry');
     if (expiryEl) {
@@ -2311,26 +2311,27 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
         photoEl.style.borderRadius = '50%';
         photoEl.style.objectFit = 'cover';
     }
-// 4. QR Code ማመንጨት (በስታንዳርድ ሳይዝ የተስተካከለ)
-let qrContainer = document.getElementById('cardQrCode');
-if (qrContainer) {
-    qrContainer.innerHTML = "";
-    if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-            text: id || 'GM-0001',
-            width: 100,  // ከ 85 ወደ 100 ከፍ ተደርጓል (በጣም ተመራጭ ሳይዝ)
-            height: 100,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H // ግልጽ እና በፍጥነት እንዲነበብ ያደርገዋል
-        });
-    }
-}
 
-// 5. ካርዱን ማሳየት
+    // 4. QR Code ማመንጨት (በስታንዳርድ ሳይዝ የተስተካከለ)
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (typeof QRCode !== 'undefined') {
+            new QRCode(qrContainer, {
+                text: id || 'GM-0001',
+                width: 100,  // ከ 85 ወደ 100 ከፍ ተደርጓል (በጣም ተመራጭ ሳይዝ)
+                height: 100,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H // ግልጽ እና በፍጥነት እንዲነበብ ያደርገዋል
+            });
+        }
+    }
+
+    // 5. ካርዱን ማሳየት
     let frontView = document.getElementById('idCardFrontView');
     if (frontView) frontView.style.display = 'block';
-    
+
     let backView = document.getElementById('idCardBackView');
     if (backView) backView.style.display = 'none';
 
@@ -2367,6 +2368,7 @@ if (qrContainer) {
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
 }
+
 /* =========================================================
    MEMBER REGISTRATION ENGINE
    ========================================================= */
@@ -2402,16 +2404,16 @@ function submitRegistration() {
             body: JSON.stringify(payload)
         }).then(() => {
             if (btn) { btn.innerText = "Complete Registration & Generate ID"; btn.disabled = false; }
-            
-            (payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
-            
+
+            showSmartIdCard(payload.memberId, payload.fullName, payload.phone, payload.edid, payload.expiryDate, payload.photoBase64);
+
             if (document.getElementById('regForm')) {
                 document.getElementById('regForm').reset();
             }
             if (document.getElementById('regGregDate')) {
-                doshowSmartIdCardcument.getElementById('regGregDate').valueAsDate = new Date();
+                document.getElementById('regGregDate').valueAsDate = new Date();
             }
-            
+
             let newMemberRow = [
                 payload.memberId, 
                 payload.fullName, 
@@ -2425,7 +2427,7 @@ function submitRegistration() {
                 payload.edid, 
                 payload.photoBase64
             ];
-            
+
             if (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) {
                 let existingIdx = membersCache.findIndex(m => String(m[0] || '').trim().toLowerCase() === payload.memberId.toLowerCase());
                 if (existingIdx >= 0) {
@@ -2481,10 +2483,11 @@ function editMember(id, name, phone, plan) {
     if (document.getElementById('regPlan')) document.getElementById('regPlan').value = plan;
     if (typeof calcPrice === 'function') calcPrice();
 }
+
 function deleteMember(id) {
     if (confirm("አባል " + id + " በቋሚነት እንዲጠፋ ይፈልጋሉ?")) {
         membersCache = membersCache.filter(m => String(m[0] || '').trim().toLowerCase() !== String(id).trim().toLowerCase());
-        
+
         renderDirectory(membersCache);
         if (typeof renderDashboardAnalytics === 'function') {
             renderDashboardAnalytics(membersCache);
@@ -2504,6 +2507,7 @@ function deleteMember(id) {
         }).catch(err => console.error("Delete error:", err));
     }
 }
+
 /* =========================================================
    UPDATED QR SCANNER & SMART PARSER WITH MANUAL CONFIRMATION
    ========================================================= */
@@ -2513,10 +2517,9 @@ let currentScannedMember = null;
 
 // 1. Start Camera Stream
 async function startScanner(mode = 'environment') {
-    // ካሜራውን አሳይቶ የውጤት ማሳያውን መሸፈን
     let cameraArea = document.getElementById('cameraArea');
     let resultCard = document.getElementById('scanProfileResult');
-    
+
     if (cameraArea) cameraArea.style.display = 'block';
     if (resultCard) resultCard.style.display = 'none';
 
@@ -2532,7 +2535,7 @@ async function startScanner(mode = 'environment') {
     }
 
     qrScanner = new Html5Qrcode("qrCameraBox");
-    
+
     const config = { 
         fps: 15, 
         qrbox: function(viewfinderWidth, viewfinderHeight) {
@@ -2607,8 +2610,8 @@ async function processScan(scannedData) {
     if (resultCard) resultCard.style.display = 'block';
 
     let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) ? membersCache : [];
-    
-    // 🚨 ጥብቅ እና ትክክለኛ አባል የመፈለጊያ Logic
+
+    // 🚨 አስተማማኝ የመፈለጊያ Logic (ባዶ ወይም ያልተዛመዱ ነገሮችን ይከላከላል)
     let m = membersList.find(item => {
         if (!item) return false;
 
@@ -2618,11 +2621,13 @@ async function processScan(scannedData) {
         let mIdObj = item.id ? String(item.id).trim().toLowerCase() : (item.memberId ? String(item.memberId).trim().toLowerCase() : '');
         let edidObj = item.edid ? String(item.edid).trim().toLowerCase() : '';
 
-        // ባዶ ንፅፅር እንዳይፈጠር ማረጋገጥ
-        let matchId = (mIdArr !== '' && mIdArr === searchId) || (mIdObj !== '' && mIdObj === searchId);
-        let matchEdid = (edidArr !== '' && edidArr === searchId) || (edidObj !== '' && edidObj === searchId);
+        // Exact Match ብቻ (ባዶ ያልሆኑትን)
+        if (mIdArr !== '' && mIdArr === searchId) return true;
+        if (edidArr !== '' && edidArr === searchId) return true;
+        if (mIdObj !== '' && mIdObj === searchId) return true;
+        if (edidObj !== '' && edidObj === searchId) return true;
 
-        return matchId || matchEdid;
+        return false;
     });
 
     if (!m) {
@@ -2646,11 +2651,56 @@ async function processScan(scannedData) {
     let mStatusRaw = Array.isArray(m) ? (m[6] || "Active") : (m.status || "Active");
     let mPhoto = Array.isArray(m) ? (m[10] || "https://placehold.co/120") : (m.photo || "https://placehold.co/120");
 
+    // === የኢትዮጵያ ቀንን (E.C) EXPIRY ቼክ ማድረጊያ LOGIC ===
     let isExpired = false;
-    if (typeof checkIsExpired === 'function') {
-        isExpired = checkIsExpired(rawExpiry, mStatusRaw);
-    } else {
-        isExpired = String(mStatusRaw).toLowerCase() === 'expired';
+
+    if (rawExpiry && rawExpiry !== "N/A") {
+        let cleanDate = String(rawExpiry).split('(')[0].replace(/E\.C|E\/C/gi, '').trim();
+        let parts = cleanDate.split('/');
+
+        if (parts.length === 3) {
+            let ethDay = parseInt(parts[0], 10);
+            let ethMonth = parseInt(parts[1], 10);
+            let ethYear = parseInt(parts[2], 10);
+
+            let today = new Date();
+            let gYear = today.getFullYear();
+            let gMonth = today.getMonth() + 1;
+            let gDay = today.getDate();
+
+            let curEthYear = (gMonth < 9 || (gMonth === 9 && gDay < 11)) ? (gYear - 8) : (gYear - 7);
+            let curEthMonth = 1;
+            let curEthDay = 1;
+
+            if (gMonth === 8) { // August -> ነሐሴ
+                curEthMonth = 12;
+                curEthDay = gDay - 6; 
+            } else if (gMonth === 7) { // July -> ሐምሌ
+                curEthMonth = 11;
+                curEthDay = gDay - 7;
+            }
+
+            if (ethYear < curEthYear) {
+                isExpired = true;
+            } else if (ethYear === curEthYear) {
+                if (ethMonth < curEthMonth) {
+                    isExpired = true;
+                } else if (ethMonth === curEthMonth && ethDay < curEthDay) {
+                    isExpired = true;
+                }
+            }
+        } else {
+            let expD = new Date(rawExpiry);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!isNaN(expD.getTime()) && expD < today) {
+                isExpired = true;
+            }
+        }
+    }
+
+    if (mStatusRaw && String(mStatusRaw).trim().toLowerCase() === 'expired') {
+        isExpired = true;
     }
 
     let calculatedStatus = isExpired ? "Expired" : (mStatusRaw || "Active");
@@ -2706,7 +2756,7 @@ async function confirmAttendance() {
 
     try {
         await sendAttendance(currentScannedMember.id, currentScannedMember.name, "Granted");
-        
+
         if (btn) {
             btn.innerText = "✅ SUCCESS!";
             btn.style.background = "var(--success-color, #01B574)";
@@ -2731,10 +2781,10 @@ function cancelScan() {
     startScanner();
 }
 
-// 6. መረጃውን ወደ Google Apps Script የሚልከው
+// 6. መረጃውን ወደ Google Apps Script የሚልከው (Promise የሚመልስ)
 function sendAttendance(id, name, status) {
     let endpoint = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT) ? API_ENDPOINT : ((typeof SCRIPT_URL !== 'undefined') ? SCRIPT_URL : '');
-    
+
     let payload = {
         action: "recordAttendance",
         memberId: id,
@@ -2767,7 +2817,7 @@ function fetchLogs() {
     .then(data => {
         if (!tbody) return;
         tbody.innerHTML = '';
-        
+
         let rows = (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && data[0][0] === "Member ID") 
                    ? data.slice(1) 
                    : data;
@@ -2804,7 +2854,7 @@ function format12HourTime(dateTimeStr) {
     return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 }
 
-// 2. Attendance Logs ማሳያ (የተስተካከለ የመፈለጊያ Logic)
+// 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
 function renderGroupedLogs(rows) {
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
@@ -2844,15 +2894,12 @@ function renderGroupedLogs(rows) {
 
             let formattedTime = format12HourTime(rawScanTime);
 
-            // 🚨 የተስተካከለ ማጣሪያ፦ ባዶ ንፅፅር እንዳይሰራ በደንብ ተለይቷል
+            // 🚨 አባሉን ከ membersCache መፈለግ (በእኩልነት ብቻ)
             let m = (typeof membersCache !== 'undefined' && Array.isArray(membersCache)) 
                     ? membersCache.find(mem => {
-                        if (!mem) return false;
                         let cachedId = String(mem[0] || '').trim().toLowerCase();
                         let searchId = memberId.toLowerCase();
-                        
-                        if (!cachedId || !searchId) return false;
-                        return cachedId === searchId;
+                        return cachedId !== '' && searchId !== '' && cachedId === searchId;
                     })
                     : null;
 
@@ -2897,11 +2944,9 @@ function downloadVCard() {
 
 function exportCSV() {
     let csv = "ID,Full Name,Phone,Plan,Paid,Expiry,Status\n";
-    if (Array.isArray(membersCache)) {
-        membersCache.forEach(m => {
-            csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
-        });
-    }
+    membersCache.forEach(m => {
+        csv += `"${m[0]}","${m[1]}","${m[2]}","${m[3]}","${m[7]||0}","${m[5]}","${m[6]||'Active'}"\n`;
+    });
     let blob = new Blob([csv], { type: 'text/csv' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -2919,27 +2964,23 @@ function filterDirectoryByStatus() {
     if (!membersCache || !Array.isArray(membersCache)) return;
 
     let filtered = membersCache.filter(m => {
-        if (!m) return false;
-
         let id = String(m[0] || '').toLowerCase();
         let name = String(m[1] || '').toLowerCase();
         let phone = String(m[2] || '').toLowerCase();
-        
+
         let matchesSearch = !q || id.includes(q) || name.includes(q) || phone.includes(q);
-        
+
         let expiry = m[5] || '';
         let rawStatus = m[6] || 'Active';
         let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(expiry, rawStatus) : false;
-        
+
         if (filterVal === 'ACTIVE') return matchesSearch && !isExpired;
         if (filterVal === 'EXPIRED') return matchesSearch && isExpired;
-        
+
         return matchesSearch;
     });
 
-    if (typeof renderDirectory === 'function') {
-        renderDirectory(filtered);
-    }
+    renderDirectory(filtered);
 }
 
 function filterDirectory() {
