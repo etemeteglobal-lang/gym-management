@@ -685,8 +685,8 @@
             margin-top: 8px;
         }
 /* =========================================================
-       WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (REPLACEMENT)
-       ========================================================= */
+   WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (FIXED)
+   ========================================================= */
 
     @media (max-width: 900px) {
         body {
@@ -731,12 +731,39 @@
             padding: 0 !important;
         }
 
+        /* 📱 TOPBAR & ICONS FIX FOR MOBILE */
         .topbar {
-            padding: 10px 14px;
+            padding: 8px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
 
-        .topbar p {
-            display: none;
+        /* ከላይ ያሉትን አይከኖች እና ባጆች በስልክ ላይ በጥሩ ሁኔታ ማደራጀት */
+        .topbar div[style*="display: flex"], 
+        .topbar .telemetry-items {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-wrap: nowrap !important; /* እንዳይታጠፉና እንዳይደበቁ ያደርጋል */
+        }
+
+        /* ንዑስ ጽሁፎችን ብቻ ይደብቃል (አይከኖችና ባጆች አይነኩም) */
+        .topbar p.sub-title, 
+        .topbar small {
+            display: none !important;
+        }
+
+        /* የቀን ባጅ እና አይከኖች መጠን በስልክ ላይ ተመጣጣኝ ማድረግ */
+        .topbar button, 
+        .topbar span, 
+        .topbar div[style*="background"] {
+            font-size: 0.72rem !important;
+            padding: 4px 8px !important;
+            white-space: nowrap !important;
         }
 
         .content-scroll {
