@@ -1786,26 +1786,49 @@ function calcEthDates() {
             .catch(() => applySettings());
         }
 
-        function applySettings() {
-            document.getElementById('setGymName').value = systemSettings.gymName;
-            document.getElementById('setGymPhone').value = systemSettings.gymPhone;
-            document.getElementById('setMalePrice').value = systemSettings.malePrice;
-            document.getElementById('setFemalePrice').value = systemSettings.femalePrice;
+      function applySettings() {
+            document.getElementById('setGymName').value = systemSettings.gymName || "GUDDA LIFE FITNESS";
+            document.getElementById('setGymPhone').value = systemSettings.gymPhone || "+251912292150";
+            document.getElementById('setMalePrice').value = systemSettings.malePrice || 2000;
+            document.getElementById('setFemalePrice').value = systemSettings.femalePrice || 1500;
 
-            document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
-            document.getElementById('cardGymName').innerText = systemSettings.gymName;
+            if(document.getElementById('sidebarGymName')) document.getElementById('sidebarGymName').innerText = systemSettings.gymName;
+            if(document.getElementById('cardGymName')) document.getElementById('cardGymName').innerText = systemSettings.gymName;
             
             if (systemSettings.gymLogoBase64) {
-                document.getElementById('sidebarLogoImg').src = systemSettings.gymLogoBase64;
-                document.getElementById('cardGymLogo').src = systemSettings.gymLogoBase64;
+                if(document.getElementById('sidebarLogoImg')) document.getElementById('sidebarLogoImg').src = systemSettings.gymLogoBase64;
+                if(document.getElementById('cardGymLogo')) document.getElementById('cardGymLogo').src = systemSettings.gymLogoBase64;
             }
-            if (systemSettings.cbeQrBase64) document.getElementById('cardCbeQr').src = systemSettings.cbeQrBase64;
-            if (systemSettings.teleQrBase64) document.getElementById('cardTeleQr').src = systemSettings.teleQrBase64;
 
-            calcPrice();
+            // 💡 የ QR ምስል IDዎችን ከአዲሱ HTML ጋር ማጣጣም
+            let cbeImg = document.getElementById('cbeQrImg') || document.getElementById('cardCbeQr');
+            let teleImg = document.getElementById('telebirrQrImg') || document.getElementById('cardTeleQr');
+
+            if (systemSettings.cbeQrBase64 && cbeImg) {
+                cbeImg.src = systemSettings.cbeQrBase64;
+                cbeImg.style.display = 'block';
+                let txt = document.getElementById('cbeQrPlaceholder');
+                if (txt) txt.style.display = 'none';
+            }
+            if (systemSettings.teleQrBase64 && teleImg) {
+                teleImg.src = systemSettings.teleQrBase64;
+                teleImg.style.display = 'block';
+                let txt = document.getElementById('telebirrQrPlaceholder');
+                if (txt) txt.style.display = 'none';
+            }
+
+            if (typeof calcPrice === 'function') calcPrice();
         }
 
         function saveSettings() {
+            // የ Button ጽሁፉን ወደ Loading መቀየር
+            let saveBtn = document.querySelector("#settingsView .btn-main");
+            let originalText = saveBtn ? saveBtn.innerText : "Save Configuration";
+            if (saveBtn) {
+                saveBtn.innerText = "⏳ Saving Settings...";
+                saveBtn.disabled = true;
+            }
+
             systemSettings.gymName = document.getElementById('setGymName').value || "GUDDA LIFE FITNESS";
             systemSettings.gymPhone = document.getElementById('setGymPhone').value || "+251912292150";
             systemSettings.malePrice = parseFloat(document.getElementById('setMalePrice').value) || 2000;
@@ -1823,7 +1846,15 @@ function calcEthDates() {
             if (cbeFile) promises.push(fileToBase64(cbeFile).then(b => systemSettings.cbeQrBase64 = b));
             if (teleFile) promises.push(fileToBase64(teleFile).then(b => systemSettings.teleQrBase64 = b));
 
-            Promise.all(promises).then(() => postSettingsToServer());
+            Promise.all(promises).then(() => {
+                postSettingsToServer(saveBtn, originalText);
+            }).catch(err => {
+                alert("❌ ምስሎችን ማዘጋጀት ላይ ስህተት ተፈጽሟል!");
+                if (saveBtn) {
+                    saveBtn.innerText = originalText;
+                    saveBtn.disabled = false;
+                }
+            });
         }
 
         function fileToBase64(file) {
@@ -1835,26 +1866,47 @@ function calcEthDates() {
             });
         }
 
-        function postSettingsToServer() {
+        function postSettingsToServer(saveBtn, originalText) {
+            // መረጃውን በቅድሚያ Local ላይ መጫን
+            applySettings();
+
             fetch(API_ENDPOINT, {
-                method: 'POST', mode: 'no-cors',
+                method: 'POST', 
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: "saveSettings", ...systemSettings })
             }).then(() => {
-                applySettings();
-                alert("የሲስተሙ መቼቶች በጥሩ ሁኔታ ተቀምጠዋል!");
+                // በተኑን ወደ ነበረበት መመለስ
+                if (saveBtn) {
+                    saveBtn.innerText = originalText;
+                    saveBtn.disabled = false;
+                }
+                alert("✅ የሲስተሙ መቼቶች በጥሩ ሁኔታ ተቀምጠዋል!");
+            }).catch(err => {
+                if (saveBtn) {
+                    saveBtn.innerText = originalText;
+                    saveBtn.disabled = false;
+                }
+                alert("✅ መቼቶች ተቀይረዋል!");
             });
         }
 
         function calcPrice() {
-            let gender = document.getElementById('regGender').value;
-            let plan = document.getElementById('regPlan').value;
+            let genderEl = document.getElementById('regGender');
+            let planEl = document.getElementById('regPlan');
+            if(!genderEl || !planEl) return;
+
+            let gender = genderEl.value;
+            let plan = planEl.value;
             let base = (gender === "Female") ? systemSettings.femalePrice : systemSettings.malePrice;
             let total = base;
             if (plan === "3 Months") total = base * 3;
             else if (plan === "Yearly") total = base * 12;
-            document.getElementById('regAmount').value = total;
-            calcEthDates();
+            
+            let amountEl = document.getElementById('regAmount');
+            if(amountEl) amountEl.value = total;
+            
+            if (typeof calcEthDates === 'function') calcEthDates();
         }
 
         /* =========================================================
@@ -2221,63 +2273,43 @@ if (qrContainer) {
     }
 }
 
-// 5. የካርድ ገጽታ ማሳመር (የፊትና የኋላ ገጽ ቁመት እንዲስተካከል)
+// 5. ካርዱን ማሳየት
     let frontView = document.getElementById('idCardFrontView');
-    if (frontView) {
-        frontView.style.display = 'block';
-        frontView.style.background = '#FFFFFF';
-        frontView.style.border = '3px solid #FF5E00';
-        frontView.style.borderRadius = '16px';
-        frontView.style.overflow = 'hidden';
-        frontView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
-    }
+    if (frontView) frontView.style.display = 'block';
     
     let backView = document.getElementById('idCardBackView');
-    if (backView) {
-        backView.style.display = 'none';
-        backView.style.background = '#0F172A';
-        backView.style.border = '3px solid #FF5E00';
-        backView.style.borderRadius = '16px';
-        backView.style.color = '#FFFFFF';
-        backView.style.overflow = 'hidden';
-        backView.style.minHeight = '100%'; // 💡 ነጩ የOverflow መስመር እንዳይታይ የኋላው ገጽ ከፊት ገጹ ጋር እኩል ያደርገዋል
-        backView.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
+    if (backView) backView.style.display = 'none';
 
-        // በውስጡ ያሉትን አላስፈላጊ ነጭ Backgrounds በሙሉ ማጽዳት
-        let childDivs = backView.querySelectorAll('div');
-        childDivs.forEach(div => {
-            if (div.style.backgroundColor === 'white' || div.style.background === 'rgb(255, 255, 255)' || div.style.backgroundColor === '#ffffff') {
-                div.style.background = 'transparent';
-            }
-        });
-    }
-
-    // 6. CBE እና Telebirr QR ምስሎችን በካርዱ የኋላ ገጽ ላይ በስታንዳርድ ሳይዝ መጫን
+    // 6. የ QR ምስሎችን እና መረጃዎችን ብቻ መጫን (ዲዛይኑን ሳይነካ)
     if (typeof systemSettings !== 'undefined') {
-        let cbeQrImg = document.getElementById('cbeQrImg') || document.getElementById('cardCbeQr');
-        let teleQrImg = document.getElementById('telebirrQrImg') || document.getElementById('cardTeleQr');
-
-        if (cbeQrImg && systemSettings.cbeQrBase64) {
-            cbeQrImg.src = systemSettings.cbeQrBase64;
-            cbeQrImg.style.maxHeight = '90px'; // 💡 ምስሉ በነጩ ሳጥን ልክ እንዲመጣጠን
-            cbeQrImg.style.objectFit = 'contain';
+        // CBE QR
+        let cbeImg = document.getElementById('cbeQrImg');
+        let cbeTxt = document.getElementById('cbeQrPlaceholder');
+        if (cbeImg && systemSettings.cbeQrBase64) {
+            cbeImg.src = systemSettings.cbeQrBase64;
+            cbeImg.style.display = 'block';
+            if (cbeTxt) cbeTxt.style.display = 'none';
         }
-        if (teleQrImg && systemSettings.teleQrBase64) {
-            teleQrImg.src = systemSettings.teleQrBase64;
-            teleQrImg.style.maxHeight = '90px'; // 💡 ምስሉ በነጩ ሳጥን ልክ እንዲመጣጠን
-            teleQrImg.style.objectFit = 'contain';
+
+        // Telebirr QR
+        let teleImg = document.getElementById('telebirrQrImg');
+        let teleTxt = document.getElementById('telebirrQrPlaceholder');
+        if (teleImg && systemSettings.teleQrBase64) {
+            teleImg.src = systemSettings.teleQrBase64;
+            teleImg.style.display = 'block';
+            if (teleTxt) teleTxt.style.display = 'none';
+        }
+
+        // Phone & Location
+        if (document.getElementById('cardGymPhone') && systemSettings.gymPhone) {
+            document.getElementById('cardGymPhone').innerText = systemSettings.gymPhone;
+        }
+        if (document.getElementById('cardGymLoc') && systemSettings.gymLocation) {
+            document.getElementById('cardGymLoc').innerText = systemSettings.gymLocation;
         }
     }
 
-    // 7. Powered by FaidATech (በነባሩ Footer ቦታ ላይ ብቻ መጫን)
-    if (document.getElementById('cardFooterText')) {
-        let footerEl = document.getElementById('cardFooterText');
-        footerEl.innerHTML = 'Powered by <span style="color:#FF5E00; font-weight:800;">FaidATech</span>';
-        footerEl.style.color = '#94A3B8';
-        footerEl.style.fontSize = '0.65rem';
-        footerEl.style.fontWeight = '700';
-    }
-
+    // 7. Modal
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
 }
