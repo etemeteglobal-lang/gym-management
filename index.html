@@ -2762,11 +2762,21 @@ document.addEventListener('click', function(event) {
     }
 });
 
+let isLoggingIn = false; // ደጋግሞ መጫንን መከላከያ Variable
+
 async function executeLogin() {
+  // 1. ቀደም ብሎ ከተነካ ሁለተኛውን ጥያቄ ማገድ
+  if (isLoggingIn) return;
+  isLoggingIn = true;
+
   const userEl = document.getElementById('authUserInput');
   const passEl = document.getElementById('authPassInput');
   const errorEl = document.getElementById('loginError');
   const overlayEl = document.getElementById('enterpriseLoginOverlay');
+  const loginBtn = document.querySelector('#enterpriseLoginOverlay button');
+
+  // አዝራሩን ጊዜያዊ Disable ማድረግ
+  if (loginBtn) loginBtn.disabled = true;
 
   const userInput = userEl ? userEl.value.trim() : '';
   const passInput = passEl ? passEl.value.trim() : '';
@@ -2781,6 +2791,8 @@ async function executeLogin() {
       errorEl.innerText = "እባክዎን ፓስወርድ ያስገቡ!";
       errorEl.style.display = 'block';
     }
+    isLoggingIn = false;
+    if (loginBtn) loginBtn.disabled = false;
     return;
   }
 
@@ -2798,27 +2810,25 @@ async function executeLogin() {
     const data = await response.json();
 
     if (data.success) {
-      // 1. የመግቢያውን መስኮት ከ HTML ገጹ በቋሚነት ማስወገድ (Force Remove)
-      if (overlayEl) {
-        overlayEl.remove();
-      }
+      // የመግቢያ መስኮቱን መደለዝ
+      if (overlayEl) overlayEl.remove();
 
-      // 2. ከጀርባ የተደበቁ ኤለመንቶች ካሉ እንዲታዩ ማድረግ
+      // ዳሽቦርዱን ማሳየት
       document.body.style.overflow = 'auto';
-      const mainContent = document.getElementById('mainContent') || document.querySelector('.app-container');
+      const mainContent = document.getElementById('mainContent');
       if (mainContent) {
         mainContent.style.display = 'block';
       }
 
-      // 3. የተጠቃሚ መረጃን መያዝ
       localStorage.setItem('gym_user_role', data.role || 'Admin');
       localStorage.setItem('gym_user_name', data.name || 'User');
-
     } else {
       if (errorEl) {
         errorEl.innerText = data.message || "የተሳሳተ የተጠቃሚ ስም ወይም ፓስወርድ!";
         errorEl.style.display = 'block';
       }
+      isLoggingIn = false;
+      if (loginBtn) loginBtn.disabled = false;
     }
   } catch (err) {
     console.error("Login Error:", err);
@@ -2826,6 +2836,8 @@ async function executeLogin() {
       errorEl.innerText = "ከሰርቨር ጋር መገናኘት አልተቻለም!";
       errorEl.style.display = 'block';
     }
+    isLoggingIn = false;
+    if (loginBtn) loginBtn.disabled = false;
   }
 }
 // =====================================================
