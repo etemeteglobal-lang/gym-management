@@ -2763,16 +2763,33 @@ document.addEventListener('click', function(event) {
 });
 
 async function executeLogin() {
-  const userInput = document.getElementById('usernameInput')?.value.trim();
-  const passInput = document.getElementById('passwordInput')?.value.trim();
+  // 1. በ HTML ላይ ባሉት ትክክለኛ IDs (authUserInput, authPassInput) ዳታውን መያዝ
+  const userEl = document.getElementById('authUserInput');
+  const passEl = document.getElementById('authPassInput');
+  const errorEl = document.getElementById('loginError');
+  const overlayEl = document.getElementById('enterpriseLoginOverlay');
+
+  const userInput = userEl ? userEl.value.trim() : '';
+  const passInput = passEl ? passEl.value.trim() : '';
+
+  // የኤረር ማሳወቂያ ቦታውን ማፅዳት
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.innerText = '';
+  }
 
   if (!passInput) {
-    alert("እባክዎን ፓስወርድ ያስገቡ!");
+    if (errorEl) {
+      errorEl.innerText = "እባክዎን ፓስወርድ ያስገቡ!";
+      errorEl.style.display = 'block';
+    } else {
+      alert("እባክዎን ፓስወርድ ያስገቡ!");
+    }
     return;
   }
 
   try {
-    // text/plain በመጠቀም የ CORS Preflight እገዳን ማለፍ
+    // CORS Preflight እገዳን ለማለፍ text/plain መጠቀም
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {
@@ -2788,19 +2805,27 @@ async function executeLogin() {
     const data = await response.json();
 
     if (data.success) {
-      // የመግቢያ ሞዳል መዝጋትና ዳሽቦርድ ማሳየት
-      const loginModal = document.getElementById('loginModal');
-      const mainContent = document.getElementById('mainContent');
-      if (loginModal) loginModal.style.display = 'none';
-      if (mainContent) mainContent.style.display = 'block';
-      
-      alert("እንኳን ደህና መጡ " + (data.name || "User") + "!");
+      // የመግቢያ መስኮቱን (enterpriseLoginOverlay) መዝጋት
+      if (overlayEl) {
+        overlayEl.style.display = 'none';
+      }
     } else {
-      alert(data.message || "የተሳሳተ የተጠቃሚ ስም ወይም ፓስወርድ!");
+      // የተሳሳተ ፓስወርድ ከሆነ በስክሪኑ ላይ በቀይ ማሳየት
+      if (errorEl) {
+        errorEl.innerText = data.message || "የተሳሳተ የተጠቃሚ ስም ወይም ፓስወርድ!";
+        errorEl.style.display = 'block';
+      } else {
+        alert(data.message || "የተሳሳተ የተጠቃሚ ስም ወይም ፓስወርድ!");
+      }
     }
   } catch (err) {
     console.error("Login Error:", err);
-    alert("ከሰርቨር ጋር መገናኘት አልተቻለም! እባክዎን የኢንተርኔት ግንኙነትዎን ወይም SCRIPT_URL ያረጋግጡ።");
+    if (errorEl) {
+      errorEl.innerText = "ከሰርቨር ጋር መገናኘት አልተቻለም! እባክዎን የኢንተርኔት ግንኙነትዎን ያረጋግጡ።";
+      errorEl.style.display = 'block';
+    } else {
+      alert("ከሰርቨር ጋር መገናኘት አልተቻለም!");
+    }
   }
 }
 // =====================================================
