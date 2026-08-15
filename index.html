@@ -2798,15 +2798,19 @@ async function executeLogin() {
     const data = await response.json();
 
     if (data.success) {
-      // የመግቢያ መስኮቱን ሙሉ በሙሉ መደበቅ
+      // 1. የመግቢያውን መስኮት ከ HTML ገጹ በቋሚነት ማስወገድ (Force Remove)
       if (overlayEl) {
-        overlayEl.style.display = 'none';
-        overlayEl.style.opacity = '0';
-        overlayEl.style.pointerEvents = 'none';
-        overlayEl.classList.add('hidden');
+        overlayEl.remove();
       }
 
-      // የተጠቃሚውን መረጃ በ Session መያዝ (ካስፈልገ)
+      // 2. ከጀርባ የተደበቁ ኤለመንቶች ካሉ እንዲታዩ ማድረግ
+      document.body.style.overflow = 'auto';
+      const mainContent = document.getElementById('mainContent') || document.querySelector('.app-container');
+      if (mainContent) {
+        mainContent.style.display = 'block';
+      }
+
+      // 3. የተጠቃሚ መረጃን መያዝ
       localStorage.setItem('gym_user_role', data.role || 'Admin');
       localStorage.setItem('gym_user_name', data.name || 'User');
 
