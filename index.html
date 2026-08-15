@@ -1315,34 +1315,52 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// =====================================================
-// AUTHENTICATION ENGINE (fetch() FIXED)
-// =====================================================
-
 function executeLogin() {
     let u = document.getElementById('authUserInput').value.trim();
     let p = document.getElementById('authPassInput').value.trim();
+    let err = document.getElementById('loginError');
 
-    fetch()
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-                syncMembers();
-            } else {
-                let err = document.getElementById('loginError');
-                err.style.display = 'block';
-                err.innerText = result.message || "የተሳሳተ በዓል!";
-            }
+    if (!p) {
+        if (err) {
+            err.style.display = 'block';
+            err.innerText = "እባክዎን ፓስወርድ ያስገቡ!";
+        }
+        return;
+    }
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'login',
+            username: u,
+            password: p
         })
-        .withFailureHandler(function(error) {
-            let err = document.getElementById('loginError');
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+            if (typeof syncMembers === 'function') {
+                syncMembers();
+            }
+        } else {
+            if (err) {
+                err.style.display = 'block';
+                err.innerText = result.message || "የተሳሳተ ፓስወርድ!";
+            }
+        }
+    })
+    .catch(error => {
+        if (err) {
             err.style.display = 'block';
             err.innerText = "ስህተት: " + error;
-            console.error("Login Error:", error);
-        })
-        .handleLogin(u, p);
+        }
+        console.error("Login Error:", error);
+    });
 }
 
+// አዝራሩ (Button) ፈንክሽኑን በቀላሉ እንዲያገኘው ግሎባል ማድረግ
+window.executeLogin = executeLogin;
 function executeLogout() {
     document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
 }
