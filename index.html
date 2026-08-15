@@ -1193,17 +1193,17 @@
                             </p>
                         </div>
 
-                      <!-- Big Dynamic Member QR (Client-Side JS) -->
+                        <!-- Big Dynamic Member QR -->
                         <div style="background:#FF5E00; padding:8px 12px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 12px rgba(255, 94, 0, 0.3);">
                             <div style="text-align:left;">
                                 <div style="font-size:0.55rem; color:#FFE6D5; font-weight:800;">MEMBER ID</div>
                                 <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.1rem; font-weight:900; font-family:monospace;">-</div>
                             </div>
                             <div style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-                                <!-- በ Canvas/Div የተተካው ቦታ -->
-                                <div id="cardQrCode" style="width:80px; height:80px; display:flex; align-items:center; justify-content:center;"></div>
+                                <!-- src ላይ GYM-0001 የሚለውን አውጥተነዋል -->
+                                <img id="cardQrCodeImg" src="" alt="Member QR" style="width:80px; height:80px; display:block;">
                             </div>
-                        </div>  
+                        </div>
                     </div>
                 </div>
 
@@ -2313,19 +2313,18 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
         photoEl.style.objectFit = 'cover';
     }
 
-    // 4. Dynamic Client-Side QR Code (ከምስል ኤፒአይ ውጪ በራሱ Canvas የሚያመርት)
-        let qrContainer = document.getElementById('cardQrCode');
-        if (qrContainer) {
-            qrContainer.innerHTML = ''; // የቀደመውን ማፅዳት
-            let memberIdVal = id || 'GYM-0001';
-            
+    // 4. QR Code ማመንጨት (በስታንዳርድ ሳይዝ የተስተካከለ)
+    let qrContainer = document.getElementById('cardQrCode');
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        if (typeof QRCode !== 'undefined') {
             new QRCode(qrContainer, {
-                text: memberIdVal,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+                text: id || 'GM-0001',
+                width: 100,  // ከ 85 ወደ 100 ከፍ ተደርጓል (በጣም ተመራጭ ሳይዝ)
+                height: 100,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H // ግልጽ እና በፍጥነት እንዲነበብ ያደርገዋል
             });
         }
     }
@@ -2369,7 +2368,7 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
     // 7. Modal
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
-
+}
 
 /* =========================================================
    MEMBER REGISTRATION ENGINE
