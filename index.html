@@ -2763,19 +2763,26 @@ document.addEventListener('click', function(event) {
 });
 
 async function executeLogin() {
-  // 1. ፋንክሽኑ መስራቱን ማረጋገጫ
-  alert("1. አዝራሩ በትክክል ተነክቷል!");
+  const userEl = document.getElementById('authUserInput');
+  const passEl = document.getElementById('authPassInput');
+  const errorEl = document.getElementById('loginError');
+  const overlayEl = document.getElementById('enterpriseLoginOverlay');
 
-  const userInput = document.getElementById('authUserInput')?.value.trim();
-  const passInput = document.getElementById('authPassInput')?.value.trim();
+  const userInput = userEl ? userEl.value.trim() : '';
+  const passInput = passEl ? passEl.value.trim() : '';
 
-  // 2. SCRIPT_URL መኖሩን ማረጋገጥ
-  if (typeof SCRIPT_URL === 'undefined' || !SCRIPT_URL) {
-    alert("ኤረር፦ SCRIPT_URL አልተገለጸም! እባክዎን ከላይ SCRIPT_URL ን ያስገቡ።");
-    return;
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.innerText = '';
   }
 
-  alert("2. ወደ ሰርቨር በመላክ ላይ ነው...");
+  if (!passInput) {
+    if (errorEl) {
+      errorEl.innerText = "እባክዎን ፓስወርድ ያስገቡ!";
+      errorEl.style.display = 'block';
+    }
+    return;
+  }
 
   try {
     const response = await fetch(SCRIPT_URL, {
@@ -2789,16 +2796,32 @@ async function executeLogin() {
     });
 
     const data = await response.json();
-    alert("3. ከሰርቨር የመጣ ምላሽ፦ " + JSON.stringify(data));
 
     if (data.success) {
-      const overlay = document.getElementById('enterpriseLoginOverlay');
-      if (overlay) overlay.style.display = 'none';
+      // የመግቢያ መስኮቱን ሙሉ በሙሉ መደበቅ
+      if (overlayEl) {
+        overlayEl.style.display = 'none';
+        overlayEl.style.opacity = '0';
+        overlayEl.style.pointerEvents = 'none';
+        overlayEl.classList.add('hidden');
+      }
+
+      // የተጠቃሚውን መረጃ በ Session መያዝ (ካስፈልገ)
+      localStorage.setItem('gym_user_role', data.role || 'Admin');
+      localStorage.setItem('gym_user_name', data.name || 'User');
+
     } else {
-      alert("ስህተት፦ " + data.message);
+      if (errorEl) {
+        errorEl.innerText = data.message || "የተሳሳተ የተጠቃሚ ስም ወይም ፓስወርድ!";
+        errorEl.style.display = 'block';
+      }
     }
   } catch (err) {
-    alert("4. የኔትወርክ ወይም የ CORS ኤረር፦ " + err.message);
+    console.error("Login Error:", err);
+    if (errorEl) {
+      errorEl.innerText = "ከሰርቨር ጋር መገናኘት አልተቻለም!";
+      errorEl.style.display = 'block';
+    }
   }
 }
 // =====================================================
