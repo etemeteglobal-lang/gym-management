@@ -1258,29 +1258,6 @@
     </div>
 
 <script>
-// =====================================================
-// GOOGLE APPS SCRIPT INTEGRATION (FIXED & COMPLETE)
-// =====================================================
-
-const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
-
-// 🔥 CORE DATA STORAGE
-let membersCache = [];
-let qrScanner = null;
-let chartRev = null, chartPlan = null, chartQ = null, chartTraffic = null, chartG = null;
-let scanHistory = {};
-let currentScannedMember = null;
-
-let systemSettings = {
-    gymName: "GUDDA LIFE FITNESS",
-    gymPhone: "+251912292150",
-    malePrice: 2000,
-    femalePrice: 1500,
-    gymLogoBase64: "",
-    cbeQrBase64: "",
-    teleQrBase64: "",
-    adminPass: "admin123"
-};
 
 // =====================================================
 // SYSTEM INITIALIZATION
@@ -1339,14 +1316,14 @@ document.addEventListener('click', function(event) {
 });
 
 // =====================================================
-// AUTHENTICATION ENGINE (google.script.run FIXED)
+// AUTHENTICATION ENGINE (fetch() FIXED)
 // =====================================================
 
 function executeLogin() {
     let u = document.getElementById('authUserInput').value.trim();
     let p = document.getElementById('authPassInput').value.trim();
 
-    google.script.run
+    fetch()
         .withSuccessHandler(function(result) {
             if (result.success) {
                 document.getElementById('enterpriseLoginOverlay').style.display = 'none';
@@ -1463,11 +1440,11 @@ function calcEthDates() {
 }
 
 // =====================================================
-// SETTINGS & API INTEGRATION (google.script.run FIXED)
+// SETTINGS & API INTEGRATION (fetch() FIXED)
 // =====================================================
 
 function fetchSettings() {
-    google.script.run
+    fetch()
         .withSuccessHandler(function(data) {
             if (data.success) {
                 systemSettings = {
@@ -1551,7 +1528,7 @@ function saveSettings() {
     Promise.all(promises).then(() => {
         applySettings();
 
-        google.script.run
+        fetch()
             .withSuccessHandler(function(result) {
                 if (saveBtn) {
                     saveBtn.innerText = originalText;
@@ -2694,38 +2671,30 @@ function fileToBase64(file) {
     </div>
 
 <script>
+
 // =====================================================
-// GOOGLE APPS SCRIPT INTEGRATION (FIXED & COMPLETE)
+// 1. BACKEND URL (ከ Apps Script Deploy ያደረግከውን URL እዚህ ተካ)
 // =====================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgov4UxFzRcSA40v5CHd7i1GBsx3544lOOhdT0vyL4H9sVfvL4lXrEcdd9hsbj7LZTOw/exec';
+const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>`);
 
-const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
-
-// 🔥 CORE DATA STORAGE
-let membersCache = [];
-let qrScanner = null;
-let chartRev = null, chartPlan = null, chartQ = null, chartTraffic = null, chartG = null;
-let scanHistory = {};
-let currentScannedMember = null;
-
-let systemSettings = {
-    gymName: "GUDDA LIFE FITNESS",
-    gymPhone: "+251912292150",
-    malePrice: 2000,
-    femalePrice: 1500,
-    gymLogoBase64: "",
-    cbeQrBase64: "",
-    teleQrBase64: "",
-    adminPass: "admin123"
-};
-
+// የቻርት ቫሪያብሎች (chartG ተጨምሯል)
+let chartRev = null;
+let chartAtt = null;
+let chartQ = null;
+let chartTraffic = null;
+let chartG = null;
+let chartPlan = null;
 // =====================================================
 // SYSTEM INITIALIZATION
 // =====================================================
 
 window.onload = function() {
     initTheme();
-    document.getElementById('regGregDate').valueAsDate = new Date();
-    renderCalendarHeader();
+    if(document.getElementById('regGregDate')) {
+        document.getElementById('regGregDate').valueAsDate = new Date();
+    }
+    if(typeof renderCalendarHeader === 'function') renderCalendarHeader();
     fetchSettings();
 };
 
@@ -2734,11 +2703,11 @@ function initTheme() {
     if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark-theme-enabled');
         document.documentElement.classList.add('light-theme-enabled');
-        document.getElementById('themeToggleBtn').innerText = '☀️';
+        if(document.getElementById('themeToggleBtn')) document.getElementById('themeToggleBtn').innerText = '☀️';
     } else {
         document.documentElement.classList.remove('light-theme-enabled');
         document.documentElement.classList.add('dark-theme-enabled');
-        document.getElementById('themeToggleBtn').innerText = '🌙';
+        if(document.getElementById('themeToggleBtn')) document.getElementById('themeToggleBtn').innerText = '🌙';
     }
 }
 
@@ -2748,18 +2717,19 @@ function toggleTheme() {
     if (html.classList.contains('dark-theme-enabled')) {
         html.classList.remove('dark-theme-enabled');
         html.classList.add('light-theme-enabled');
-        btn.innerText = '☀️';
+        if(btn) btn.innerText = '☀️';
         localStorage.setItem('faida_theme', 'light');
     } else {
         html.classList.remove('light-theme-enabled');
         html.classList.add('dark-theme-enabled');
-        btn.innerText = '🌙';
+        if(btn) btn.innerText = '🌙';
         localStorage.setItem('faida_theme', 'dark');
     }
 }
 
 function toggleMobileMenu() {
-    document.getElementById('sidebarNav').classList.toggle('mobile-open');
+    const sidebar = document.getElementById('sidebarNav');
+    if(sidebar) sidebar.classList.toggle('mobile-open');
 }
 
 document.addEventListener('click', function(event) {
@@ -2774,59 +2744,49 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// =====================================================
-// AUTHENTICATION ENGINE (google.script.run FIXED)
-// =====================================================
-
 function executeLogin() {
     let u = document.getElementById('authUserInput').value.trim();
     let p = document.getElementById('authPassInput').value.trim();
+    let err = document.getElementById('loginError');
 
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-                syncMembers();
-            } else {
-                let err = document.getElementById('loginError');
-                err.style.display = 'block';
-                err.innerText = result.message || "የተሳሳተ በዓል!";
-            }
+    if (!p) {
+        if (err) {
+            err.style.display = 'block';
+            err.innerText = "እባክዎን ፓስወርድ ያስገቡ!";
+        }
+        return;
+    }
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'login',
+            username: u,
+            password: p
         })
-        .withFailureHandler(function(error) {
-            let err = document.getElementById('loginError');
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+            if (typeof syncMembers === 'function') {
+                syncMembers();
+            }
+        } else {
+            if (err) {
+                err.style.display = 'block';
+                err.innerText = result.message || "የተሳሳተ ፓስወርድ!";
+            }
+        }
+    })
+    .catch(error => {
+        if (err) {
             err.style.display = 'block';
             err.innerText = "ስህተት: " + error;
-            console.error("Login Error:", error);
-        })
-        .handleLogin(u, p);
+        }
+        console.error("Login Error:", error);
+    });
 }
-
-function executeLogout() {
-    document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
-}
-
-function switchView(viewId, evt) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(viewId).classList.add('active');
-    if (evt) evt.currentTarget.classList.add('active');
-
-    document.getElementById('sidebarNav').classList.remove('mobile-open');
-
-    const titles = {
-        'dashboardView': 'Executive Dashboard Analytics',
-        'registerView': 'Member Onboarding Portal',
-        'membersView': 'Members Directory',
-        'scannerView': 'QR Access Scanner',
-        'logsView': 'Attendance Audit Logs',
-        'settingsView': 'Enterprise Settings'
-    };
-    if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId];
-    if (viewId === 'logsView') fetchLogs();
-}
-
 // =====================================================
 // ETHIOPIAN CALENDAR & DATE CALCULATOR
 // =====================================================
@@ -2899,31 +2859,40 @@ function calcEthDates() {
 }
 
 // =====================================================
-// SETTINGS & API INTEGRATION (google.script.run FIXED)
+// SETTINGS & API INTEGRATION (fetch() FIXED)
 // =====================================================
 
 function fetchSettings() {
-    google.script.run
-        .withSuccessHandler(function(data) {
-            if (data.success) {
-                systemSettings = {
-                    gymName: data.gymName || "GUDDA LIFE FITNESS",
-                    gymPhone: data.gymPhone || "+251912292150",
-                    malePrice: parseFloat(data.malePrice) || 2000,
-                    femalePrice: parseFloat(data.femalePrice) || 1500,
-                    gymLogoBase64: data.gymLogoBase64 || "",
-                    cbeQrBase64: data.cbeQrBase64 || "",
-                    teleQrBase64: data.teleQrBase64 || "",
-                    adminPass: data.adminPass || "admin123"
-                };
-            }
-            applySettings();
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'getSettings'
         })
-        .withFailureHandler(function(error) {
-            console.error("Fetch Settings Error:", error);
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.success !== false) {
+            systemSettings = {
+                gymName: data.gymName || "GUDDA LIFE FITNESS",
+                gymPhone: data.gymPhone || "+251912292150",
+                malePrice: parseFloat(data.malePrice) || 2000,
+                femalePrice: parseFloat(data.femalePrice) || 1500,
+                gymLogoBase64: data.gymLogoBase64 || "",
+                cbeQrBase64: data.cbeQrBase64 || "",
+                teleQrBase64: data.teleQrBase64 || "",
+                adminPass: data.adminPass || "admin123"
+            };
+        }
+        if (typeof applySettings === 'function') {
             applySettings();
-        })
-        .getSettings();
+        }
+    })
+    .catch(error => {
+        console.error("Fetch Settings Error:", error);
+        if (typeof applySettings === 'function') {
+            applySettings();
+        }
+    });
 }
 
 function applySettings() {
@@ -2987,7 +2956,7 @@ function saveSettings() {
     Promise.all(promises).then(() => {
         applySettings();
 
-        google.script.run
+        fetch()
             .withSuccessHandler(function(result) {
                 if (saveBtn) {
                     saveBtn.innerText = originalText;
@@ -3098,7 +3067,7 @@ function submitRegistration() {
     }
 
     Promise.all(work).then(() => {
-        google.script.run
+        fetch()
             .withSuccessHandler(function(result) {
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -3138,20 +3107,25 @@ function submitRegistration() {
 }
 
 function syncMembers() {
-    google.script.run
-        .withSuccessHandler(function(data) {
-            const rows = Array.isArray(data) ? data : (data && Array.isArray(data.members) ? data.members : []);
-            membersCache = rows;
-            renderDirectoryTable(rows);
-            renderDashboard(rows);
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'fetchMembers'
         })
-        .withFailureHandler(function(error) {
-            console.error('syncMembers failed:', error);
-            membersCache = [];
-            renderDirectoryTable([]);
-            renderDashboard([]);
-        })
-        .fetchMembers();
+    })
+    .then(response => response.json())
+    .then(data => {
+        const rows = Array.isArray(data) ? data : (data && Array.isArray(data.members) ? data.members : []);
+        membersCache = rows;
+        if (typeof renderDirectoryTable === 'function') renderDirectoryTable(rows);
+        if (typeof renderDashboard === 'function') renderDashboard(rows);
+    })
+    .catch(error => {
+        console.error('syncMembers failed:', error);
+        membersCache = [];
+        if (typeof renderDirectoryTable === 'function') renderDirectoryTable([]);
+        if (typeof renderDashboard === 'function') renderDashboard([]);
+    });
 }
 
 function renderDirectoryTable(rows) {
@@ -3262,7 +3236,7 @@ function editMember(memberId) {
 
 function deleteMember(memberId) {
     if (!confirm('ይህን አባል መሰረዝ ይፈልጋሉ?')) return;
-    google.script.run
+    fetch()
         .withSuccessHandler(function(result) {
             alert(result && result.message ? result.message : 'አባል ተሰርዟል።');
             syncMembers();
@@ -3415,28 +3389,21 @@ function renderCharts(list) {
 }
 
 function fetchLogs() {
-    google.script.run
-        .withSuccessHandler(function(data) {
-            const logsBody = document.getElementById('logsTableBody');
-            if (!logsBody) return;
-            const rows = Array.isArray(data) ? data : (data && Array.isArray(data.logs) ? data.logs : []);
-            if (!rows.length) {
-                logsBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No attendance logs</td></tr>';
-                return;
-            }
-            logsBody.innerHTML = rows.map((row) => `
-                <tr>
-                    <td>${row.memberId || '-'}</td>
-                    <td>${row.name || '-'}</td>
-                    <td>${row.timestamp || '-'}</td>
-                    <td>${row.status || 'AUTHORIZED'}</td>
-                </tr>
-            `).join('');
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'getLogs'
         })
-        .withFailureHandler(function(error) {
-            console.error('fetchLogs failed:', error);
-        })
-        .fetchAttendanceLogs();
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (Array.isArray(data)) {
+            if (typeof renderLogsTable === 'function') renderLogsTable(data);
+        }
+    })
+    .catch(error => {
+        console.error("fetchLogs error:", error);
+    });
 }
 
 function startScanner(mode) {
@@ -3514,7 +3481,7 @@ function cancelScan() {
 function confirmAttendance() {
     if (!currentScannedMember) return;
     const member = currentScannedMember;
-    google.script.run
+    fetch()
         .withSuccessHandler(function(result) {
             alert(result && result.message ? result.message : 'Attendance logged successfully');
             fetchLogs();
@@ -3605,7 +3572,7 @@ function downloadVCard() {
 }
 
 function postSettingsToServer(saveBtn, originalText) {
-    google.script.run
+    fetch()
         .withSuccessHandler(function(result) {
             if (saveBtn) {
                 saveBtn.innerText = originalText;
