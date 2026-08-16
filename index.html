@@ -676,14 +676,28 @@
         .id-details p:last-child {
             border-bottom: none;
         }
+.id-qr-box {
+    background: var(--brand-orange);
+    padding: 8px 12px;
+    border-radius: 14px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(255, 94, 0, 0.3);
+}
 
-        .id-qr-box {
-            background: var(--brand-orange);
-            padding: 10px;
-            border-radius: 14px;
-            display: inline-block;
-            margin-top: 8px;
-        }
+.id-qr-box img {
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+    display: block !important;
+    object-fit: contain;
+    background: #ffffff;
+    padding: 3px;
+    border-radius: 8px;
+}
 /* =========================================================
    WORLD-CLASS MOBILE-FIRST RESPONSIVE ENGINE (FIXED)
    =/* =========================================================
@@ -1148,7 +1162,6 @@
     </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <!-- OFFICIAL SMART ID CARD MODAL -->
 <div id="smartIdModal" style="position:fixed; inset:0; background:rgba(15, 23, 42, 0.92); backdrop-filter:blur(12px); display:none; justify-content:center; align-items:center; z-index:100000; padding:15px; overflow-y:auto; font-family:'Inter', system-ui, sans-serif;">
     <div style="background:#1E293B; border:1px solid #334155; border-radius:20px; padding:20px; max-width:360px; width:100%; margin:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center; gap:15px;">
@@ -1158,7 +1171,6 @@
             
             <!-- FRONT VIEW -->
             <div id="idCardFrontView" style="background:#FFFFFF; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; position:relative; height:490px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; color:#1E293B;">
-                
                 <div>
                     <!-- Header -->
                     <div style="background:#0F172A; padding:14px 10px 24px 10px; text-align:center; border-bottom:2px solid #FF5E00; position:relative;">
@@ -1173,7 +1185,7 @@
                         <img id="cardMemberPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Photo" style="width:75px; height:75px; border-radius:50%; border:3px solid #FF5E00; object-fit:cover; background:#1E293B; box-shadow:0 0 15px rgba(255, 94, 0, 0.4); margin:0 auto; display:block;">
                     </div>
 
-<!-- Body Details -->
+                    <!-- Body Details -->
                     <div style="padding:6px 14px 0 14px; text-align:center;">
                         <h2 id="cardMemberName" style="color:#0F172A; font-size:1.05rem; font-weight:900; margin:4px 0 0 0; text-transform:uppercase;">MEMBER NAME</h2>
                         <div style="display:inline-block; background:rgba(255, 94, 0, 0.12); color:#FF5E00; font-size:0.55rem; font-weight:800; padding:2px 10px; border-radius:12px; margin-top:2px;">OFFICIAL GYM MEMBER</div>
@@ -1193,80 +1205,78 @@
                             </p>
                         </div>
 
-                        <!-- Big Dynamic Member QR -->
+                        <!-- Big Dynamic Member QR Container -->
                         <div style="background:#FF5E00; padding:8px 12px; border-radius:14px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 12px rgba(255, 94, 0, 0.3);">
                             <div style="text-align:left;">
                                 <div style="font-size:0.55rem; color:#FFE6D5; font-weight:800;">MEMBER ID</div>
                                 <div id="cardMemberId" style="color:#FFFFFF !important; font-size:1.1rem; font-weight:900; font-family:monospace;">-</div>
                             </div>
-                            <div style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-                                <!-- src ላይ GYM-0001 የሚለውን አውጥተነዋል -->
-                                <img id="cardQrCodeImg" src="" alt="Member QR" style="width:80px; height:80px; display:block;">
+                            <div style="background:#FFFFFF; padding:4px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; width:88px; height:88px;">
+                                <img id="cardQrCodeImg" src="" alt="Member QR" style="width:80px; height:80px; display:block; object-fit:contain;">
                             </div>
                         </div>
                     </div>
                 </div>
 
-              <!-- Front Footer -->
+                <!-- Front Footer -->
                 <div style="text-align:center; margin-top:14px; padding-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <span style="color:#64748B; font-weight:800; font-size:0.68rem; letter-spacing:0.8px; text-transform:uppercase;">POWERED BY</span>
                     <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height:24px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle;">
                 </div>
             </div>
 
-            <!-- Corrected Back View ID Card Container -->
-            <div id="idCardBackView" style="width: 330px; background: #FFFFFF; border: 3px solid #FF5E00; border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; flex-direction: column;">
+            <!-- BACK VIEW -->
+            <div id="idCardBackView" style="width:100%; max-width:320px; height:490px; background:#FFFFFF; border:2px solid #FF5E00; border-radius:18px; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 10px 25px rgba(0,0,0,0.3); display:none; flex-direction:column; justify-content:space-between; box-sizing:border-box;">
                 
-                <!-- 1. Top Header (Dark Blue Section) -->
-                <div style="background: #0B132B; padding: 14px 10px; text-align: center;">
-                    <div style="color: #FF5E00; font-weight: 900; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                <!-- Top Header -->
+                <div style="background:#0F172A; padding:14px 10px; text-align:center; border-bottom:2px solid #FF5E00;">
+                    <div id="cardBackGymName" style="color:#FF5E00; font-weight:900; font-size:0.95rem; letter-spacing:0.5px; text-transform:uppercase;">
                         GUDDA LIFE FITNESS
                     </div>
-                    <div style="color: #94A3B8; font-size: 0.55rem; margin-top: 3px; font-style: italic;">
+                    <div style="color:#94A3B8; font-size:0.55rem; margin-top:3px; font-style:italic;">
                         "ጤንነትዎን በጥበብ፣ ብቃትዎን በልምድ የሚያሳድጉበት የላቀ ማዕከል ነው!"
                     </div>
                 </div>
 
-                <!-- 2. Card Body (White Section) -->
-                <div style="padding: 14px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                <!-- Card Body -->
+                <div style="padding:14px; background:#FFFFFF; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
                     
                     <!-- Payment QRs Grid -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
                         <!-- CBE Birr Box -->
-                        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 8px; text-align: center;">
-                            <div id="cbeQrContainer" style="display: flex; justify-content: center; align-items: center; min-height: 85px; margin-bottom: 4px;">
-                                <img id="cbeQrImg" src="" alt="CBE QR" style="max-width: 85px; max-height: 85px; width: auto; height: auto; object-fit: contain; display: none;">
-                                <span id="cbeQrPlaceholder" style="font-size: 0.6rem; color: #94A3B8;">QR አልተመረጠም</span>
+                        <div style="background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:10px; padding:8px; text-align:center;">
+                            <div style="display:flex; justify-content:center; align-items:center; min-height:85px; margin-bottom:4px;">
+                                <img id="cardCbeQr" src="" alt="CBE QR" style="max-width:85px; max-height:85px; width:auto; height:auto; object-fit:contain;">
                             </div>
-                            <span style="font-weight: 800; font-size: 0.65rem; color: #1E293B; text-transform: uppercase; display: block;">CBE BIRR</span>
+                            <span style="font-weight:800; font-size:0.65rem; color:#1E293B; text-transform:uppercase; display:block;">CBE BIRR</span>
                         </div>
 
                         <!-- Telebirr Box -->
-                        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 8px; text-align: center;">
-                            <div id="telebirrQrContainer" style="display: flex; justify-content: center; align-items: center; min-height: 85px; margin-bottom: 4px;">
-                                <img id="telebirrQrImg" src="" alt="Telebirr QR" style="max-width: 85px; max-height: 85px; width: auto; height: auto; object-fit: contain; display: none;">
-                                <span id="telebirrQrPlaceholder" style="font-size: 0.6rem; color: #0284C7; text-transform: uppercase; display: block;">TELEBIRR</span>
+                        <div style="background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:10px; padding:8px; text-align:center;">
+                            <div style="display:flex; justify-content:center; align-items:center; min-height:85px; margin-bottom:4px;">
+                                <img id="cardTeleQr" src="" alt="Telebirr QR" style="max-width:85px; max-height:85px; width:auto; height:auto; object-fit:contain;">
                             </div>
-                            <span style="font-weight: 800; font-size: 0.65rem; color: #0284C7; text-transform: uppercase; display: block;">TELEBIRR</span>
+                            <span style="font-weight:800; font-size:0.65rem; color:#0284C7; text-transform:uppercase; display:block;">TELEBIRR</span>
                         </div>
                     </div>
 
                     <!-- Gym Contact Box -->
-                    <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.65rem; font-weight: 700; color: #334155;">
+                    <div style="background:#F1F5F9; border:1px dashed #CBD5E1; border-radius:8px; padding:8px; text-align:center; font-size:0.65rem; font-weight:700; color:#334155;">
                         📞 <span id="cardGymPhone">+251912292150</span> &nbsp;|&nbsp; 📍 <span id="cardGymLoc">Bolo, Adama</span>
                     </div>
 
                     <!-- Back Footer Branding -->
-                    <div style="text-align: center; margin-top: 12px; padding-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span style="color: #64748B; font-weight: 800; font-size: 0.65rem; letter-spacing: 0.8px; text-transform: uppercase;">POWERED BY</span>
-                        <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height: 22px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle;">
+                    <div style="text-align:center; margin-top:12px; padding-bottom:2px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                        <span style="color:#64748B; font-weight:800; font-size:0.65rem; letter-spacing:0.8px; text-transform:uppercase;">POWERED BY</span>
+                        <img src="images/faidatech-logo.png" crossorigin="anonymous" alt="FaidATech" style="height:22px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle;">
                     </div>
-
                 </div>
             </div>
 
+        </div>
+
         <!-- Action Buttons -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
             <button type="button" style="padding:10px; background:#2563EB; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="toggleIdPage()">🔄 Flip Card</button>
             <button type="button" style="padding:10px; background:#FF5E00; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="downloadBothSides()">📥 Download</button>
             <button type="button" style="padding:10px; background:#10B981; color:#FFF; border-radius:10px; border:none; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:4px;" onclick="shareSmartId()">🔗 Share</button>
@@ -1278,7 +1288,7 @@
     const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2394A3B8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
     
     // 1. API EndPoint Connection
-    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzgov4UxFzRcSA40v5CHd7i1GBsx3544lOOhdT0vyL4H9sVfvL4lXrEcdd9hsbj7LZTOw/exec";
+    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxvPhGp9eyxuQ5xf0tfxd6ilQZmAKP3eIlN2osK1k21biLCL_3E0TMWSf-u3K18PIAsVA/exec";
 
     async function apiCall(action, payload = {}) {
         try {
@@ -1296,11 +1306,10 @@
         }
     }
 
-    // 2. Modal Data Populate Fix (Handles Object Keys & Array Indexes)
+    // 2. Modal Data Populate
     function fillCardData(member) {
         if (!member) return;
 
-        // የዳታ ቁልፎች (Keys) ቢለያዩ እንኳ ሳይሳሳት እንዲያነብ የተዘጋጀ
         const nameVal = member.fullName || member.name || member.memberName || (Array.isArray(member) ? member[1] : '') || '';
         const phoneVal = member.phone || member.phoneNumber || member.mobile || (Array.isArray(member) ? member[2] : '') || '';
         const edidVal = member.edid || member.faidaId || member.faidaEdid || (Array.isArray(member) ? member[9] : '') || '';
@@ -1308,7 +1317,6 @@
         const memberIdVal = member.memberId || member.id || member.idNo || (Array.isArray(member) ? member[0] : '') || '';
         const photoVal = member.photoBase64 || member.photo || member.avatar || (Array.isArray(member) ? member[10] : '') || '';
 
-        // Front Elements Populate
         const nameEl = document.getElementById('cardMemberName');
         if (nameEl) nameEl.innerText = nameVal || '—';
 
@@ -1324,7 +1332,6 @@
         const idEl = document.getElementById('cardMemberId');
         if (idEl) idEl.innerText = memberIdVal || 'GYM-0000';
 
-        // Profile Photo Handling
         const photoEl = document.getElementById('cardMemberPhoto');
         if (photoEl) {
             if (photoVal && typeof photoVal === 'string' && photoVal.trim() !== '' && !photoVal.includes('placehold.co')) {
@@ -1335,18 +1342,20 @@
             photoEl.onerror = function() { this.src = DEFAULT_AVATAR_SVG; };
         }
 
-        // Front QR Code Generation
-        const qrEl = document.getElementById('cardQrCodeImg');
-        if (qrEl) {
-            const qrData = memberIdVal || 'GYM-0000';
-            qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrData)}`;
-        }
-
-        // የጀርባውን ገጽ መረጃ (Gym QR & Phone) ከሰርቨር መጫን
-        loadGymSettingsToBackCard();
+            const qrEl = document.getElementById('cardQrCodeImg');
+                 if (qrEl) {
+                 const qrData = memberIdVal || 'GYM-0000';
+               // በከፍተኛ ጥራትና አስተማማኝ በሆነው Google Chart / QuickChart QR API መጠቀም
+                qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+                        
+              // የኔትወርክ ችግር ካጋጠመ ወደ ሁለተኛ አስተማማኝ QR ሰርቨር አውቶማቲክ እንዲቀይር
+              qrEl.onerror = function() {
+                  this.src = `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&size=200`;
+           };
+       }
     }
 
-    // 3. Fetch and Load Back Card Info (Gym Settings & Payment QRs)
+    // 3. Fetch and Load Back Card Info
     async function loadGymSettingsToBackCard() {
         try {
             const res = await apiCall("getSettings");
@@ -1360,13 +1369,11 @@
                 const backLoc = document.getElementById('cardGymLoc');
                 if (backLoc && res.gymLocation) backLoc.innerText = res.gymLocation;
 
-                // CBE Birr QR
                 const cbeImg = document.getElementById('cardCbeQr');
                 if (cbeImg && res.cbeQrBase64 && res.cbeQrBase64.trim() !== '') {
                     cbeImg.src = res.cbeQrBase64;
                 }
 
-                // Telebirr QR
                 const teleImg = document.getElementById('cardTeleQr');
                 if (teleImg && res.teleQrBase64 && res.teleQrBase64.trim() !== '') {
                     teleImg.src = res.teleQrBase64;
@@ -1392,132 +1399,42 @@
         }
     }
 
-// 5. Side-by-Side Canvas Generator (የተስተካከለ)
-async function generateCombinedCanvas() {
-    const front = document.getElementById('idCardFrontView');
-    const back = document.getElementById('idCardBackView');
-    
-    if (!front) throw new Error("ID Card element not found");
-
-    // የኋላው ካርድ ተደብቆ ከሆነ (display: none) ላፍታ እንዲታይ ማድረግ
-    const backWasHidden = back && (getComputedStyle(back).display === 'none' || back.style.display === 'none');
-    
-    if (back && backWasHidden) {
-        back.style.display = 'block';
-        back.style.position = 'absolute';
-        back.style.left = '-9999px'; // ከስክሪን ውጭ ላፍታ ይቆያል
-    }
-
-    try {
-        // 1. የፊቱን ገጽ ምስል ማንሳት
-        const frontCanvas = await html2canvas(front, {
-            scale: 2,
-            backgroundColor: null,
-            useCORS: true,
-            allowTaint: true
-        });
-
-        // 2. የኋላውን ገጽ ምስል ማንሳት (ከአለ)
-        let backCanvas = null;
-        if (back) {
-            backCanvas = await html2canvas(back, {
-                scale: 2,
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: true
-            });
-
-            // የኋላውን ካርድ ወደ ነበረበት መመለስ
-            if (backWasHidden) {
-                back.style.display = 'none';
-                back.style.position = '';
-                back.style.left = '';
-            }
-        }
-
-        // 3. ሁለቱን ምስሎች በአንድ ላይ ማዋሃድ
-        const combinedCanvas = document.createElement('canvas');
-        const padding = 30;
-
-        if (backCanvas) {
-            combinedCanvas.width = frontCanvas.width + backCanvas.width + (padding * 3);
-            combinedCanvas.height = Math.max(frontCanvas.height, backCanvas.height) + (padding * 2);
-
-            const ctx = combinedCanvas.getContext('2d');
-
-            // የካርዱ ማዋሃጃ ዳራ ቀለም (Dark Background)
-            ctx.fillStyle = '#0F172A';
-            ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-
-            // የፊቱን እና የኋላውን ካርድ ጎን ለጎን መሳል
-            ctx.drawImage(frontCanvas, padding, padding);
-            ctx.drawImage(backCanvas, frontCanvas.width + (padding * 2), padding);
-        } else {
-            combinedCanvas.width = frontCanvas.width + (padding * 2);
-            combinedCanvas.height = frontCanvas.height + (padding * 2);
-
-            const ctx = combinedCanvas.getContext('2d');
-            ctx.fillStyle = '#0F172A';
-            ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-            ctx.drawImage(frontCanvas, padding, padding);
-        }
-
-        return combinedCanvas;
-
-    } catch (e) {
-        // Error ቢፈጠር እንኳን የኋላውን ካርድ ወደ ነበረበት መመለስ
-        if (back && backWasHidden) {
-            back.style.display = 'none';
-            back.style.position = '';
-            back.style.left = '';
-        }
-        throw e;
-    }
-}
-// 6. Download Handler (ሁለቱንም ገጽ በአንድ ላይ በጥራት የሚያወርድ)
+    // 5. Download Both Sides
     async function downloadBothSides() {
         try {
             let front = document.getElementById('idCardFrontView');
             let back = document.getElementById('idCardBackView');
 
             if (typeof html2canvas === 'undefined') {
-                alert("html2canvas አልተጫነም! እባክዎን HTML head ላይ መኖሩን ያረጋግጡ።");
+                alert("html2canvas አልተጫነም!");
                 return;
             }
 
-            // 1. ሁለቱንም ገፆች Capture ለማድረግ ለአፍታ Display Status ቀይር
             const origFrontDisplay = front.style.display;
             const origBackDisplay = back.style.display;
 
             front.style.display = 'flex';
             back.style.display = 'flex';
 
-            // HD Canvas Capture (scale: 3)
             const canvasFront = await html2canvas(front, { scale: 3, useCORS: true, allowTaint: true });
             const canvasBack = await html2canvas(back, { scale: 3, useCORS: true, allowTaint: true });
 
-            // የቀደመውን Display status መልስ
             front.style.display = origFrontDisplay;
             back.style.display = origBackDisplay;
 
-            // 2. ሁለቱንም ገጾች ጎን ለጎን የሚያቀናጅ Master Canvas መፍጠር
             const masterCanvas = document.createElement('canvas');
-            const gap = 30; // በካርዶቹ መካከል ያለው ክፍተት
+            const gap = 30;
 
             masterCanvas.width = canvasFront.width + canvasBack.width + gap;
             masterCanvas.height = Math.max(canvasFront.height, canvasBack.height);
 
             const ctx = masterCanvas.getContext('2d');
-
-            // የጀርባው ከለር (Dark background)
             ctx.fillStyle = "#0F172A";
             ctx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
 
-            // Front እና Back ምስሎችን መሳል
             ctx.drawImage(canvasFront, 0, 0);
             ctx.drawImage(canvasBack, canvasFront.width + gap, 0);
 
-            // 3. ማውረድ
             let memberId = document.getElementById('cardMemberId')?.innerText || 'GYM-MEMBER';
             let link = document.createElement('a');
             link.download = `${memberId}_Full_Smart_ID.png`;
@@ -1529,7 +1446,8 @@ async function generateCombinedCanvas() {
             alert("ካርዱን ለማውረድ አልተቻለም።");
         }
     }
-    // 7. Share Handler (ለስልክም ለኮምፒውተርም የሚሰራ)
+
+    // 6. Share Handler
     async function shareSmartId() {
         try {
             let front = document.getElementById('idCardFrontView');
@@ -1556,7 +1474,6 @@ async function generateCombinedCanvas() {
                         files: [file]
                     });
                 } else {
-                    // በኮምፒውተር Chrome ላይ Direct Share ከሌለ ምስሉን Download ያደርገዋል
                     let downloadLink = document.createElement('a');
                     downloadLink.download = `${memberId}_Smart_ID.png`;
                     downloadLink.href = URL.createObjectURL(blob);
@@ -1569,10 +1486,8 @@ async function generateCombinedCanvas() {
         }
     }
 
-    // ለቁልፍ አጠራር ጥንቃቄ (Alias)
     const downloadSmartId = downloadBothSides;
-</script>
-<script>
+
           async function apiCall(action, payload = {}) {
   try {
     const requestData = Object.assign({ action: action }, payload);
@@ -2254,109 +2169,64 @@ function openMemberSmartId(memberId) {
     }
 }
 
-/* =========================================================
-   SMART ID CARD ENGINE (STRICTLY STYLING & COLORS ONLY)
-   ========================================================= */
 function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
-    // 1. መረጃዎችን ማስገባት እና ደመቅ ያሉ ከለሮችን መስጠት
+    // 1. የአባሉን መረጃዎች መሙላት
     if (document.getElementById('cardMemberId')) {
         let idEl = document.getElementById('cardMemberId');
         idEl.innerText = id || 'GM-0001';
-        idEl.style.color = '#FFFFFF'; // በኦሬንጁ ሳጥን ውስጥ ነጭ ሆኖ እንዲታይ
-        idEl.style.fontWeight = '900';
     }
 
     if (document.getElementById('cardMemberName')) {
         let nameEl = document.getElementById('cardMemberName');
         nameEl.innerText = String(name || 'MEMBER NAME').toUpperCase();
-        nameEl.style.color = '#0F172A'; // ደማቅ ጥቁር ከለር
-        nameEl.style.fontWeight = '900';
     }
 
-    // EDID - እሴት መስጠት እና ቀለሙን ጥቁር ማድረግ
     if (document.getElementById('cardEdid')) {
-        let edidEl = document.getElementById('cardEdid');
-        edidEl.innerText = edid || 'EDID-FAN-2589341592';
-        edidEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+        document.getElementById('cardEdid').innerText = edid || '-';
     }
 
-    // PHONE - እሴት መስጠት እና ቀለሙን ጥቁር ማድረግ
     if (document.getElementById('cardPhone')) {
-        let phoneEl = document.getElementById('cardPhone');
-        phoneEl.innerText = phone || 'N/A';
-        phoneEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+        document.getElementById('cardPhone').innerText = phone || '-';
     }
 
-    // LOCATION - ተረስቶ የነበረው አሁን ተጨምሯል
     if (document.getElementById('cardLocation')) {
-        let locEl = document.getElementById('cardLocation');
-        locEl.innerText = location || 'Adama, Ethiopia';
-        locEl.style.color = '#0F172A'; // ነጩን ወደ ጥቁር ቀይረነዋል
+        document.getElementById('cardLocation').innerText = location || 'Adama, Ethiopia';
     }
 
-    // 2. የማለቂያ ቀኗን (Expiry Date) መስመር ሙሉ በሙሉ ማጥፋት
-    let expiryEl = document.getElementById('cardExpiry');
-    if (expiryEl) {
-        expiryEl.style.display = 'none';
-        if (expiryEl.parentElement) {
-            expiryEl.parentElement.style.display = 'none';
-        }
-    }
-
-    // 3. የፎቶ ዲዛይን (Powerful Border & Shadow)
+    // 2. የአባሉን ፎቶ መስጠት
     if (document.getElementById('cardMemberPhoto')) {
         let photoEl = document.getElementById('cardMemberPhoto');
-        photoEl.src = photo || 'https://placehold.co/100';
-        photoEl.style.border = '4px solid #FF5E00';
-        photoEl.style.boxShadow = '0 8px 16px rgba(255,94,0,0.3)';
-        photoEl.style.borderRadius = '50%';
-        photoEl.style.objectFit = 'cover';
+        if (photo) photoEl.src = photo;
     }
 
-    // 4. QR Code ማመንጨት (በስታንዳርድ ሳይዝ የተስተካከለ)
-    let qrContainer = document.getElementById('cardQrCode');
-    if (qrContainer) {
-        qrContainer.innerHTML = "";
-        if (typeof QRCode !== 'undefined') {
-            new QRCode(qrContainer, {
-                text: id || 'GM-0001',
-                width: 100,  // ከ 85 ወደ 100 ከፍ ተደርጓል (በጣም ተመራጭ ሳይዝ)
-                height: 100,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H // ግልጽ እና በፍጥነት እንዲነበብ ያደርገዋል
-            });
-        }
+    // 3. Dynamic Member ID QR Code ማስገባት
+    let qrImg = document.getElementById('cardQrCodeImg');
+    if (qrImg) {
+        const memberCode = id || 'GM-0001';
+        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(memberCode);
     }
 
-    // 5. ካርዱን ማሳየት
+    // 4. Front View ማሳየት
     let frontView = document.getElementById('idCardFrontView');
-    if (frontView) frontView.style.display = 'block';
+    if (frontView) frontView.style.display = 'flex';
 
     let backView = document.getElementById('idCardBackView');
     if (backView) backView.style.display = 'none';
 
-    // 6. የ QR ምስሎችን እና መረጃዎችን ብቻ መጫን (ዲዛይኑን ሳይነካ)
+    // 5. Back View የክፍያ (CBE & Telebirr) Base64 QR ምስሎች መጫን
     if (typeof systemSettings !== 'undefined') {
-        // CBE QR
-        let cbeImg = document.getElementById('cbeQrImg');
-        let cbeTxt = document.getElementById('cbeQrPlaceholder');
+        let cbeImg = document.getElementById('cardCbeQr');
         if (cbeImg && systemSettings.cbeQrBase64) {
             cbeImg.src = systemSettings.cbeQrBase64;
             cbeImg.style.display = 'block';
-            if (cbeTxt) cbeTxt.style.display = 'none';
         }
 
-        // Telebirr QR
-        let teleImg = document.getElementById('telebirrQrImg');
-        let teleTxt = document.getElementById('telebirrQrPlaceholder');
+        let teleImg = document.getElementById('cardTeleQr');
         if (teleImg && systemSettings.teleQrBase64) {
             teleImg.src = systemSettings.teleQrBase64;
             teleImg.style.display = 'block';
-            if (teleTxt) teleTxt.style.display = 'none';
         }
 
-        // Phone & Location
         if (document.getElementById('cardGymPhone') && systemSettings.gymPhone) {
             document.getElementById('cardGymPhone').innerText = systemSettings.gymPhone;
         }
@@ -2365,11 +2235,10 @@ function showSmartIdCard(id, name, phone, edid, expiry, photo, location) {
         }
     }
 
-    // 7. Modal
+    // 6. Modal ማሳየት
     let modal = document.getElementById('smartIdModal');
     if (modal) modal.style.display = 'flex';
 }
-
 /* =========================================================
    MEMBER REGISTRATION ENGINE
    ========================================================= */
