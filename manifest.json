@@ -1,0 +1,21 @@
+{
+  "short_name": "Gym App",
+  "name": "GUDDA LIFE FITNESS",
+  "icons": [
+    {
+      "src": "./images/gudda-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/gudda-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0B1437",
+  "theme_color": "#111C44",
+  "display": "standalone",
+  "orientation": "portrait"
+}
