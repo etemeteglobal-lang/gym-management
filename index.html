@@ -921,6 +921,21 @@
     display: inline-block;
     border: 1px solid rgba(88, 166, 255, 0.3);
 }
+/* Modal Table Horizontal Scroll Fix */
+#metricDetailModal .modal-content {
+    max-width: 95% !important;
+}
+
+#metricDetailModal .modal-body,
+#metricDetailModal div:has(> table) {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#metricDetailModal table {
+    width: 100% !important;
+    min-width: 750px !important;
+}
     </style>
 </head>
 <body>
@@ -2413,14 +2428,13 @@ function renderDashboardAnalytics(members, logs, filterYear = null) {
         } else {
             active++;
 
-            // Expiring in 7 Days Logic
-            if (expiryDate) {
-                let expDateObj = parseFlexibleDate(expiryDate);
-                if (expDateObj) {
-                    let diffDays = (expDateObj.getTime() - now.getTime()) / (1000 * 3600 * 24);
-                    if (diffDays >= 0 && diffDays <= 7) expiringSoon++;
-                }
+          // Expiring in 7 Days Logic (ለ Dashboard)
+        if (expiryDate) {
+            let diffDays = getEthDaysRemaining(expiryDate);
+            if (diffDays !== null && diffDays >= 0 && diffDays <= 7) {
+                expiringSoon++;
             }
+           }
         }
 
         // Revenue Calculation
@@ -2764,7 +2778,122 @@ function attachCardClickEvents() {
     }
 }
 
-// 1. Generic Metric Detail Modal (Total, Active, Expired, Revenue, Today's Scans)
+// 1. የፋይናንስ ማጠቃለያ ካርዶችን የሚያዘጋጀው ፋንክሽን
+function renderFinancialCards(container, list, type) {
+    if (!container) return;
+
+    let totalRev = 0;
+    let totalMaleRev = 0;
+    let totalFemaleRev = 0;
+    let activeCount = 0;
+    let pendingRev = 0; // በቀጣይ 7 ቀናት የሚጠበቅ ፔንዲንግ ገቢ
+    let pendingCount = 0;
+
+    list.forEach(m => {
+        if (!m) return;
+
+        let val7 = String(m[7] || '').trim();
+        let val8 = String(m[8] || '').trim();
+
+        let amount = 0;
+        let gender = 'male';
+
+        // ጾታ እና ክፍያን በራስ-ሰር መለየት
+        if (val7.toLowerCase().includes('female') || val7.includes('ሴት') || val7.toLowerCase().includes('male') || val7.includes('ወንድ')) {
+            gender = val7.toLowerCase();
+            amount = parseFloat(val8.replace(/[^0-9.]/g, '')) || 0;
+        } else {
+            amount = parseFloat(val7.replace(/[^0-9.]/g, '')) || parseFloat(val8.replace(/[^0-9.]/g, '')) || 0;
+            gender = val8.toLowerCase();
+        }
+
+        // ክፍያ 0 ከሆነ Plan (m[3]) ላይ መፈለግ
+        if (amount === 0 && m[3]) {
+            amount = parseFloat(String(m[3]).replace(/[^0-9.]/g, '')) || 0;
+        }
+
+        let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : false;
+        if (!isExpired) activeCount++;
+
+        totalRev += amount;
+
+        if (gender.includes('female') || gender.includes('ሴት') || gender === 'f') {
+            totalFemaleRev += amount;
+        } else {
+            totalMaleRev += amount;
+        }
+
+        // በቀጣይ 7 ቀናት ውስጥ የሚያበቁ አባላትን መለየትና ፔንዲንግ ገቢ ማሰላት
+        let expiryDate = m[5];
+        if (!isExpired && expiryDate) {
+            let diffDays = (typeof getEthDaysRemaining === 'function') ? getEthDaysRemaining(expiryDate) : null;
+            if (diffDays !== null && diffDays >= 0 && diffDays <= 7) {
+                pendingRev += amount;
+                pendingCount++;
+            }
+        }
+    });
+
+    let malePct = totalRev > 0 ? Math.round((totalMaleRev / totalRev) * 100) : 0;
+    let femalePct = totalRev > 0 ? Math.round((totalFemaleRev / totalRev) * 100) : 0;
+    let arpu = activeCount > 0 ? Math.round(totalRev / activeCount) : 0;
+
+    if (type === 'revenue') {
+        container.innerHTML = `
+            <!-- Total & Pending Revenue Cards Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <!-- Total Collected Revenue -->
+                <div style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #a5b4fc; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">ጠቅላላ የተሰበሰበ ገቢ</span>
+                    <h2 style="color: #818cf8; margin: 6px 0 0 0; font-size: 1.8rem; font-weight: bold;">${totalRev.toLocaleString()} ETB</h2>
+                </div>
+
+                <!-- Pending / Expected Revenue (Next 7 Days) -->
+                <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #fcd34d; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">በ7 ቀን የሚጠበቅ ፔንዲንግ ገቢ (${pendingCount})</span>
+                    <h2 style="color: #fbbf24; margin: 6px 0 0 0; font-size: 1.8rem; font-weight: bold;">${pendingRev.toLocaleString()} ETB</h2>
+                </div>
+            </div>
+
+            <!-- Revenue by Gender Breakdown -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 12px 0; color: #e2e8f0; font-size: 0.9rem;">የገቢ ስርጭት በጾታ (Revenue by Gender)</h4>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="color: #38bdf8; font-size: 0.85rem;">👨 ወንድ (Male):</span>
+                    <strong style="color: #fff; font-size: 0.85rem;">${totalMaleRev.toLocaleString()} ETB (${malePct}%)</strong>
+                </div>
+                <div style="width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+                    <div style="width: ${malePct}%; background: #38bdf8; height: 100%;"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="color: #ec4899; font-size: 0.85rem;">👩 ሴት (Female):</span>
+                    <strong style="color: #fff; font-size: 0.85rem;">${totalFemaleRev.toLocaleString()} ETB (${femalePct}%)</strong>
+                </div>
+                <div style="width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="width: ${femalePct}%; background: #ec4899; height: 100%;"></div>
+                </div>
+            </div>
+        `;
+    } else if (type === 'arpu') {
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #93c5fd; font-size: 0.85rem;">አማካኝ ገቢ (ARPU)</span>
+                    <h2 style="color: #60a5fa; margin: 6px 0 0 0; font-size: 1.8rem;">${arpu.toLocaleString()} ETB</h2>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #6ee7b7; font-size: 0.85rem;">ንቁ አባላት (Active)</span>
+                    <h2 style="color: #34d399; margin: 6px 0 0 0; font-size: 1.8rem;">${activeCount}</h2>
+                </div>
+            </div>
+        `;
+    }
+}
+// ---------------------------------------------------------
+// Generic Metric Detail Modal (የተስተካከለና የተዘጋ)
+// ---------------------------------------------------------
 function openMetricDetailModal(type) {
     const modal = document.getElementById('metricDetailModal');
     const title = document.getElementById('metricDetailModalTitle');
@@ -2772,9 +2901,20 @@ function openMetricDetailModal(type) {
 
     if (!modal || !tbody) return;
 
-    let rows = (cachedMembersData.length > 0 && Array.isArray(cachedMembersData[0]) && cachedMembersData[0][0] === "Member ID") 
-               ? cachedMembersData.slice(1) 
-               : cachedMembersData;
+    const thead = modal.querySelector('thead');
+    let tableElem = tbody.closest('table');
+    let cardContainer = document.getElementById('financialCardsWrapper');
+
+    if (!cardContainer && tableElem && tableElem.parentElement) {
+        cardContainer = document.createElement('div');
+        cardContainer.id = 'financialCardsWrapper';
+        tableElem.parentElement.insertBefore(cardContainer, tableElem);
+    }
+
+    let rawData = (typeof cachedMembersData !== 'undefined' && Array.isArray(cachedMembersData)) ? cachedMembersData : [];
+    let rows = (rawData.length > 0 && Array.isArray(rawData[0]) && rawData[0][0] === "Member ID") 
+               ? rawData.slice(1) 
+               : rawData;
 
     let selectEl = document.getElementById('dashYearFilter');
     let selectedYearStr = selectEl ? selectEl.value : 'ALL';
@@ -2782,91 +2922,246 @@ function openMetricDetailModal(type) {
 
     let cumulativeRows = rows.filter(m => {
         if (selectedYearStr === 'ALL') return true;
-        let jYear = extractEcYear(m[4]);
+        let jYear = (typeof extractEcYear === 'function') ? extractEcYear(m[4]) : null;
         return jYear ? jYear <= targetYear : true;
     });
+
+    // Default Header ለተለመዱት ሞዳሎች
+    if (thead) {
+        thead.innerHTML = `
+            <tr style="color: #9aa0a6; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: left;">
+                <th style="padding:10px;">መለያ (ID)</th>
+                <th style="padding:10px;">ስም</th>
+                <th style="padding:10px;">ስልክ</th>
+                <th style="padding:10px;">ፕላን</th>
+                <th style="padding:10px;">የሚያበቃበት ቀን</th>
+                <th style="padding:10px;">ሁኔታ</th>
+            </tr>
+        `;
+    }
 
     let filteredList = [];
 
     if (type === 'total') {
+        if (cardContainer) cardContainer.style.display = 'none';
         if (title) title.innerText = "የሁሉንም አባላት ዝርዝር (Total Members)";
         filteredList = cumulativeRows;
         renderModalTableRows(tbody, filteredList);
+
     } else if (type === 'active') {
+        if (cardContainer) cardContainer.style.display = 'none';
         if (title) title.innerText = "የነቁ አባላት ዝርዝር (Active Subs)";
         filteredList = cumulativeRows.filter(m => {
             let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
             return !isExpired;
         });
         renderModalTableRows(tbody, filteredList);
+
     } else if (type === 'expired') {
+        if (cardContainer) cardContainer.style.display = 'none';
         if (title) title.innerText = "ጊዜያቸው ያለፈባቸው አባላት ዝርዝር (Expired Subs)";
         filteredList = cumulativeRows.filter(m => {
             let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
             return isExpired;
         });
         renderModalTableRows(tbody, filteredList);
-    } else if (type === 'revenue') {
-        if (title) title.innerText = "የገቢ እና ክፍያዎች ዝርዝር (Total Revenue)";
+
+    } else if (type === 'revenue' || type === 'arpu') {
+        if (title) title.innerText = (type === 'revenue') 
+            ? "የገቢ እና ክፍያዎች ዝርዝር (Total Revenue)" 
+            : "የአባል አማካኝ ገቢ ትንተና (Average Revenue Per User)";
+
         filteredList = cumulativeRows.filter(m => {
-            let jYear = extractEcYear(m[4]);
+            let jYear = (typeof extractEcYear === 'function') ? extractEcYear(m[4]) : null;
             return selectedYearStr === 'ALL' || jYear === targetYear;
         });
+
+        if (cardContainer) {
+            cardContainer.style.display = 'block';
+            renderFinancialCards(cardContainer, filteredList, type);
+        }
         renderModalTableRows(tbody, filteredList);
-    } else if (type === 'today_scans') {
+
+    } else if (type === 'retention') {
+        if (title) title.innerText = "የአባላት Retention Rate ትንተና";
+        filteredList = cumulativeRows.filter(m => {
+            let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
+            return !isExpired;
+        });
+
+        if (cardContainer) {
+            cardContainer.style.display = 'block';
+            renderRetentionChurnCards(cardContainer, cumulativeRows, 'retention');
+        }
+        renderModalTableRows(tbody, filteredList);
+
+    } else if (type === 'churn') {
+        if (title) title.innerText = "የአባላት Churn Rate ትንተና";
+        filteredList = cumulativeRows.filter(m => {
+            let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
+            return isExpired;
+        });
+
+        if (cardContainer) {
+            cardContainer.style.display = 'block';
+            renderRetentionChurnCards(cardContainer, cumulativeRows, 'churn');
+        }
+        renderModalTableRows(tbody, filteredList);
+
+} else if (type === 'today_scans') {
         if (title) title.innerText = "የዛሬ መግቢያዎች ዝርዝር (Today's Check-ins)";
+
+        if (thead) {
+            thead.innerHTML = `
+                <tr style="color: #9aa0a6; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: left;">
+                    <th style="padding:10px;">መለያ (ID)</th>
+                    <th style="padding:10px;">ስም</th>
+                    <th style="padding:10px;">የመጣበት ሰዓት</th>
+                    <th style="padding:10px;">ሁኔታ</th>
+                </tr>
+            `;
+        }
+
+        // 1. መረጃውን አዲሱን getDOMAttendanceLogs() በመጠቀም መውሰድ
+        let allLogs = (typeof getDOMAttendanceLogs === 'function') ? getDOMAttendanceLogs() : [];
         
-        let now = new Date();
-        let year = now.getFullYear();
-        let month = String(now.getMonth() + 1).padStart(2, '0');
-        let day = String(now.getDate()).padStart(2, '0');
-        let todayStr = `${year}-${month}-${day}`;
+        // 2. ከሁሉ በላይ ያለውን የቅርብ ቀን (የዛሬውን) Group ብቻ መለየት
+        let todaysLogs = [];
+        if (allLogs.length > 0) {
+            let latestGroup = allLogs[0].dateGroup;
+            todaysLogs = allLogs.filter(l => l.dateGroup === latestGroup);
+        }
 
-        let logs = (cachedLogsData.length > 0 && Array.isArray(cachedLogsData[0]) && cachedLogsData[0][0] === "Member ID")
-                   ? cachedLogsData.slice(1)
-                   : cachedLogsData;
+        // 3. አስቀድመህ የሰራኸውን renderAttendanceRiskCards ፋንክሽን መጥራት
+        if (cardContainer) {
+            cardContainer.style.display = 'block';
+            if (typeof renderAttendanceRiskCards === 'function') {
+                renderAttendanceRiskCards(cardContainer, todaysLogs, 'today_scans');
+            }
+        }
 
-        let todaysLogs = logs.filter(l => String(l[2] || '').includes(todayStr));
-        renderTodayScansRows(tbody, todaysLogs);
+        // 4. ሰንጠረዡን መሙላት
+        if (todaysLogs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#9aa0a6;">ለዛሬ የተመዘገበ መግቢያ የለም።</td></tr>';
+        } else {
+            tbody.innerHTML = todaysLogs.map(l => {
+                let memberId = l.memberId;
+                let fullName = l.fullName;
+                let scanTime = l.scanTime;
+
+                let m = (typeof cachedMembersData !== 'undefined' && Array.isArray(cachedMembersData)) 
+                        ? cachedMembersData.find(mem => String(mem[0] || '').trim().toLowerCase() === memberId.toLowerCase())
+                        : null;
+
+                let isExpired = false;
+                if (m && typeof checkIsExpired === 'function') {
+                    isExpired = checkIsExpired(m[5], m[6]);
+                }
+
+                let statusText = isExpired ? 'Expired' : 'Active';
+                let bgStyle = isExpired ? 'rgba(238,93,80,0.15)' : 'rgba(1,181,116,0.15)';
+                let colorStyle = isExpired ? '#EE5D50' : '#01B574';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding:10px; font-weight:bold; color:#58A6FF;">${memberId}</td>
+                        <td style="padding:10px; color:#fff;">${fullName}</td>
+                        <td style="padding:10px; color:#9aa0a6;">${scanTime}</td>
+                        <td style="padding:10px;">
+                            <span style="padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:800; background:${bgStyle}; color:${colorStyle};">
+                                ● ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+    } else if (type === 'at_risk') {
+        if (title) title.innerText = "ከ14+ ቀን በላይ ያልመጡ አባላት (At-Risk Members)";
+
+        let rawLogs = window.globalAttendanceRows || (typeof getDOMAttendanceLogs === 'function' ? getDOMAttendanceLogs() : []);
+        
+        let checkedInIds = new Set();
+        if (Array.isArray(rawLogs)) {
+            rawLogs.forEach(l => {
+                let id = Array.isArray(l) ? l[0] : l.memberId;
+                if (id) checkedInIds.add(String(id).trim().toLowerCase());
+            });
+        }
+
+        let membersList = (typeof membersCache !== 'undefined' && Array.isArray(membersCache) && membersCache.length > 0) 
+            ? membersCache 
+            : cumulativeRows;
+
+        let atRiskList = membersList.filter(m => {
+            let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
+            if (isExpired) return false;
+
+            let memberId = String(m[0] || '').trim().toLowerCase();
+            return !checkedInIds.has(memberId);
+        });
+
+        if (cardContainer) {
+            cardContainer.style.display = 'block';
+            if (typeof renderAttendanceRiskCards === 'function') {
+                renderAttendanceRiskCards(cardContainer, atRiskList, 'at_risk');
+            }
+        }
+        renderModalTableRows(tbody, atRiskList);
     }
 
+    // 💡 ዋናው ማስተካከያ፡ ሞዳሉን የሚያሳየው መስመር ከ if/else ውጭ ተደርጓል!
     modal.style.display = 'flex';
 }
-
-// 2. Expiring Soon Modal (በ7 ቀን ውስጥ የሚያበቁ)
 function openExpiringSoonModal() {
     const modal = document.getElementById('expiringSoonModal') || document.getElementById('metricDetailModal');
     const title = document.getElementById('expiringSoonModalTitle') || document.getElementById('metricDetailModalTitle');
     const tbody = document.getElementById('expiringSoonModalTableBody') || document.getElementById('metricDetailModalTableBody');
+    const thead = modal ? modal.querySelector('thead') : null;
 
     if (!modal || !tbody) return;
 
-    let rows = (cachedMembersData.length > 0 && Array.isArray(cachedMembersData[0]) && cachedMembersData[0][0] === "Member ID") 
-               ? cachedMembersData.slice(1) 
-               : cachedMembersData;
+    const tableContainer = tbody.closest('.table-container') || tbody.parentElement.parentElement;
+    if (tableContainer) {
+        tableContainer.style.overflowX = 'auto';
+        tableContainer.style.maxWidth = '100%';
+    }
 
-    let now = new Date();
+    if (thead) {
+        thead.innerHTML = `
+            <tr style="color: #9aa0a6; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: left; white-space: nowrap;">
+                <th style="padding:10px;">መለያ (ID)</th>
+                <th style="padding:10px;">ስም</th>
+                <th style="padding:10px;">የሚያበቃበት ቀን</th>
+                <th style="padding:10px;">ቀሪ ቀን</th>
+                <th style="padding:10px; text-align:center;">ተግባር</th>
+            </tr>
+        `;
+    }
+
+    let rawData = (typeof cachedMembersData !== 'undefined' && Array.isArray(cachedMembersData)) ? cachedMembersData : [];
+    let rows = (rawData.length > 0 && Array.isArray(rawData[0]) && rawData[0][0] === "Member ID") 
+               ? rawData.slice(1) 
+               : rawData;
+
     let filteredList = rows.filter(m => {
         let expiryDate = m[5];
         let rawStatus = m[6] || 'Active';
         let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(expiryDate, rawStatus) : false;
 
         if (!isExpired && expiryDate) {
-            let expDateObj = parseFlexibleDate(expiryDate);
-            if (expDateObj) {
-                let diffDays = (expDateObj.getTime() - now.getTime()) / (1000 * 3600 * 24);
-                return diffDays >= 0 && diffDays <= 7;
-            }
+            let diffDays = (typeof getEthDaysRemaining === 'function') ? getEthDaysRemaining(expiryDate) : null;
+            return diffDays !== null && diffDays >= 0 && diffDays <= 7;
         }
         return false;
     });
 
     if (title) title.innerText = "በ7 ቀን ውስጥ አባልነታቸው የሚያበቃ አባላት (Expiring in 7 Days)";
-    renderModalTableRows(tbody, filteredList);
+    renderExpiringModalRows(tbody, filteredList);
     modal.style.display = 'flex';
 }
 
-// 3. New Members Modal (Week, Month, Year)
 function openNewMembersModal(period) {
     const modal = document.getElementById('newMembersModal') || document.getElementById('metricDetailModal');
     const title = document.getElementById('newMembersModalTitle') || document.getElementById('metricDetailModalTitle');
@@ -2874,9 +3169,10 @@ function openNewMembersModal(period) {
 
     if (!modal || !tbody) return;
 
-    let rows = (cachedMembersData.length > 0 && Array.isArray(cachedMembersData[0]) && cachedMembersData[0][0] === "Member ID") 
-               ? cachedMembersData.slice(1) 
-               : cachedMembersData;
+    let rawData = (typeof cachedMembersData !== 'undefined' && Array.isArray(cachedMembersData)) ? cachedMembersData : [];
+    let rows = (rawData.length > 0 && Array.isArray(rawData[0]) && rawData[0][0] === "Member ID") 
+               ? rawData.slice(1) 
+               : rawData;
 
     let now = new Date();
     let filteredList = [];
@@ -2888,7 +3184,7 @@ function openNewMembersModal(period) {
     if (period === 'week' || period === 'THIS_WEEK') {
         if (title) title.innerText = "በዚህ ሳምንት አዲስ የገቡ አባላት (This Week)";
         filteredList = rows.filter(m => {
-            let jDateObj = parseFlexibleDate(m[4]);
+            let jDateObj = (typeof parseFlexibleDate === 'function') ? parseFlexibleDate(m[4]) : null;
             if (!jDateObj) return false;
             let diffDays = (now.getTime() - jDateObj.getTime()) / (1000 * 3600 * 24);
             return diffDays >= 0 && diffDays <= 7;
@@ -2896,7 +3192,7 @@ function openNewMembersModal(period) {
     } else if (period === 'month' || period === 'THIS_MONTH') {
         if (title) title.innerText = "በዚህ ወር አዲስ የገቡ አባላት (This Month)";
         filteredList = rows.filter(m => {
-            let jDateObj = parseFlexibleDate(m[4]);
+            let jDateObj = (typeof parseFlexibleDate === 'function') ? parseFlexibleDate(m[4]) : null;
             if (!jDateObj) return false;
             let diffDays = (now.getTime() - jDateObj.getTime()) / (1000 * 3600 * 24);
             return diffDays >= 0 && diffDays <= 30;
@@ -2904,7 +3200,7 @@ function openNewMembersModal(period) {
     } else if (period === 'year' || period === 'THIS_YEAR') {
         if (title) title.innerText = `በ${selectedYearStr === 'ALL' ? 'አጠቃላይ' : selectedYearStr + ' ዓ.ም.'} አዲስ የገቡ አባላት`;
         filteredList = rows.filter(m => {
-            let jYear = extractEcYear(m[4]);
+            let jYear = (typeof extractEcYear === 'function') ? extractEcYear(m[4]) : null;
             return selectedYearStr === 'ALL' || jYear === targetYear;
         });
     }
@@ -2917,7 +3213,6 @@ function openNewMembersModal(period) {
 // 7. HELPER RENDER FUNCTIONS
 // ---------------------------------------------------------
 
-// የአባላት መረጃን ወደ Modal Table Rows Render ማድረጊያ
 function renderModalTableRows(tbody, list) {
     tbody.innerHTML = '';
     if (!list || list.length === 0) {
@@ -2954,7 +3249,47 @@ function renderModalTableRows(tbody, list) {
     });
 }
 
-// የዛሬ መግቢያዎችን (Today's Scans Logs) ወደ Modal Table Render ማድረጊያ
+function renderExpiringModalRows(tbody, list) {
+    tbody.innerHTML = '';
+    if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">ምንም የተገኘ መረጃ የለም።</td></tr>';
+        return;
+    }
+
+    list.forEach(m => {
+        let id = m[0] || '-';
+        let name = m[1] || '-';
+        let phone = m[2] || '';
+        let expiry = m[5] || '-';
+
+        let diffDays = (typeof getEthDaysRemaining === 'function') ? getEthDaysRemaining(expiry) : '-';
+        let daysText = (diffDays !== null && diffDays !== '-') ? `${diffDays} ቀን` : '-';
+
+        let smsMessage = encodeURIComponent(`ሰላም ${name}፤ የጂም አባልነትዎ በ ${expiry} ቀን ያበቃል። እባክዎን አባልነትዎን ያድሱ።`);
+        let smsUrl = `sms:${phone}?body=${smsMessage}`;
+
+        let tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        tr.style.whiteSpace = 'nowrap';
+        tr.innerHTML = `
+            <td style="padding:10px; font-weight:bold; color:#58A6FF;">${id}</td>
+            <td style="padding:10px; font-weight:600; color:#fff;">${name}</td>
+            <td style="padding:10px; color:#ffb703; font-weight:500;">${expiry}</td>
+            <td style="padding:10px;">
+                <span style="padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold; background:rgba(255, 183, 3, 0.15); color:#ffb703;">
+                    ${daysText}
+                </span>
+            </td>
+            <td style="padding:10px; text-align:center;">
+                <a href="${smsUrl}" style="display:inline-flex; align-items:center; gap:5px; padding:6px 12px; background:#2ecc71; color:#fff; text-decoration:none; border-radius:6px; font-size:0.8rem; font-weight:600;">
+                    💬 መልእክት ላክ
+                </a>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
 function renderTodayScansRows(tbody, logsList) {
     tbody.innerHTML = '';
     if (!logsList || logsList.length === 0) {
@@ -2979,18 +3314,18 @@ function renderTodayScansRows(tbody, logsList) {
     });
 }
 
-// Modal መዝጊያ function
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'none';
     }
 }
-// ==========================================
-// 1. DYNAMIC EXCEL EXPORT FUNCTION
-// ==========================================
+
+// ---------------------------------------------------------
+// EXPORT FUNCTIONS (EXCEL & PDF)
+// ---------------------------------------------------------
+
 function exportModalToExcel(tableId, titleId) {
-    // 1. የርዕስ እና ሰንጠረዥ ID-ዎችን መፈለግ
     const titleEl = document.getElementById(titleId);
     const tableEl = document.getElementById(tableId) || document.querySelector('#' + tableId) || document.querySelector('table');
 
@@ -3002,13 +3337,8 @@ function exportModalToExcel(tableId, titleId) {
     }
 
     try {
-        // ከ HTML Table ወደ Excel Sheet መቀየር
         const wb = XLSX.utils.table_to_book(tableEl, { sheet: "Data" });
-
-        // የፋይል ስም ማስተካከል (የማይፈቀዱ characters በማስወገድ)
         const safeFileName = `${fileNameText.replace(/[^a-zA-Z0-9ሀ-ፖ]/g, "_")}.xlsx`;
-
-        // ማውረድ (Download)
         XLSX.writeFile(wb, safeFileName);
     } catch (error) {
         console.error("Excel Export Error:", error);
@@ -3016,9 +3346,6 @@ function exportModalToExcel(tableId, titleId) {
     }
 }
 
-// ==========================================
-// 2. DYNAMIC PDF EXPORT FUNCTION
-// ==========================================
 function exportModalToPDF(tableId, titleId) {
     const titleEl = document.getElementById(titleId);
     const tableEl = document.getElementById(tableId) || document.querySelector('#' + tableId) || document.querySelector('table');
@@ -3034,11 +3361,9 @@ function exportModalToPDF(tableId, titleId) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // 1. የፒዲኤፍ ርዕስ ማዘጋጀት
         doc.setFontSize(14);
         doc.text(titleText, 14, 15);
 
-        // 2. autoTable በመጠቀም ሰንጠረዡን ወደ PDF መቀየር
         doc.autoTable({
             html: tableEl,
             startY: 22,
@@ -3047,7 +3372,6 @@ function exportModalToPDF(tableId, titleId) {
             styles: { fontSize: 9, cellPadding: 3 }
         });
 
-        // 3. የፋይል ስም ማዘጋጀትና ማውረድ
         const safeFileName = `${titleText.replace(/[^a-zA-Z0-9ሀ-ፖ]/g, "_")}.pdf`;
         doc.save(safeFileName);
     } catch (error) {
@@ -3665,6 +3989,7 @@ function format12HourTime(dateTimeStr) {
 
 // 2. Attendance Logs ማሳያ (መረጃውን ከ checkIsExpired ጋር በማገናኘት)
 function renderGroupedLogs(rows) {
+    window.globalAttendanceRows = rows || [];
     let tbody = document.getElementById('logsTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -3858,6 +4183,123 @@ async function saveQrImage(type) { // type = 'cbe' ወይም 'tele'
 
   reader.readAsDataURL(file);
 }
+// ማንኛውንም የኢትዮጵያ ቀን በትክክል ከዛሬ ጋር አነጻጽሮ የቀራት ልዩነት የሚያሰላ Function
+function getEthDaysRemaining(expiryStr) {
+    if (!expiryStr) return null;
+    
+    let match = String(expiryStr).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (!match) return null;
+
+    let expD = parseInt(match[1], 10);
+    let expM = parseInt(match[2], 10);
+    let expY = parseInt(match[3], 10);
+
+    // የዛሬን የኢትዮጵያ ቀን በJS Built-in Intl API በቅጽበት ማግኘት
+    let formatter = new Intl.DateTimeFormat('en-US-u-ca-ethiopic', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+    });
+    let parts = formatter.formatToParts(new Date());
+    
+    let curEthD = parseInt(parts.find(p => p.type === 'day').value, 10);
+    let curEthM = parseInt(parts.find(p => p.type === 'month').value, 10);
+    let curEthY = parseInt(parts.find(p => p.type === 'year').value, 10);
+
+    // ሁለቱንም ቀናት ወደ ጠቅላላ ቀናት ቀይሮ ማቀናነስ
+    let expTotalDays = (expY * 365) + Math.floor(expY / 4) + ((expM - 1) * 30) + expD;
+    let todayTotalDays = (curEthY * 365) + Math.floor(curEthY / 4) + ((curEthM - 1) * 30) + curEthD;
+
+    return expTotalDays - todayTotalDays;
+}
+// ---------------------------------------------------------
+// Retention እና Churn ካርዶችን የሚስል አዲስ ፋንክሽን
+// ---------------------------------------------------------
+function renderRetentionChurnCards(container, list, type) {
+    if (!container) return;
+
+    let totalMembers = list.length;
+    let activeMembers = 0;
+    let expiredMembers = 0;
+
+    list.forEach(m => {
+        let isExpired = (typeof checkIsExpired === 'function') ? checkIsExpired(m[5], m[6]) : (String(m[6]).toLowerCase() === 'expired');
+        if (isExpired) {
+            expiredMembers++;
+        } else {
+            activeMembers++;
+        }
+    });
+
+    let retentionRate = totalMembers > 0 ? ((activeMembers / totalMembers) * 100).toFixed(1) : "0.0";
+    let churnRate = totalMembers > 0 ? ((expiredMembers / totalMembers) * 100).toFixed(1) : "0.0";
+
+    if (type === 'retention') {
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #6ee7b7; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">የአባላት Retention Rate</span>
+                    <h2 style="color: #10B981; margin: 6px 0 0 0; font-size: 2rem; font-weight: bold;">${retentionRate}%</h2>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #9aa0a6; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">የቀጠሉ ንቁ አባላት (Active)</span>
+                    <h2 style="color: #38bdf8; margin: 6px 0 0 0; font-size: 2rem; font-weight: bold;">${activeMembers} / ${totalMembers}</h2>
+                </div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center; color: #a7f3d0; font-size: 0.85rem;">
+                💡 <b>Retention Rate</b> የሚያሳየው ከጠቅላላ አባላት ውስጥ አባልነታቸውን ሳያቋርጡ በተግባር እየተጠቀሙ ያሉበትን የመቶኛ መጠን ነው።
+            </div>
+        `;
+    } else if (type === 'churn') {
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #fca5a5; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">የአባላት Churn Rate</span>
+                    <h2 style="color: #EF4444; margin: 6px 0 0 0; font-size: 2rem; font-weight: bold;">${churnRate}%</h2>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 18px; text-align: center;">
+                    <span style="color: #9aa0a6; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">አባልነታቸው ያቋረጡ (Expired)</span>
+                    <h2 style="color: #f87171; margin: 6px 0 0 0; font-size: 2rem; font-weight: bold;">${expiredMembers} / ${totalMembers}</h2>
+                </div>
+            </div>
+            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center; color: #fecaca; font-size: 0.85rem;">
+                ⚠️ <b>Churn Rate</b> የሚያሳየው አባልነታቸው አልፎ ያልታደሰ ወይም አገልግሎት ያቋረጡ አባላትን የመቶኛ መጠን ነው።
+            </div>
+        `;
+    }
+}
+// ---------------------------------------------------------
+// Today's Check-ins እና At-Risk ካርዶችን የሚስል አዲስ ፋንክሽን
+// ---------------------------------------------------------
+function renderAttendanceRiskCards(container, dataList, type) {
+    if (!container) return;
+
+    if (type === 'today_scans') {
+        let count = dataList.length;
+        container.innerHTML = `
+            <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px;">
+                <span style="color: #67e8f9; font-size: 0.85rem; text-transform: uppercase; font-weight: 600;">የዛሬ ጠቅላላ መግቢያዎች (Today's Total Check-ins)</span>
+                <h2 style="color: #06B6D4; margin: 6px 0 0 0; font-size: 2.2rem; font-weight: bold;">${count}</h2>
+            </div>
+            <div style="background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; text-align: center; color: #a5f3fc; font-size: 0.85rem;">
+                📌 ከታች ያለው ሰንጠረዥ ዛሬ ጂም ገብተው Scan ያደረጉ አባላትን የገቡበትን ሰዓት ጨምሮ ያሳያል።
+            </div>
+        `;
+    } else if (type === 'at_risk') {
+        let count = dataList.length;
+        container.innerHTML = `
+            <div style="background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px;">
+                <span style="color: #fbcfe8; font-size: 0.85rem; text-transform: uppercase; font-weight: 600;">ስጋት ላይ ያሉ አባላት (14+ ቀን ያልመጡ)</span>
+                <h2 style="color: #EC4899; margin: 6px 0 0 0; font-size: 2.2rem; font-weight: bold;">${count}</h2>
+            </div>
+            <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; text-align: center; color: #fbcfe8; font-size: 0.85rem;">
+                ⚠️ እነዚህ አባላት ንቁ (Active) ቢሆኑም ላለፉት 14 ቀናት እና ከዚያ በላይ ወደ ጂም አልመጡም። ደውለው የሚያጋጥማቸውን መሰናክል መጠየቅ ይመከራል።
+            </div>
+        `;
+    }
+}
+
+
 // ገጹ ሎድ ሲያደርግ በራሱ እንዲሰራ ማድረግ
 document.addEventListener("DOMContentLoaded", loadSettings);
 </script>
