@@ -1872,40 +1872,34 @@
         /* =========================================================
            AUTHENTICATION & NAVIGATION ENGINE
            ========================================================= */
-     function executeLogin() {
-    let u = document.getElementById('authUserInput').value.trim();
-    let p = document.getElementById('authPassInput').value.trim();
-    
-    // ከ Google Sheet የመጣው ፓስወርድ (ከሌለ በ "1234" ይሰራል)
-    let validPass = (window.systemSettings && window.systemSettings.adminPass) 
-                    ? String(window.systemSettings.adminPass).trim() 
-                    : "1234";
-
-    if ((u === "admin" || u === "G-Owner") && (p === validPass || p === "1234" || p === "8888")) {
-        document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-        
-        // አፑ ሲከፈት አባላትንና ዳሽቦርዱን እንዲጭን ጥሪ ማድረግ
-        if (typeof syncMembers === "function") syncMembers();
-        if (typeof fetchMembers === "function") fetchMembers();
-    } else {
-        let err = document.getElementById('loginError');
-        err.style.display = 'block';
-        err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
-    }
-}
-
 function executeLogin() {
-    let u = document.getElementById('authUserInput').value.trim();
-    let p = document.getElementById('authPassInput').value.trim();
+    let uInput = document.getElementById('authUserInput');
+    let pInput = document.getElementById('authPassInput');
     let err = document.getElementById('loginError');
 
-    // 1. በ Settings ተቀይሮ የነበረውን ፓስወርድ ማግኘት (ከ Memory ወይም ከ LocalStorage)
-    let activePassword = systemSettings.adminPass || localStorage.getItem('gymAdminPass') || "1234";
+    let u = uInput ? uInput.value.trim() : "";
+    let p = pInput ? pInput.value.trim() : "";
 
-    // 2. ተጠቃሚው ያስገባውን ፓስወርድ ከተቀየረው ፓስወርድ ጋር ማወዳደር
-    if ((u === "admin" || u === "G-Owner") && p === String(activePassword).trim()) {
+    // 1. ኦፍላይን እና ኦንላይን ላይ ፓስወርድ መያዣ
+    // ከ window.systemSettings፣ ከ LocalStorage ወይም ከ "1234" ያነባል
+    let systemPass = (window.systemSettings && window.systemSettings.adminPass) 
+                     ? window.systemSettings.adminPass 
+                     : null;
+    
+    let savedPass = localStorage.getItem('gymAdminPass');
+    
+    // የመጨረሻ የፀደቀ ፓስወርድ
+    let validPassword = systemPass || savedPass || "1234";
+
+    // 2. ማረጋገጫ (ከ "admin" እና ከተቀመጠው ፓስወርድ ጋር)
+    if ((u === "admin" || u === "G-Owner") && p === String(validPassword).trim()) {
+        
+        // ለቀጣይ ኦፍላይን መግቢያ ፓስወርዱን በ LocalStorage ማስቀመጥ
+        localStorage.setItem('gymAdminPass', validPassword);
+
         document.getElementById('enterpriseLoginOverlay').style.display = 'none';
         if (err) err.style.display = 'none';
+        if (pInput) pInput.value = ''; // ፓስወርዱን ማጽዳት
         
         if (typeof syncMembers === "function") syncMembers();
         if (typeof fetchMembers === "function") fetchMembers();
@@ -1916,7 +1910,6 @@ function executeLogin() {
         }
     }
 }
-
 function switchView(viewId, evt) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -3206,7 +3199,7 @@ function renderExpiringModalRows(tbody, list) {
             <td style="padding:10px; color:#ffb703; font-weight:500;">${expiry}</td>
             <td style="padding:10px;">
                 <span style="padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold; background:rgba(255, 183, 3, 0.15); color:#ffb703;">
-                    ${daysText}
+                    ${daysText} 
                 </span>
             </td>
             <td style="padding:10px; text-align:center;">
