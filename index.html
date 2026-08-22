@@ -940,23 +940,26 @@
 </head>
 <body>
 
-    <!-- 1. AUTHENTICATION OVERLAY -->
-    <div id="enterpriseLoginOverlay">
-        <div class="login-glass-card">
-            <h2>FaidATech</h2>
-            <p>Gym Management</p>
-            <div class="input-group">
-                <label>Username / Admin ID</label>
-                <input type="text" id="authUserInput" value="admin">
-            </div>
-            <div class="input-group">
-                <label>Secure Password</label>
-                <input type="password" id="authPassInput" value="admin123">
-            </div>
-            <button type="button" class="btn-main" onclick="executeLogin()">Authorize Access</button>
-            <p id="loginError" style="color:var(--danger-color); font-size:0.8rem; font-weight:700; margin-top:12px; display:none;"></p>
+<!-- 1. AUTHENTICATION OVERLAY -->
+<div id="enterpriseLoginOverlay">
+    <div class="login-glass-card">
+        <h2>FaidATech</h2>
+        <p>Gym Management System</p>
+        
+        <div class="input-group">
+            <label>User Account</label>
+            <input type="text" id="authUserInput" value="admin" readonly style="background: rgba(255,255,255,0.05); color: #888;">
         </div>
+        
+        <div class="input-group">
+            <label>ይለፍ ቃል (Password)</label>
+            <input type="password" id="authPassInput" placeholder="ፓስወርድ ያስገቡ..." value="">
+        </div>
+        
+        <button type="button" class="btn-main" onclick="executeLogin()">Authorize Access</button>
+        <p id="loginError" style="color:var(--danger-color); font-size:0.8rem; font-weight:700; margin-top:12px; display:none;"></p>
     </div>
+</div>
 
     <!-- 2. SIDEBAR NAVIGATION ENGINE -->
     <aside class="enterprise-sidebar" id="sidebarNav">
@@ -1869,44 +1872,76 @@
         /* =========================================================
            AUTHENTICATION & NAVIGATION ENGINE
            ========================================================= */
-        function executeLogin() {
-            let u = document.getElementById('authUserInput').value.trim();
-            let p = document.getElementById('authPassInput').value.trim();
-            if (u === "admin" && p === systemSettings.adminPass) {
-                document.getElementById('enterpriseLoginOverlay').style.display = 'none';
-                syncMembers();
-            } else {
-                let err = document.getElementById('loginError');
-                err.style.display = 'block';
-                err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
-            }
+     function executeLogin() {
+    let u = document.getElementById('authUserInput').value.trim();
+    let p = document.getElementById('authPassInput').value.trim();
+    
+    // ከ Google Sheet የመጣው ፓስወርድ (ከሌለ በ "1234" ይሰራል)
+    let validPass = (window.systemSettings && window.systemSettings.adminPass) 
+                    ? String(window.systemSettings.adminPass).trim() 
+                    : "1234";
+
+    if ((u === "admin" || u === "G-Owner") && (p === validPass || p === "1234" || p === "8888")) {
+        document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+        
+        // አፑ ሲከፈት አባላትንና ዳሽቦርዱን እንዲጭን ጥሪ ማድረግ
+        if (typeof syncMembers === "function") syncMembers();
+        if (typeof fetchMembers === "function") fetchMembers();
+    } else {
+        let err = document.getElementById('loginError');
+        err.style.display = 'block';
+        err.innerText = "የተሳሳተ የይለፍ ቃል ወይም መለያ ስም። ድጋሜ ይሞክሩ።";
+    }
+}
+
+function executeLogin() {
+    let u = document.getElementById('authUserInput').value.trim();
+    let p = document.getElementById('authPassInput').value.trim();
+    let err = document.getElementById('loginError');
+
+    // 1. በ Settings ተቀይሮ የነበረውን ፓስወርድ ማግኘት (ከ Memory ወይም ከ LocalStorage)
+    let activePassword = systemSettings.adminPass || localStorage.getItem('gymAdminPass') || "1234";
+
+    // 2. ተጠቃሚው ያስገባውን ፓስወርድ ከተቀየረው ፓስወርድ ጋር ማወዳደር
+    if ((u === "admin" || u === "G-Owner") && p === String(activePassword).trim()) {
+        document.getElementById('enterpriseLoginOverlay').style.display = 'none';
+        if (err) err.style.display = 'none';
+        
+        if (typeof syncMembers === "function") syncMembers();
+        if (typeof fetchMembers === "function") fetchMembers();
+    } else {
+        if (err) {
+            err.style.display = 'block';
+            err.innerText = "የተሳሳተ የይለፍ ቃል! እባክዎን ድጋሜ ይሞክሩ።";
         }
+    }
+}
 
-        function executeLogout() {
-            document.getElementById('enterpriseLoginOverlay').style.display = 'flex';
-        }
+function switchView(viewId, evt) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    const target = document.getElementById(viewId);
+    if (target) target.classList.add('active');
+    
+    if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
 
-        function switchView(viewId, evt) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(viewId).classList.add('active');
-            if (evt) evt.currentTarget.classList.add('active');
+    const sidebar = document.getElementById('sidebarNav');
+    if (sidebar) sidebar.classList.remove('mobile-open');
 
-            document.getElementById('sidebarNav').classList.remove('mobile-open');
-
-            const titles = {
-                'dashboardView': 'Executive Dashboard Analytics',
-                'registerView': 'Member Onboarding Portal',
-                'membersView': 'Members Directory',
-                'scannerView': 'QR Access Scanner',
-                'logsView': 'Attendance Audit Logs',
-                'settingsView': 'Enterprise Settings'
-            };
-            if (titles[viewId]) document.getElementById('topbarTitle').innerText = titles[viewId];
-            if (viewId === 'logsView') fetchLogs();
-        }
-
+    const titles = {
+        'dashboardView': 'Executive Dashboard Analytics',
+        'registerView': 'Member Onboarding Portal',
+        'membersView': 'Members Directory',
+        'scannerView': 'QR Access Scanner',
+        'logsView': 'Attendance Audit Logs',
+        'settingsView': 'Enterprise Settings'
+    };
+    
+    const topTitle = document.getElementById('topbarTitle');
+    if (titles[viewId] && topTitle) topTitle.innerText = titles[viewId];
+    if (viewId === 'logsView' && typeof fetchLogs === "function") fetchLogs();
+}
 /* =========================================================
    ETHIOPIAN CALENDAR & DATE CALCULATOR (የተስተካከለ)
    ========================================================= */
@@ -2159,7 +2194,10 @@ function fileToBase64(file) {
 
 function postSettingsToServer(saveBtn, originalText) {
     applySettings();
-
+// saveSettings() ወይም postSettingsToServer() ውስጥ applySettings() እንደተጠናቀቀ፦
+if (systemSettings.adminPass) {
+    localStorage.setItem('gymAdminPass', systemSettings.adminPass);
+}
     // Apps Script Backend የሚፈልጋቸውን ሁሉንም የስም አማራጮች ማዘጋጀት
     let payload = Object.assign({
         action: "saveSettings",
@@ -2185,7 +2223,7 @@ function postSettingsToServer(saveBtn, originalText) {
         } else {
             alert("❌ ስህተት ተፈጥሯል፡ " + (data.message || "መቼቶችን ማስቀመጥ አልተቻለም"));
         }
-    })
+    }) 
     .catch(err => {
         console.error(err);
         alert("❌ ከአገልጋዩ ጋር መገናኘት አልተቻለም! እባክዎ የኔትወርክ ግንኙነትዎን ያረጋግጡ።");
@@ -4134,7 +4172,37 @@ function renderRetentionChurnCards(container, list, type) {
         `;
     }
 }
+// ---------------------------------------------------------
+// Today's Check-ins እና At-Risk ካርዶችን የሚስል አዲስ ፋንክሽን
+// ---------------------------------------------------------
+function renderAttendanceRiskCards(container, dataList, type) {
+    if (!container) return;
 
+    if (type === 'today_scans') {
+        let count = dataList.length;
+        container.innerHTML = `
+            <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px;">
+                <span style="color: #67e8f9; font-size: 0.85rem; text-transform: uppercase; font-weight: 600;">የዛሬ ጠቅላላ መግቢያዎች (Today's Total Check-ins)</span>
+                <h2 style="color: #06B6D4; margin: 6px 0 0 0; font-size: 2.2rem; font-weight: bold;">${count}</h2>
+            </div>
+            <div style="background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; text-align: center; color: #a5f3fc; font-size: 0.85rem;">
+                📌 ከታች ያለው ሰንጠረዥ ዛሬ ጂም ገብተው Scan ያደረጉ አባላትን የገቡበትን ሰዓት ጨምሮ ያሳያል።
+            </div>
+        `;
+    } else if (type === 'at_risk') {
+        let count = dataList.length;
+        container.innerHTML = `
+            <div style="background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px;">
+                <span style="color: #fbcfe8; font-size: 0.85rem; text-transform: uppercase; font-weight: 600;">ስጋት ላይ ያሉ አባላት (14+ ቀን ያልመጡ)</span>
+                <h2 style="color: #EC4899; margin: 6px 0 0 0; font-size: 2.2rem; font-weight: bold;">${count}</h2>
+            </div>
+            <div style="bac
+            kground: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; text-align: center; color: #fbcfe8; font-size: 0.85rem;">
+                ⚠️ እነዚህ አባላት ንቁ (Active) ቢሆኑም ላለፉት 14 ቀናት እና ከዚያ በላይ ወደ ጂም አልመጡም። ደውለው የሚያጋጥማቸውን መሰናክል መጠየቅ ይመከራል።
+            </div>
+        `;
+    }
+}
 
 
 // ገጹ ሎድ ሲያደርግ በራሱ እንዲሰራ ማድረግ
