@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gym-app-v3';
+const CACHE_NAME = 'gym-app-v4';
 
 // ኦፍላይን እንዲያዙ የሚፈለጉ የፕሮጀክቱ ፋይሎች
 const urlsToCache = [
